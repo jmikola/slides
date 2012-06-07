@@ -1,36 +1,36 @@
 Notable Mascots
-100: [img]mascot-twig.png
+100: [img]mascot-octocat.png
 200: [img]mascot-knp.png
-300: [img]mascot-sismo.png
-400: [img]mascot-silex.png
-500: [img]mascot-pirium.png
+300: [img]mascot-twig.png
+400: [img]mascot-sismo.png
+500: [img]mascot-nelmio.png
+A Symfony Production
+100: Dustin Whittle used Symfony to redevelop this Yahoo! web property in 2008. ## Yahoo! Answers ##
+200: This Miami-based VPS hosting company reimplemented their control panel using Symfony2 in October 2010. ## Servergrove ##
+300: This website employs Symfony2, Redis and Varnish at great scale, serving terabytes of adult video each day. ## YouPorn ##
+400: This NYC-based e-commerce startup was one of the first to deploy Symfony2 to production in early 2010. ## OpenSky ##
+500: KnpLabs was contracted out to develop this fitness website using Symfony2 in August 2010. ## Exercise.com ##
 Attack of the Clones
 100: [img]clones-lukas.png
 200: [img]clones-fabpot.png
 300: [img]clones-fabnot.png
 400: [img]clones-harry.png
 500: [img]clones-keynote_c.jpg
-A Symfony Production
-100: Symfony powers the website for this Paris company, which serves video to many millions of users each month. ## DailyMotion ##
-100: Dustin Whittle used Symfony to redevelop this Yahoo! web property in 2008. ## Yahoo! Answers ##
-200: This NYC-based e-commerce startup was one of the first to deploy Symfony2 to production in February 2010. ## OpenSky ##
-400: This website employs Symfony2, Redis and Varnish at great scale, serving terabytes of adult video per day. - ## YouPorn ##
-500: KnpLabs was contracted out to develop this fitness website using Symfony2 in 2010. ## Exercise.com ##
 Symfony in OSS
-100: This ubiquitous unit-testing framework utilizes Symfony's YAML component. ## PHPUnit ##
-200: Several Symfony2 components will be used to develop the eigth version of this well-known CMS project. ## Drupal ##
-300: Fabien Potencier and Igor Wiedler maintain this micro-framework, which is based on several Symfony2 components. ## Silex ##
+100: Several Symfony2 components will be used to develop the eigth version of this well-known CMS project. ## Drupal ##
+200: Fabien Potencier and Igor Wiedler maintain this micro-framework, which utilizes several Symfony2 components. ## Silex ##
 300: In early 2010, developers of this forum package started talking about using Symfony2 for their next major version. ## phpBB ##
+400: This project from Javier Eguiluz uses Symfony2 components to allow authors to publish e-books with ease ## easybook ##
 500: This application framework is built atop numerous Symfony2 components and bundles.<br>Drak, the project's lead developer, extensively refactored Symfony2's session component earlier this year. ## Zikula ##
-Framework, Inc
-100: This international development team has published more Symfony2 bundles than any other organization. ## KnpLabs ##
-200: This Swiss development shop celebrates a special day once every four years. ## Liip ##
-300: Sensio Labs Deutschland was formed out of this Köln-based company. ## Interlutions ##
-400: This interactive ad agency is a sister company of Sensio Labs Paris. ## Extreme Sensio ##
-500: This two-man company from Sheffield recently joined with Inviqa to form Sensio Labs UK. ## Lime Thinking ##
+Dude, Where's my Class?
+100: Request ## HttpFoundation or BrowserKit ##
+200: PropertyPath ## Form ##
+300: CompilerPassInterface ## DependencyInjection ##
+400: NotFoundHttpException ## HttpKernel ##
+500: OutputFormatterStyleInterface ## Console ##
 Sensio: Past and Present
 100: This Doctrine core member worked as a Sensio Guru and consultant before joining OpenSky in 2010. ## Jon Wage ##
 200: He's likely to give you a badge on Sensio Connect for contributing to his WürstBundle. ## Marc Weistroff ##
 300: When he's flying, you can count on him tweeting a photo of his in-flight meal and leg room. ## Hugo Hamon ##
 400: While at Sensio between 2004 and 2007, he created Propel ORM and authored "The Definitive Guide To Symfony". ## Francois Zaninotto ##
-500: He got his big start with Symfony developing an online store for women's lingerie ## Fabien Potencier ##
+500: He got his big start with Symfony developing an online store for women's lingerie. ## Fabien Potencier ##

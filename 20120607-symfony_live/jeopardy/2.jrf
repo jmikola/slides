@@ -4,51 +4,33 @@ Symfony Component Zoo
 300: [img]mascot-event_dispatcher.png
 400: [img]mascot-output_escaping.png
 500: [img]mascot-templating.png
-category2
-100: 
-200: 
-300: What was the original meaning of the PHP acronym? ## Personal homepage ##
-400: A teapot will respond with this status code when instructed to BREW coffee via the Hyper Text Coffee Pot Control Protocol. ## 418 ##
-500: 
-category3
-100: 
+Potpourri
+100: Hopefully, you'll sign on to this website later and leave feedback for sessions you attended at Symfony Live ## joind.in ##
+200: This new feature in PHP 5.4 allows for horizontal code re-use. ## Traits ##
+300: Until last week, this standard for class autoloading was the only thing developers from multiple PHP projects could agree upon. ## PSR-0 ##
+400: Before "PHP Hypertext Preprocessor", this was the original meaning of the PHP acronym. ## Personal Home Page ##
+500: A teapot may respond with this status code if instructed to BREW coffee via the Hyper Text Coffee Pot Control Protocol. ## 418 ##
+Running out of Namespaces
+100: Classes shared by Doctrine ORM and ODM might be found in this namespace ## Common ##
 200: This namespace contains code for integrating with optional vendor libraries. ## Bridge ##
-300: 
+300: FrameworkExtraBundle and GeneratorBundle live under this vendor namespace ## Sensio ##
 400: Symfony 2.1 has 23, but Symfony 2.0 has only 22. ## Components ##
-500: Symfony\Bundle\SecurityBundle\DependencyInjection\<br>Security\UserProvider\UserProviderFactoryInterface ## Longest class name ##
-category4
-100: 
-200: 
-300: 
-400: 
-500: 
-Files
-100: A dot-prefixed YML file in the root directory of your respository hints that you also have a commit hook set for this service. ## Travis CI ##
+500: Symfony\Bundle\SecurityBundle\<br>DependencyInjection\Security\<br>UserProvider\UserProviderFactoryInterface ## Longest class name ##
+Notable Mascots
+100: [img]mascot-linux.png
+200: [img]mascot-composer.png
+300: [img]mascot-silex.png
+400: [img]mascot-phrozn.png
+500: [img]mascot-pirium.png
+Anything but PHP Files
+100: Symfony 2.0's standard distribution used this proprietary file to manage its vendor libraries. ## deps ##
 200: You'll list your application's cache and log directories here if you want to avoid committing them by mistake. ## .gitignore ##
-200: With this tool and a single JSON file, you , you are only a JSON file away from having to manually organize your project's dependencies. ## Composer ##
-300: Its feature files may read like prose, but those get translated into acceptance tests for your application. ## Behat ##
-300: Symfony 2.0's standard distribution used this proprietary file to manage its vendor libraries. ## deps ##
-400: 
-500: 
-category6
-100: Ask this developer to sign a Contributor License Agreement and he'll kindly raise his fingers to his chin. ## lsmith ##
-200: Male or female, we don't know, but this online persona is anything but Fabien Potencier. ## fabnot ##
-300: Travis CI and commit hooks are nice, but they can't beat this organic 
-400: 
-500: 
-
-Symfony\Bundle\SecurityBundle\DependencyInjection\Security\UserProvider\UserProviderFactoryInterface - What is the longest class name in Symfony2?
-
-He changed his avatar to look like somebody from Game of Thrones - Who is Fabien Potencier?
-
-The original meaning of the PHP acronym - What is Personal Homepage?
-
-
-What is a fight between Stof and PHP-CS-Fixer? Clash of the titans
-What is the HTTP status code for: I'm a teapot? 418
-
-Answer: fabnot
-Question: Who is fabpot's humoristic tween on Twitter?
-
-It's a perverted ghost / What is the exception pictogram?
-It's not a CSI expert / What isn't the profiler?
+300: With this tool and a single JSON file, managing your project dependencies could not be easier. ## Composer ##
+400: Its *.feature files may read like prose, but those let you execute acceptance tests for your application. ## Behat ##
+500: A dot-prefixed YML file in the root directory of your respository hints that you also have a commit hook set for this service. ## Travis CI ## 
+Celebrity Sightings
+100: Some say he reviews PR's before they're opened, and that his bundle test suites have 137% code coverage... all we know is that he's called this. ## Stof ##
+200: This Symfony core contributor couldn't attend Symfony Live this year because he's getting married this weekend. ## Ryan Weaver ##
+300: Ask this Symfony CMF evangelist to sign a Contributor License Agreement and he'll kindly raise his fingers to his chin. ## Lukas Smith ##
+400: This Portland-based core contributor has a penchant for funny project names like Assetic, Buzz and Spork. ## Kris Wallsmith ##
+500: Male or female, we don't know, but this online persona is anything but Fabien Potencier. ## fabnot ##
