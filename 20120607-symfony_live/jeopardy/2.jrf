@@ -25,7 +25,7 @@ Notable Mascots
 Anything but PHP Files
 100: Symfony 2.0's standard distribution used this proprietary file to manage its vendor libraries. ## deps ##
 200: You'll list your application's cache and log directories here if you want to avoid committing them by mistake. ## .gitignore ##
-300: With this tool and a single JSON file, managing your project dependencies could not be easier. ## Composer ##
+300: A single JSON file combined with Nils Adermann's love for computer science will take care of all of your project dependencies. ## Composer ##
 400: Its *.feature files may read like prose, but those let you execute acceptance tests for your application. ## Behat ##
 500: A dot-prefixed YML file in the root directory of your respository hints that you also have a commit hook set for this service. ## Travis CI ## 
 Celebrity Sightings
