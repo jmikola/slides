@@ -5,11 +5,11 @@ Symfony Component Zoo
 400: [img]mascot-output_escaping.png
 500: [img]mascot-templating.png
 Potpourri
-100: Hopefully, you'll sign on to this website later and leave feedback for sessions you attended at Symfony Live ## joind.in ##
+100: Hopefully, you'll log on to this website later and leave feedback for sessions you attended at Symfony Live ## joind.in ##
 200: This new feature in PHP 5.4 allows for horizontal code re-use. ## Traits ##
 300: Until last week, this standard for class autoloading was the only thing developers from multiple PHP projects could agree upon. ## PSR-0 ##
 400: Before "PHP Hypertext Preprocessor", this was the original meaning of the PHP acronym. ## Personal Home Page ##
-500: A teapot may respond with this status code if instructed to BREW coffee via the Hyper Text Coffee Pot Control Protocol. ## 418 ##
+500: [dj]A teapot may respond with this status code if instructed to BREW coffee via the Hyper Text Coffee Pot Control Protocol. ## 418 ##
 Running out of Namespaces
 100: Classes shared by Doctrine ORM and ODM might be found in this namespace ## Common ##
 200: This namespace contains code for integrating with optional vendor libraries. ## Bridge ##
@@ -19,7 +19,7 @@ Running out of Namespaces
 Notable Mascots
 100: [img]mascot-linux.png
 200: [img]mascot-composer.png
-300: [img]mascot-silex.png
+300: [dj][img]mascot-silex.png
 400: [img]mascot-phrozn.png
 500: [img]mascot-pirium.png
 Anything but PHP Files
@@ -32,5 +32,5 @@ Celebrity Sightings
 100: Some say he reviews PR's before they're opened, and that his bundle test suites have 137% code coverage... all we know is that he's called this. ## Stof ##
 200: This Symfony core contributor couldn't attend Symfony Live this year because he's getting married this weekend. ## Ryan Weaver ##
 300: Ask this Symfony CMF evangelist to sign a Contributor License Agreement and he'll kindly raise his fingers to his chin. ## Lukas Smith ##
-400: This Portland-based core contributor has a penchant for funny project names like Assetic, Buzz and Spork. ## Kris Wallsmith ##
+400: [dj]This Portland-based core contributor has a penchant for funny project names like Assetic, Buzz and Spork. ## Kris Wallsmith ##
 500: Male or female, we don't know, but this online persona is anything but Fabien Potencier. ## fabnot ##
