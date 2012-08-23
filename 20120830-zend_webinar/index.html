@@ -1,0 +1,1234 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Getting Acquainted with MongoDB</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <!-- <link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'> -->
+        <link rel="stylesheet" href="node_modules/reveal.js/css/main.css">
+        <link rel="stylesheet" href="node_modules/reveal.js/css/theme/default.css">
+        <link rel="stylesheet" href="node_modules/reveal.js/lib/css/zenburn.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            // If the query includes 'print-pdf' we'll use the PDF print sheet
+            document.write( '<link rel="stylesheet" href="node_modules/reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="node_modules/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="state-background"></div>
+
+            <div class="slides">
+                <section data-state="title">
+                    <h1>Getting Acquainted with <span>MongoDB</span></h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">@jmikola</a></p>
+                </section>
+
+                <section data-markdown data-state="about-10gen">
+                    ## 10gen
+
+                    * Develops MongoDB
+                    * Provides support, training, and consulting
+                    * Loves the community
+                        * Mailing lists, IRC, and Stack Overflow
+                        * Sponsors conferences and user groups
+                    * Offices: NYC, Palo Alto, Europe, Australia
+                    * Hiring at [10gen.com/careers](http://10gen.com/careers)
+                </section>
+
+                <section data-markdown data-state="starting-off">
+                    ## Starting Off
+
+                    <ul>
+                        <li>What sets MongoDB apart?</li>
+                        <li class="fragment">What are documents?</li>
+                        <li class="fragment">How do I get them into Mongo?</li>
+                        <li class="fragment">How can I get them back out?</li>
+                        <li class="fragment">Can we do that faster?</li>
+                        <li class="fragment">What else can I do?</li>
+                    </ul>
+
+                    <p class="photo-credit"><a href="http://www.flickr.com/photos/pagedooley/7330663394/">http://www.flickr.com/photos/pagedooley/7330663394/</a></p>
+                </section>
+
+                <section>
+                    <section data-markdown data-state="analogies">
+                        ## Analogy Time
+
+                        <table>
+                            <tr><th>RDBMS</th><th>:</th><th>MongoDB</th></tr>
+                            <tr><td>Database</td><td>:</td><td>Database</td></tr>
+                            <tr><td>Table</td><td>:</td><td>Collection</td></tr>
+                            <tr><td>Row</td><td>:</td><td>Document</td></tr>
+                            <tr><td>Column</td><td>:</td><td>Field</td></tr>
+                            <tr><td>Primary Key</td><td>:</td><td><code>_id</code></td></tr>
+                        </table>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## RDBMS: The Good Parts
+
+                        * Tried and true
+                        * SQL is a rich query language
+                        * ACID compliance
+                        * Transactions
+                    </section>
+
+                    <section data-markdown>
+                        ## RDBMS: The Bad Parts
+
+                        * Modeling complex or polymorphic data
+                        * Schema migrations
+                        * Administration
+                        * Scalability
+                    </section>
+
+                    <section data-markdown>
+                        ## MongoDB: The Good Parts
+
+                        * Document model
+                        * Dynamic schemas
+                        * Performance and scalability
+                        * Features (aggregation, geo, GridFS)
+                    </section>
+
+                    <section data-markdown>
+                        ## MongoDB: The Bad Parts
+
+                        * Limited atomicity
+                        * Query language has its limits
+                        * Concurrency (improving)
+                    </section>
+
+                    <section data-state="database-landscape">
+                        <h2>Database Landscape</h2>
+
+                        <div class="diagram">
+                            <ul>
+                                <li class="memcached">Memcached</li>
+                                <li class="key-value">Key/Value</li>
+                                <li class="mongodb">MongoDB</li>
+                                <li class="rdbms">RDBMS</li>
+                            </ul>
+                            <div class="y-axis">Scalability and Performance</div>
+                            <div class="x-axis">Depth of Functionality</div>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown data-state="relational-modeling">
+                        ## Relational Modeling
+
+                        * Articles
+                            * One author
+                            * Many comments
+                            * Many tags
+                        * Authors
+                            * Many articles
+                            * Many comments
+                        * Tags
+                            * Many articles
+                        * Comments
+                            * One article
+                            * One author
+                    </section>
+
+                    <section data-state="relational-modeling-diagram">
+                        <h2>Relational Modeling</h2>
+
+                        <table class="bordered" id="relational-articles">
+                            <thead>
+                                <tr><th colspan="4">articles</th></tr>
+                                <tr>
+                                    <th>id</th>
+                                    <th>author_id</th>
+                                    <th>title</th>
+                                    <th>body</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>Praesent ante dui</td>
+                                    <td>Lorem ipsum…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bordered" id="relational-articles-to-tags">
+                            <thead>
+                                <tr><th colspan="3">articles_to_tags</th></tr>
+                                <tr>
+                                    <th>id</th>
+                                    <th>article_id</th>
+                                    <th>tag_id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>36</td>
+                                    <td>1</td>
+                                    <td>7</td>
+                                </tr>
+                                <tr>
+                                    <td>37</td>
+                                    <td>1</td>
+                                    <td>8</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bordered" id="relational-authors">
+                            <thead>
+                                <tr><th colspan="3">authors</th></tr>
+                                <tr>
+                                    <th>id</th>
+                                    <th>name</th>
+                                    <th>email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Bob</td>
+                                    <td>bob@example.com</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>John</td>
+                                    <td>john@example.com</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bordered" id="relational-comments">
+                            <thead>
+                                <tr><th colspan="4">comments</th></tr>
+                                <tr>
+                                    <th>id</th>
+                                    <th>article_id</th>
+                                    <th>author_id</th>
+                                    <th>body</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>4</td>
+                                    <td>1</td>
+                                    <td>3</td>
+                                    <td>Morbi libero erat…</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>1</td>
+                                    <td>2</td>
+                                    <td>Dapibus quis…</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>1</td>
+                                    <td>3</td>
+                                    <td>Fusce fermentum…</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bordered" id="relational-tags">
+                            <thead>
+                                <tr><th colspan="2">tags</th></tr>
+                                <tr>
+                                    <th>id</th>
+                                    <th>name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>7</td>
+                                    <td>luctus</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>rhoncus</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section data-markdown data-state="relational-modeling-segue">
+                        # Things May Get Out of Hand
+
+                        <p class="photo-credit"><a href="http://www.slxdeveloper.com/page.aspx?action=viewarticle&amp;articleid=92">http://www.slxdeveloper.com/page.aspx?action=viewarticle&amp;articleid=92</a></p>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Document Modeling
+
+                        * Articles
+                            * One author
+                            * Many comments
+                                * One author
+                            * Many tags
+                    </section>
+
+                    <section data-markdown>
+                        ## Document Modeling
+
+                        <pre><code class="language-js">{
+    _id: 1,
+    title: "Praesent ante dui",
+    body: "Lorem ipsum…",
+    author: { name: "Bob", email: "bob@example.com" },
+    comments: [
+        {
+            body: "Morbi libero erat…",
+            author: { name: "John", email: "john@example.com" }
+        },
+        {
+            body: "Dapibus quis…",
+            author: { name: "Bob", email: "bob@example.com" }
+        },
+        {
+            body: "Fusce fermentum…",
+            author: { name: "John", email: "john@example.com" }
+        }
+    ],
+    tags: [ "luctus", "rhoncus" ]
+}</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Documents are BSON
+
+                        * Binary JSON
+                        * Zero or more key/value pairs
+                        * Values are scalars, arrays, and objects
+                        * Additional data types
+                            * Binary strings
+                            * JavaScript Code
+                            * Dates
+                    </section>
+
+                    <section data-markdown>
+                        ## Binary Representation
+
+                        <pre><code class="no-highlight">{"hello": "world"}
+
+"\x16\x00\x00\x00\x02hello\x00
+ \x06\x00\x00\x00world\x00\x00"</code></pre>
+
+                        <pre><code class="no-highlight">{"things": ["foo", 5.05, 2012]}
+
+"\x33\x00\x00\x00\x04things\x00
+ \x26\x00\x00\x00\x02\x30\x00\x04
+ \x00\x00\x00foo\x00\x01\x31\x00
+ \x33\x33\x33\x33\x33\x33\x14\x40
+ \x12\x32\x00\xDC\x07\x00\x00\x00
+ \x00\x00\x00\x00\x00"</code></pre>
+
+                        <p class="fragment">Curious? <a href="http://bsonspec.org/">BSONSpec.org</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## Documents in PHP
+
+                        <pre><code class="language-php">// Arrays are most common
+$a = ['hello' => 'world'];
+
+$b = ['things' => ['foo', 5.05, 2012]];</code></pre>
+
+                        <pre><code class="language-php">// Objects work, too!
+$a = new stdClass();
+$a->hello = 'world';
+
+$b = new stdClass();
+$b->things = ['foo', 5.05, 2012];</code></pre>
+
+                    </section>
+                </section>
+
+                <section>
+                    <section data-state="getting-started">
+                        <h1>Getting Up and Running with Mongo</h1>
+
+                        <h3 class="fragment">In 60 Seconds</h3>
+
+                        <h6 class="fragment">* Excluding download time :)</h6>
+
+                        <p class="photo-credit"><a href="http://www.sxc.hu/photo/487816">http://www.sxc.hu/photo/487816</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## [mongodb.org/downloads](http://www.mongodb.org/downloads)
+
+                        * Compiled binaries
+                            * OS X, Linux, Windows, Solaris
+                        * Packages
+                            * MacPorts, Homebrew, Debian, CentOS
+                        * Drivers for over a dozen languages
+                    </section>
+
+                    <section data-markdown>
+                        ## Installing
+
+                        <pre><code class="no-highlight">$ tar xvzf mongodb-linux-x86_64-2.2.0-rc1.tgz
+mongodb-linux-x86_64-2.2.0-rc1/GNU-AGPL-3.0
+mongodb-linux-x86_64-2.2.0-rc1/README
+mongodb-linux-x86_64-2.2.0-rc1/THIRD-PARTY-NOTICES
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongodump
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongorestore
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongoexport
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongoimport
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongostat
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongotop
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongooplog
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongofiles
+mongodb-linux-x86_64-2.2.0-rc1/bin/bsondump
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongoperf
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongosniff
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongod
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongos
+mongodb-linux-x86_64-2.2.0-rc1/bin/mongo</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Starting
+
+                        <pre><code class="no-highlight" style="overflow: hidden; word-wrap: normal;">$ mkdir /data/db
+
+$ mongodb-linux-x86_64-2.2.0-rc1/bin/mongod
+[initandlisten] MongoDB starting : pid=28285 port=27017 dbpath=/data/db/ 64-bit host=honeydew
+[initandlisten] db version v2.2.0-rc1, pdfile version 4.5
+[initandlisten] git version: cf117b7c7d0655282deab662ed68e11119f844c7
+[initandlisten] build info: Linux ip-10-2-29-40 2.6.21.7-2.ec2.v1.2.fc8xen #1 SMP Fri Nov 20 17:48:28 EST 2009 x86_64 BOOST_LIB_VERSION=1_49
+[initandlisten] options: {}
+[initandlisten] journal dir=/data/db/journal
+[initandlisten] recover : no journal files present, no recovery needed
+[initandlisten] waiting for connections on port 27017
+[websvr] admin web console waiting for connections on port 28017</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Connecting
+
+                        <pre><code class="no-highlight">$ mongo
+MongoDB shell version: 2.2.0-rc1
+connecting to: test
+> show dbs
+local   (empty)
+
+> db.foo.insert({x: 1})
+
+> db.foo.find()
+{ "_id" : ObjectId("50368f0cdea8fae83cf3d097"), "x" : 1 }
+
+> !!"Does this shell use JavaScript?"
+true</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## PHP Driver
+
+                        * [PECL extension](http://pecl.php.net/package/mongo)
+                        * Classes for Mongo resources, types
+                        * BSON encode/decode functions
+                        * Persistent connections, logging
+                        * [INI configuration](http://us3.php.net/manual/en/mongo.configuration.php)
+                        * Track development on [GitHub](https://github.com/mongodb/mongo-php-driver) and [JIRA](https://jira.mongodb.org/browse/PHP)
+                    </section>
+
+                    <section data-markdown>
+                        ## PHP Driver Installation
+
+                        <pre><code class="no-highlight">$ pecl install mongo
+downloading mongo-1.2.12.tgz ...
+Starting to download mongo-1.2.12.tgz (90,517 bytes)
+.....................done: 90,517 bytes
+36 source files, building
+
+...
+
+Build process completed successfully
+Installing '/usr/lib/php5/20100525/mongo.so'
+install ok: channel://pecl.php.net/mongo-1.2.12
+You should add "extension=mongo.so" to php.ini</code></pre>
+
+                        <ul class="fragment">
+                            <li><a href="http://php.net/manual/en/mongo.installation.php">Compiled binaries</a> for Windows</li>
+                            <li>Included with Zend Server</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown data-state="get-cooking">
+                        # Let's Get Cooking
+
+                        <p class="photo-credit"><a href="http://www.flickr.com/photos/sharynmorrow/2224102244/">http://www.flickr.com/photos/sharynmorrow/2224102244/</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## Core Classes
+
+                        * [Mongo](http://php.net/manual/en/class.mongo.php)
+                        * [MongoDB](http://php.net/manual/en/class.mongodb.php)
+                        * [MongoCollection](http://php.net/manual/en/class.mongocollection.php)
+                        * [MongoCursor](http://php.net/manual/en/class.mongocursor.php)
+                    </section>
+
+                    <section data-markdown data-state="driver-type-classes">
+                        ## Type Classes
+
+                        * [MongoId](http://php.net/manual/en/class.mongoid.php)
+                        * [MongoCode](http://php.net/manual/en/class.mongocode.php)
+                        * [MongoDate](http://php.net/manual/en/class.mongodate.php)
+                        * [MongoRegex](http://php.net/manual/en/class.mongoregex.php)
+                        * [MongoBinData](http://php.net/manual/en/class.mongobindata.php)
+                        * [MongoInt32](http://php.net/manual/en/class.mongoint32.php)
+                        * [MongoInt64](http://php.net/manual/en/class.mongoint64.php)
+                        * [MongoMinKey](http://php.net/manual/en/class.mongominkey.php)
+                        * [MongoMaxKey](http://php.net/manual/en/class.mongomaxkey.php)
+                        * [MongoTimestamp](http://php.net/manual/en/class.mongotimestamp.php)
+                    </section>
+
+                    <section data-markdown>
+                        ## Connecting
+
+                        <pre><code class="language-php">// localhost:27017
+$m = new Mongo();
+
+<span class="fragment">// example.com:27018
+$m = new Mongo('mongodb://example.com:27018');</span>
+
+<span class="fragment">// authentication
+$m = new Mongo('mongodb://user:password@localhost');</span>
+
+<span class="fragment">// replica set
+$m = new Mongo(
+    'mongodb://rs1.example.com,rs2.example.com',
+    ['replicaSet' => 'myReplSet']
+);</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## The Mongo Class
+
+                        <pre><code class="language-php">$m = new Mongo();
+
+// Get an array of databases and their sizes
+$m->listDBs();
+
+<span class="fragment">// Get a MongoDB for the "test" database
+$m->test;
+$m->selectDB('test');</span>
+
+<span class="fragment">// Get a MongoCollection for "test.users"
+$m->test->users;
+$m->selectCollection('test', 'users');</span>
+
+<span class="fragment">// Drop the "test" database
+$m->dropDB('test');</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## The MongoDB Class
+
+                        <pre><code class="language-php">$db = $m->test;
+$db = new MongoDB($m, 'test');
+
+<span class="fragment">$db->getCollectionNames(); // Array of collection names
+$db->listCollections();    // Array of MongoCollection instances</span>
+
+<span class="fragment">// Get a MongoCollection for "test.users"
+$db->users;
+$db->selectCollection('users');</span>
+
+<span class="fragment">// Create a capped collection limited to 10KiB and 10 documents
+$db->createCollection('logs', true, 10240, 10)</span>
+
+<span class="fragment">$db->dropCollection('users'); // Drop "test.users"
+$db->drop();                  // Drop the entire database</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## The MongoCollection Class
+
+                        <pre><code class="language-php">$c = $db->users;
+$c = new MongoCollection($db, 'users');
+
+<span class="fragment">// Insert a user document for Bob
+$c->insert(['username' => 'bob', 'roles' => ['admin']]);</span>
+
+<span class="fragment">// Retrieve Bob's user
+$c->findOne(['username' => 'bob']);</span>
+
+<span class="fragment">// Find all admins
+$c->find(['roles' => 'admin']);</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## The MongoCollection Class
+
+                        <pre><code class="language-php">$c->count();                     // Count all users
+$c->count(['roles' => 'admin']); // Count only admins
+
+<span class="fragment">$c->remove(['username' => 'john']); // Delete a user
+$c->remove();                       // Delete all users</span>
+
+<span class="fragment">// Drop the entire collection
+$c->drop();</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## The MongoCollection Class
+
+                        <pre><code class="language-php">// Create a user document for Tom
+$user = ['username' => 'tom'];
+
+<span class="fragment">$c->insert($user); // Insert Tom's document</span>
+
+<span class="fragment">var_dump($user);
+<span class="stdout">array(2) {
+  ["username"]=>
+  string(3) "tom"
+  ["_id"]=>
+  object(MongoId)#3 (1) {
+    ["$id"]=>
+    string(24) "503b0772e84df1f87b000001"
+  }
+}</span></span></code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown data-state="identifiers">
+                        ## Identifiers
+
+                        <blockquote>
+                            You have the right to provide an <code>_id</code>.<br>
+                            Any <code>_id</code> you provide must be unique.<br>
+                            If you do not provide an <code>_id</code>, one will be generated for you.
+                        </blockquote>
+
+                        <p class="photo-credit"><a href="http://www.flickr.com/photos/kwl/6458495675/">http://www.flickr.com/photos/kwl/6458495675/</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## The `_id` Field
+
+                        * Immutable
+                        * Unique value within the collection
+                        * Indexed by default
+                        * Custom values allowed
+                            * Scalars: `"V4C3D5C2"`, `5034`
+                            * Objects: `{ x: 1, y: "foo" }`
+                            * [No arrays](http://www.mongodb.org/display/DOCS/Multikeys)
+
+                    </section>
+
+                    <section data-markdown>
+                        ## BSON ObjectId
+
+                        <table class="bordered">
+                            <tr>
+                                <td><code>5033ea5c</code></td>
+                                <td><code>e84df1</code></td>
+                                <td><code>110f</code></td>
+                                <td><code>000001</code></td>
+                            </tr>
+                            <tr>
+                                <td>Timestamp</td>
+                                <td>Hostname</td>
+                                <td>PID</td>
+                                <td>Sequence</td>
+                            </tr>
+                        </table>
+
+                        * 12-byte, binary string
+                        * Easily generated in cluster environments
+                        * Timestamp prefix useful for sorting
+                    </section>
+
+                    <section data-markdown>
+                        ## The MongoId Class
+
+                        <pre><code class="language-php">$id = new MongoId();
+
+echo (string) $id;        // 5033ea5ce84df1110f000001
+echo $id->getTimestamp(); // 1345579612
+echo $id->getHostname();  // honeydew
+echo $id->getPID();       // 3857
+echo $id->getInc();       // 1
+
+<span class="fragment">// Strings will not match an ObjectId
+$c->find(['_id' => '5033ea5ce84df1110f000001']);
+
+// Use MongoId in query criteria
+$c->find(['_id' => new MongoId('5033ea5ce84df1110f000001']));</span></code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Inserting
+
+                        <pre><code class="language-php">$c = $db->users;
+
+$user = $c->findOne(['username' => 'tom']);
+
+<span class="fragment">$c->insert($user); // No error, but this does nothing</span>
+
+<span class="fragment">$db->users->lastError(); // Check the last error
+<span class="stdout">array(
+  "err" => "E11000 duplicate key error…",
+  "code" => 11000,
+  "n" => 0,
+  "connectionId" => 16,
+  "ok" => 1,
+)</span></span>
+
+<span class="fragment">$c->insert($user, ['safe' => true]); // Use safe mode!
+<span class="stdout">Uncaught exception: MongoCursorException:
+  E11000 duplicate key error index: test.users.$_id_ 
+  dup key: { : ObjectId('503b0772e84df1f87b000001') }</span></span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Write Concern
+
+                        * `{safe: false}` (default)
+                            * Fire and forget
+                            * Trade consistency for performance
+                        * `{safe: true}`
+                            * Ensure primary acknowledges write
+                            * Issues [getLastError](http://www.mongodb.org/display/DOCS/getLastError+Command) command
+                        * `{safe: #}` checks multiple servers
+                            * Waits for replication
+                            * `{safe: 3}` for primary and two slaves
+                    </section>
+
+                    <section data-markdown>
+                        ## Saving
+
+                        <pre><code class="language-php">// Modify Tom's user
+$user = $c->findOne(['username' => 'tom']);
+$user['email'] = 'tom@example.com';
+$user['roles'][] = 'moderator';
+$c->save($user);</code></pre>
+
+                        * Combines update/upsert semantics
+                        * Is there an `_id`?
+                            * Yes, update the document
+                            * No, insert the document
+                    </section>
+
+                    <section data-markdown>
+                        ## Updating
+
+                        <pre><code class="language-php">// Change Tom's email address
+$c->update(
+    ['username' => 'tom'],
+    ['$set' => ['email' => 'thomas@example.com']]
+);</code></pre>
+
+                        * Criteria and new object
+                        * Overwrite entire documents
+                        * Atomic operations
+                    </section>
+
+                    <section data-markdown>
+                        ## Updating Multiple Documents
+
+                        <pre><code class="language-php">// Make everyone an admin (probably a bad idea :)
+$c->update(
+    [],
+    ['$addToSet' => ['roles' => 'admin']],
+    ['multiple' => true]
+);</code></pre>
+
+                        * Modifies one document by default
+                        * `{multiple: true}`
+                    </section>
+
+                    <section data-markdown>
+                        ## Upserting
+
+                        <pre><code class="language-php">// Ensure Sam exists as staff
+$c->update(
+    ['username' => 'sam'],
+    ['$set' => ['role' => 'staff']],
+    ['upsert' => true]
+);</code></pre>
+
+                        * `update()` with `{upsert: true}`
+                        * No multi-document operation
+                        * Does the criteria match a document?
+                            * Yes, update the document
+                            * No, insert the document
+                        * [Insert applies new object to criteria](http://www.mongodb.org/display/DOCS/Updating#Updating-UpsertswithModifiers)
+                    </section>
+
+                    <section data-markdown data-state="atomic-operators">
+                        ## Atomic Operators
+
+                        * Numbers
+                            * [$inc](http://www.mongodb.org/display/DOCS/Updating#Updating-%24inc)
+                        * Integers
+                            * [$bit](http://www.mongodb.org/display/DOCS/Updating#Updating-%24bit)
+                        * Anything
+                            * [$set](http://www.mongodb.org/display/DOCS/Updating#Updating-%24set)
+                            * [$unset](http://www.mongodb.org/display/DOCS/Updating#Updating-%24unset)
+                            * [$rename](http://www.mongodb.org/display/DOCS/Updating#Updating-%24rename)
+                        * Arrays
+                            * [$addToSet](http://www.mongodb.org/display/DOCS/Updating#Updating-%24addToSetand%24each)
+                            * [$pop](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pop)
+                            * [$push](http://www.mongodb.org/display/DOCS/Updating#Updating-%24push), [$pushAll](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pushAll)
+                            * [$pull](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pull), [$pullAll](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pullAll)
+                    </section>
+
+                    <section data-markdown>
+                        ## [Positional Updates](http://www.mongodb.org/display/DOCS/Updating#Updating-The%24positionaloperator)
+
+                        <pre><code class="language-php">// An article with votable comments
+$db->articles->insert([
+    '_id' => 1,
+    'title' => 'Praesent ante dui',
+    'comments' => [
+        ['body' => 'Dapibus quis…', 'votes' => 2],
+        ['body' => 'Fusce fermentum…', 'votes' => 0],
+    ],
+]);
+
+<span class="fragment">// Upvote the second comment
+$db->articles->update(
+    ['comments.body' => 'Fusce fermentum…'],
+    ['$inc' => ['comments.$.votes' => 1]]
+);</span></code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown data-state="querying">
+                        # Queries
+
+                        <p class="photo-credit"><a href="http://www.flickr.com/photos/spacebarpark/6712082295/">http://www.flickr.com/photos/spacebarpark/6712082295/</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## Queries Return Cursors
+
+                        * Navigates query results
+                        * Pre-query state
+                            * No database contact yet
+                            * `limit()`, `skip()`, `sort()`
+                            * Set [special flags](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-Metaqueryoperators)
+                        * Post-query state
+                            * Iteration in-progress or completed
+                            * Cannot be modified
+                    </section>
+
+                    <section data-markdown>
+                        ## The MongoCursor Class
+
+                        <pre><code class="language-php">$cursor = $db->users->find();      // Find all users
+$cursor->sort(['username' => -1]); // Sort by username, descending
+$cursor->limit(10);                // Limit to 10 results
+$cursor->skip(5);                  // Skip the first 5
+
+<span class="fragment">foreach ($cursor as $result) { }       // Iterate through results
+$results = iterator_to_array($cursor); // Get them up front</span>
+
+<span class="fragment">$cursor->count();     // Count before limit/skip
+$cursor->count(true); // Count with respect to limit/skip</span></code></pre>
+                    </section>
+
+                    <section data-markdown data-state="business-requirements">
+                        ## Ad-hoc Querying
+
+                        <blockquote>
+                            Arbitrary Business Requirement #42789!<br>
+                            We need the usernames for all admins that use Gmail and whose accounts were created within the last year.
+                        </blockquote>
+
+                        <p class="photo-credit"><a href="http://www.flickr.com/photos/69125796@N00/7415476606/">http://www.flickr.com/photos/69125796@N00/7415476606/</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## Criteria and Field Selection
+
+                        <pre><code class="language-php">$lastYear = strtotime('last year');
+
+// Arbitrary Business Requirement #42789!
+$db->users->find([
+    'email' => new MongoRegex('/gmail\.com$/i');
+    'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
+    'roles' => 'admin',
+]);
+
+<span class="fragment">// Optimize by only fetching usernames
+$db->users->find([
+    'email' => new MongoRegex('/gmail\.com$/i');
+    'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
+    'roles' => 'admin',
+], ['_id' => 0, 'username' => 1]);</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Criteria and Field Selection
+
+                        <pre><code class="language-php">// Optimize by only fetching usernames
+$db->users->find([
+    'email' => new MongoRegex('/gmail\.com$/i');
+    'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
+    'roles' => 'admin',
+], ['username' => 1]);</code></pre>
+
+                        * [Conditional operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators)
+                        * [Matching values in embedded objects](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanEmbeddedObject)
+                        * [Matching a value in an array](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanArray)
+                        * [Retrieving a subset of fields](http://www.mongodb.org/display/DOCS/Retrieving+a+Subset+of+Fields)
+                        * [Retrieving a slice of an array](http://www.mongodb.org/display/DOCS/Retrieving+a+Subset+of+Fields#RetrievingaSubsetofFields-RetrievingaSubrangeofArrayElements)
+                    </section>
+
+                    <section data-markdown data-state="query-operators">
+                        ## Conditional Operators
+
+                        * Comparison
+                            * [$gt](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D), [$gte](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D)
+                            * [$lt](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D), [$lte](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D)
+                            * [$ne](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24ne)
+                        * Logical
+                            * [$and](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24and)
+                            * [$or](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24or), [$nor](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24nor)
+                        * Arrays
+                            * [$all](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24all)
+                            * [$in](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24in), [$nin](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24nin)
+                            * [$size](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24size)
+                            * [$elemMatch](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24elemMatch)
+                        * Misc
+                            * [$exists](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24exists)
+                            * [$type](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24type)
+                        * Numbers
+                            * [$mod](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24mod)
+                        * Meta
+                            * [$not](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-Metaoperator%3A{{%24not}})
+                            * [$where](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-JavascriptExpressionsand{{%24where}})
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown data-state="indexing">
+                        # Indexing
+
+                        <p class="photo-credit"><a href="http://www.flickr.com/photos/austinevan/1225274637/">http://www.flickr.com/photos/austinevan/1225274637/</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## Indexes in MongoDB
+
+                        * B-trees
+                        * Avoid expensive table scans
+                        * Writes update indexes as needed
+                        * Top-level and/or embedded fields
+                        * [Multikey indexing of array values](http://www.mongodb.org/display/DOCS/Multikeys)
+                        * [Sparse](http://www.mongodb.org/display/DOCS/Indexes#Indexes-sparse%3Atrue), [unique](http://www.mongodb.org/display/DOCS/Indexes#Indexes-unique%3Atrue), [geospatial](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
+                    </section>
+
+                    <section data-markdown>
+                        ## Managing Indexes
+
+                        <pre><code class="language-php">$c = $db->things;
+
+// Ensure unique values for x
+$c->ensureIndex(['x' => 1], ['unique' => true]);
+
+<span class="fragment">// Check that index creation succeeds
+$c->ensureIndex(['x' => 1], ['unique' => true, 'safe' => true]);</span>
+
+<span class="fragment">// Delegate index creation as a background task
+$c->ensureIndex(['x' => 1], ['background' => true]);</span>
+
+<span class="fragment">$c->getIndexInfo(); // Array describing all indexes</span>
+
+<span class="fragment">$c->deleteIndex('x'); // Delete an index by name or field(s)
+$c->deleteIndexes();  // Delete all indexes on the collection</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Compound Indexes
+
+                        <pre><code class="language-php">$c->ensureIndex(['x' => 1, 'y' => 1, 'z' => -1]);
+
+$c->find(['x' => 'foo']);
+$c->find(['x' => 'foo', 'y' => ['$gt' => 5]]);
+$c->find(['x' => 'foo', 'y' => 4])->sort(['z' => -1]);
+$c->find(['x' => "foo", 'y' => 8, 'z' => 'baz']);</code></pre>
+
+                        * Index multiple fields
+                        * Direction per field
+                            * Range queries
+                            * Sorting
+                        * Usable for a subset of fields
+                    </section>
+
+                    <section data-markdown>
+                        ## Explain Your Queries
+
+                        <pre><code class="language-php">$cursor = $c->find(['x' => 'foo']);
+$cursor->explain();
+<span class="stdout">array(
+  "cursor" => "BtreeCursor x_1", // Avoid BasicCursor
+  "isMultiKey" => false,
+  "n" => 0,
+  "nscannedObjects" => 3,
+  "nscanned" => 3,
+  "indexOnly" => false,          // Fastest, if possible
+  "nYields" => 0,
+  "millis" => 0,
+  "indexBounds" => array(…),
+)</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Indexing Tips
+
+                        * Contain indexes in RAM
+                        * Support multiple queries per index
+                        * Avoid single-key, low-selectivity
+                        * Caveats
+                            * `$exists`, `$ne`, and `$nin`
+                            * `$all` and `$in`
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    ## Database Commands
+
+                    * Queries to `$cmd` collection
+                    * Wire protocol
+                    * Shell and driver helpers
+                    * [MongoDB::command()](http://php.net/manual/en/mongodb.command.php)
+                    * [Reference list](http://docs.mongodb.org/manual/reference/commands/)
+                        * Sharding, Replication, Aggregation
+                        * Geospatial, Administration, Diagnostic
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Aggregation
+
+                        * [Aggregation framework](http://docs.mongodb.org/manual/aggregation/)
+                        * [count()](http://www.mongodb.org/display/DOCS/Aggregation#Aggregation-Count), [distinct()](http://www.mongodb.org/display/DOCS/Aggregation#Aggregation-Distinct), and [group()](http://www.mongodb.org/display/DOCS/Aggregation#Aggregation-Group)
+                        * [MapReduce](http://www.mongodb.org/display/DOCS/MapReduce)
+                        * [Hadoop adapter](http://www.mongodb.org/display/DOCS/Hadoop)
+                    </section>
+
+                    <section data-markdown data-state="business-requirements">
+                        ## Reporting
+
+                        <blockquote>
+                            Arbitrary Business Requirement #27533!<br>
+                            We need a report listing all authors that have written an article for each tag.
+                        </blockquote>
+
+                        <p class="photo-credit"><a href="http://www.flickr.com/photos/69125796@N00/7415476606/">http://www.flickr.com/photos/69125796@N00/7415476606/</a></p>
+                    </section>
+
+                    <section data-markdown>
+                        ## Data to Aggregate
+
+                        <pre><code class="language-php">$c = $db->articles;
+
+$c->save(['author' => 'jen', 'tags' => ['politics', 'tech']]);
+$c->save(['author' => 'sue', 'tags' => ['business']]);
+$c->save(['author' => 'tom', 'tags' => ['sports']]);
+$c->save([
+    'author' => 'bob',
+    'tags' => ['business', 'sports', 'tech']
+]);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## MapReduce
+
+                        <pre><code class="language-php">$map = '
+function() {
+    for (var i = 0; i &lt; this.tags.length; i++) {
+        emit(this.tags[i], { authors: [this.author] });
+    }
+}';
+
+$reduce = '
+function(key, values) {
+    var result = { authors: [] };
+    values.forEach(function(value) {
+        value.authors.forEach(function(author) {
+            if (-1 == result.authors.indexOf(author)) {
+                result.authors.push(author);
+            }
+        });
+    });
+    return result;
+}';</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## MapReduce
+
+                        <pre><code class="language-php">$rs = $db->command([
+    'mapreduce' => 'articles',
+    'map' => new MongoCode($map),
+    'reduce' => new MongoCode($reduce),
+    'out' => ['inline' => true],
+]);
+
+<span class="fragment">foreach ($rs['results'] as $r) {
+    $authors = implode(', ', $r['value']['authors']);
+    printf("%s: %s\n", $r['_id'], $authors);
+}
+<span class="stdout">business: sue, bob
+politics: jen
+sports: tom, bob
+tech: jen, bob</span></span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Aggregation Framework
+
+                        <pre><code class="language-php">$rs = $db->command([
+    'aggregate' => 'articles',
+    'pipeline' => [
+        ['$project' => ['author' => 1, 'tags' => 1]],
+        ['$unwind' => '$tags'],
+        ['$group' => [
+            '_id' => '$tags',
+            'authors' => ['$addToSet' => '$author']
+        ]],
+    ],
+]);
+
+<span class="fragment">foreach ($rs['result'] as $r) {
+    $authors = implode(', ', $r['authors']);
+    printf("%s: %s\n", $r['_id'], $authors);
+}
+<span class="stdout">business: bob, sue
+tech: bob, jen
+sports: bob, tom
+politics: jen</span></span></code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## [Geospatial Indexing](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
+
+                        * Geo-hashed, 2D coordinates
+                        * Configurable bounds and bit precision
+                        * Suggested point format: `[x, y]`
+                        * One geospatial index per collection
+                        * [Multi-location documents](http://www.mongodb.org/display/DOCS/Geospatial+Indexing#GeospatialIndexing-MultilocationDocuments)
+                        * [Spherical model support](http://www.mongodb.org/display/DOCS/Geospatial+Indexing#GeospatialIndexing-NewSphericalModel)
+                    </section>
+
+                    <section data-markdown>
+                        ## Bounds Queries
+
+                        <pre><code class="language-php">$db->places->ensureIndex(['loc' => '2d']);
+
+// Rectangle bounds
+$db->places->find(['loc' => ['$within' => ['$box' => [
+    [10, 10], // Lower-left
+    [20, 20], // Upper-right
+]]]]);
+
+<span class="fragment">// Circular bounds
+$db->places->find(['loc' => ['$within' => ['$center' => [
+    [50, 50], // Center coordinate
+    15,       // Radius
+]]]]);</span>
+
+<span class="fragment">// Arbitrary polygonal bounds (e.g. triangle)
+$db->places->find(['loc' => ['$within' => ['$polygon' => [
+    [10, 20],
+    [10, 40],
+    [30, 40], // Implicitly connected to first point
+]]]]);</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Sorted Proximity Queries
+
+                        <pre><code class="language-php">// Find locations near a point, ordered by proximity
+$db->places->find(['loc' => ['$near' => [50, 50]]]);
+
+<span class="fragment">// Find at most 10 museums within 5 units of a point
+$db->places->find([
+    'loc' => ['$near' => [50, 50], '$maxDistance' => 5],
+    'type' => 'museum',
+])->limit(10);</span>
+
+<span class="fragment">// geoNear command includes distance and diagnostic data
+$db->command([
+    'geoNear' => 'places',
+    'near' => [50, 50],
+    'maxDistance' => 5,
+    'query' => ['type' => 'museum'],
+    'num' => 10,
+]);</span></code></pre>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    ## [GridFS](http://www.mongodb.org/display/DOCS/GridFS)
+
+                    * Large file storage in MongoDB
+                    * BSON collections
+                        * `files`: metadata, custom fields
+                        * `chunks`: binary data (1+ per file)
+                    * PHP classes
+                        * [MongoGridFS](http://php.net/manual/en/class.mongogridfs.php)
+                        * [MongoGridFSFile](http://php.net/manual/en/class.mongogridfsfile.php)
+                        * [MongoGridFSCursor](http://php.net/manual/en/class.mongogridfscursor.php)
+                </section>
+
+                <section data-markdown data-state="final">
+                    # Thanks!
+
+                    ### Questions?
+                </section>
+            </div>
+
+            <aside class="controls">
+                <a class="left" href="#">&#x25C4;</a>
+                <a class="right" href="#">&#x25BA;</a>
+                <a class="up" href="#">&#x25B2;</a>
+                <a class="down" href="#">&#x25BC;</a>
+            </aside>
+
+            <div class="footer"></div>
+
+            <div class="progress"><span></span></div>
+        </div>
+
+        <script src="node_modules/reveal.js/lib/js/head.min.js"></script>
+        <script src="node_modules/reveal.js/js/reveal.js"></script>
+        <script src="js/jquery-1.8.0.min.js"></script>
+        <script src="js/jquery.jsPlumb-1.3.12-all-min.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

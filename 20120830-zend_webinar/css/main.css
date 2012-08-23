@@ -1,0 +1,372 @@
+@font-face {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 700;
+    src: local("Lato Bold"), local("Lato-Bold"), url("../lib/font/lato_bold.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 400;
+    src: local("Lato Italic"), local("Lato-Italic"), url("../lib/font/lato_italic.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Lato";
+    font-style: italic;
+    font-weight: 700;
+    src: local("Lato Bold Italic"), local("Lato-BoldItalic"), url("../lib/font/lato_bold_italic.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Lato";
+    font-style: normal;
+    font-weight: 400;
+    src: local("Lato Regular"), local("Lato-Regular"), url("../lib/font/lato.woff") format("woff");
+}
+
+.reveal section table {
+    margin: 1em auto;
+    line-height: 1.1em;
+}
+
+.reveal section table.bordered {
+    border: outset 0.1em;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.reveal section table.bordered th,
+.reveal section table.bordered td {
+    border: inset 0.1em;
+    padding: 0.25em;
+    text-align: center;
+}
+
+.reveal section p.photo-credit {
+    bottom: 0;
+    font-size: 0.5em;
+    margin: 0 auto;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+.reveal section p.photo-credit a {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.reveal section pre {
+    margin-bottom: 2em;
+}
+
+.reveal section span.stdout {
+    display: inline-block;
+    margin: 0.5em 2em;
+    padding: 0 0.5em;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.reveal .footer {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    height: 70px;
+    width: 300px;
+    background-image: url("../img/10gen_white.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: 0.5;
+}
+
+.title section h1 {
+    font-size: 3em;
+}
+
+.title section h1 span {
+    display: block;
+    height: 2em;
+    width: 100%;
+    text-indent: -9999px;
+    background-image: url("../img/mongodb_ondark.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.title section p.bio {
+    display: inline-block;
+    margin-top: 1em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.about-10gen section h2 {
+    text-indent: -9999px;
+    background-image: url("../img/10gen_white.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.about-10gen .reveal .footer {
+    background-image: none;
+}
+
+.starting-off .state-background {
+    background-image: url("../img/highway.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.starting-off section h2 {
+    color: #000;
+}
+
+.starting-off section ul {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-left: 0.5em;
+    padding-right: 0.25em;
+}
+
+.starting-off section li {
+    list-style-position: inside;
+    margin-top: 0.5em;
+}
+
+.starting-off section li:first-child {
+    margin-top: 0;
+}
+
+.analogies th:first-child,
+.analogies td:first-child {
+    text-align: right;
+}
+
+.database-landscape section div.diagram {
+    margin: 0 auto;
+    position: relative;
+    height: 12em;
+    width: 20em;
+    background-image: url("../img/graph_white.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.database-landscape section ul {
+    display: block;
+    position: relative;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.database-landscape section li {
+    position: absolute;
+    list-style-position: inside;
+    list-style-type: disc;
+    font-size: 0.75em;
+}
+
+.database-landscape section li.memcached { top: 1.5em; left: 3em; }
+.database-landscape section li.key-value { top: 3em; left: 6em; }
+.database-landscape section li.mongodb   { top: 4.5em; left: 18em; }
+.database-landscape section li.rdbms     { top: 10em; left: 21em; }
+
+.database-landscape section li.mongodb {
+    height: 2em;
+    width: 6em;
+    text-indent: -9999px;
+    background-image: url("../img/mongodb_ondark.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.database-landscape section div.x-axis,
+.database-landscape section div.y-axis {
+    font-size: 0.75em;
+}
+
+.database-landscape section div.x-axis {
+    position: absolute;
+    bottom: -0.4em;
+    left: 7.8em;
+}
+
+.database-landscape section div.y-axis {
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-transform: rotate(-90deg) translate(-8em, -6.5em);
+       -moz-transform: rotate(-90deg) translate(-8em, -6.5em);
+        -ms-transform: rotate(-90deg) translate(-8em, -6.5em);
+         -o-transform: rotate(-90deg) translate(-8em, -6.5em);
+            transform: rotate(-90deg) translate(-8em, -6.5em);
+}
+
+.relational-modeling section > ul {
+    width: 100%;
+}
+
+.relational-modeling section > ul > li {
+    float: left;
+    margin-top: 1em;
+    width: 45%;
+}
+
+.relational-modeling section > ul > li:nth-child(odd) {
+    clear: left;
+}
+
+.relational-modeling section > ul > li:nth-child(even) {
+    margin-left: 5%;
+}
+
+.relational-modeling-diagram section table {
+    float: left;
+    font-size: 0.5em;
+    margin-left: 5%;
+}
+
+.relational-modeling-segue .state-background {
+    background-image: url("../img/sagecrm_schema.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.relational-modeling-segue section h1 {
+    color: #000;
+}
+
+.relational-modeling-segue .footer {
+    background-image: url("../img/10gen_black.png");
+}
+
+.getting-started .state-background {
+    background-image: url("../img/stopwatch_white.jpg");
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.getting-started section h1,
+.getting-started section h3,
+.getting-started section h6 {
+    color: #000;
+}
+
+.getting-started .footer {
+    background-image: url("../img/10gen_black.png");
+}
+
+.get-cooking .state-background {
+    background-image: url("../img/panda_pan.jpg");
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.identifiers section blockquote {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.identifiers .state-background {
+    background-image: url("../img/lego_police.jpg");
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.identifiers .footer {
+    background-image: url("../img/10gen_black.png");
+}
+
+.atomic-operators section > ul {
+    width: 100%;
+}
+
+.atomic-operators section > ul > li {
+    float: left;
+    margin-top: 1em;
+    width: 45%;
+}
+
+.atomic-operators section > ul > li:nth-child(even) {
+    margin-left: 5%;
+}
+
+.atomic-operators section > ul > li:nth-child(odd) {
+    clear: left;
+}
+
+.driver-type-classes section > ul > li {
+    float: left;
+    width: 45%;
+}
+
+.driver-type-classes section > ul > li:nth-child(even) {
+    margin-left: 5%;
+}
+
+.querying .state-background {
+    background-image: url("../img/lego_sherlock.jpg");
+    background-position: top left;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.business-requirements section h2 {
+    color: #000;
+}
+
+.business-requirements section blockquote {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.business-requirements .state-background {
+    background-image: url("../img/business_requirements.jpg");
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.query-operators section > ul {
+    width: 100%;
+}
+
+.query-operators section > ul > li {
+    float: left;
+    margin-top: 1em;
+    width: 25%;
+    margin-left: 5%;
+}
+
+.query-operators section > ul > li:nth-child(3n+1) {
+    margin-left: 0;
+    clear: left;
+}
+
+.query-operators section > ul > li:nth-child(3n+3) {
+    width: 30%;
+}
+
+.indexing .state-background {
+    background-image: url("../img/stacked_books.jpg");
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.final section h3 {
+    margin-top: 2em;
+}
