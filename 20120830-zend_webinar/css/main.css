@@ -26,6 +26,11 @@
     src: local("Lato Regular"), local("Lato-Regular"), url("../lib/font/lato.woff") format("woff");
 }
 
+/* Prevent clipping of underscores in fragments */
+.reveal pre code span.fragment {
+    padding-bottom: 1px;
+}
+
 .reveal section table {
     margin: 1em auto;
     line-height: 1.1em;

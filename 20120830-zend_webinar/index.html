@@ -90,7 +90,8 @@
                         * Modeling complex or polymorphic data
                         * Schema migrations
                         * Administration
-                        * Scalability
+                        * Scalability and performance
+                        * Partition tolerance
                     </section>
 
                     <section data-markdown>
@@ -98,7 +99,8 @@
 
                         * Document model
                         * Dynamic schemas
-                        * Performance and scalability
+                        * Wire protocol, BSON
+                        * Scalability and performance
                         * Features (aggregation, geo, GridFS)
                     </section>
 
@@ -315,7 +317,7 @@
                     <section data-markdown>
                         ## Documents are BSON
 
-                        * Binary JSON
+                        * Binary JSON (no grammar parsing)
                         * Zero or more key/value pairs
                         * Values are scalars, arrays, and objects
                         * Additional data types
@@ -621,7 +623,7 @@ $user = ['username' => 'tom'];
 
                         <blockquote>
                             You have the right to provide an <code>_id</code>.<br>
-                            Any <code>_id</code> you provide must be unique.<br>
+                            Any <code>_id</code> you provide must be unique for its collection.<br>
                             If you do not provide an <code>_id</code>, one will be generated for you.
                         </blockquote>
 
@@ -830,6 +832,17 @@ $db->articles->update(
                     </section>
 
                     <section data-markdown>
+                        ## Basic Querying
+
+                        <pre><code class="language-php">$c->findOne(); // Find one document as an array
+$c->find();    // Find all documents (MongoCursor)
+
+<span class="fragment">// Query on field values
+$c->findOne(['lastName' => 'Smith']);
+$c->find(['lastName' => 'Smith']);</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
                         ## Queries Return Cursors
 
                         * Navigates query results
@@ -869,6 +882,24 @@ $cursor->count(true); // Count with respect to limit/skip</span></code></pre>
                     </section>
 
                     <section data-markdown>
+                        ## Data to Query
+
+                        <pre><code class="language-php">$c = $db->users;
+
+$c->save([
+    'username' => 'bob',
+    'email' => 'bob@example.com',
+    'profile' => [
+        'bio' => "I am a data fixture.",
+        'createdAt' => new MongoDate(),
+    ],
+    'roles' => ['moderator', 'admin'],
+]);
+
+// And others…</code></pre>
+                    </section>
+
+                    <section data-markdown>
                         ## Criteria and Field Selection
 
                         <pre><code class="language-php">$lastYear = strtotime('last year');
@@ -880,7 +911,7 @@ $db->users->find([
     'roles' => 'admin',
 ]);
 
-<span class="fragment">// Optimize by only fetching usernames
+<span class="fragment">// Optimize by only selecting usernames
 $db->users->find([
     'email' => new MongoRegex('/gmail\.com$/i');
     'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
@@ -891,12 +922,12 @@ $db->users->find([
                     <section data-markdown>
                         ## Criteria and Field Selection
 
-                        <pre><code class="language-php">// Optimize by only fetching usernames
+                        <pre><code class="language-php">// Optimize by only selecting usernames
 $db->users->find([
     'email' => new MongoRegex('/gmail\.com$/i');
     'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
     'roles' => 'admin',
-], ['username' => 1]);</code></pre>
+], ['_id' => 0, 'username' => 1]);</code></pre>
 
                         * [Conditional operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators)
                         * [Matching values in embedded objects](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanEmbeddedObject)
@@ -942,9 +973,8 @@ $db->users->find([
                         ## Indexes in MongoDB
 
                         * B-trees
-                        * Avoid expensive table scans
-                        * Writes update indexes as needed
-                        * Top-level and/or embedded fields
+                        * Multiple indexes per collection
+                        * Any field(s) (e.g. top-level, embedded)
                         * [Multikey indexing of array values](http://www.mongodb.org/display/DOCS/Multikeys)
                         * [Sparse](http://www.mongodb.org/display/DOCS/Indexes#Indexes-sparse%3Atrue), [unique](http://www.mongodb.org/display/DOCS/Indexes#Indexes-unique%3Atrue), [geospatial](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
                     </section>
@@ -1008,9 +1038,11 @@ $cursor->explain();
                         ## Indexing Tips
 
                         * Contain indexes in RAM
+                        * Mind your read/write ratio
                         * Support multiple queries per index
-                        * Avoid single-key, low-selectivity
+                        * Avoid non-indexed queries and table scans
                         * Caveats
+                            * Single-key, low-selectivity indexes
                             * `$exists`, `$ne`, and `$nin`
                             * `$all` and `$in`
                     </section>
@@ -1020,12 +1052,12 @@ $cursor->explain();
                     ## Database Commands
 
                     * Queries to `$cmd` collection
-                    * Wire protocol
                     * Shell and driver helpers
                     * [MongoDB::command()](http://php.net/manual/en/mongodb.command.php)
                     * [Reference list](http://docs.mongodb.org/manual/reference/commands/)
                         * Sharding, Replication, Aggregation
                         * Geospatial, Administration, Diagnostic
+                        * Collections, Indexing
                 </section>
 
                 <section>
@@ -1135,6 +1167,103 @@ politics: jen</span></span></code></pre>
 
                 <section>
                     <section data-markdown>
+                        ## [GridFS](http://www.mongodb.org/display/DOCS/GridFS)
+
+                        * Large file storage in MongoDB
+                        * BSON collections
+                            * `fs.files`: metadata, custom fields
+                            * `fs.chunks`: binary data (1+ per file)
+                        * PHP classes
+                            * [MongoGridFS](http://php.net/manual/en/class.mongogridfs.php) extends [MongoCollection](http://php.net/manual/en/class.mongocollection.php)
+                            * [MongoGridFSFile](http://php.net/manual/en/class.mongogridfsfile.php)
+                            * [MongoGridFSCursor](http://php.net/manual/en/class.mongogridfscursor.php) extends [MongoCursor](http://php.net/manual/en/class.mongocursor.php)
+                    </section>
+
+                    <section data-markdown>
+                        ## MongoGridFS
+
+                        <pre><code class="language-php">
+// Default construction (fs.files and fs.chunks)
+$grid = $db->getGridFS();
+$grid = new MongoGridFS($db);
+
+<span class="fragment">// Custom prefix (images.files and images.chunks)
+$grid = $db->getGridFS('images');
+$grid = new MongoGridFS($db, 'images');</span>
+
+<span class="fragment">$grid->chunks; // MongoCollection for chunks</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Storing Files
+
+                        <pre><code class="language-php">// Store a file and return its _id
+$grid->storeFile('photo.jpg', ['extra' => 'metadata']);
+$grid->put('photo.jpg', ['extra' => 'metadata']);
+
+<span class="fragment">// Store bytes as a file and return its _id
+$grid->storeBytes('foo', ['extra' => 'metadata']);</span>
+
+<span class="fragment">// Store uploads from POST data
+$grid->storeUpload('field_name', ['extra' => 'metadata']);</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Retrieving Files
+
+                        <pre><code class="language-php">// Get a MongoGridFSFile by its _id
+$grid->get(new MongoId('503ce546e84df14d54000000'));
+
+<span class="fragment">// Query for a MongoGridFS file
+$grid->findOne(['filename' => 'photo.jpg']);</span>
+
+<span class="fragment">// Query for multiple MongoGridFS files
+$yesterday = new MongoDate(strtotime('yesterday'));
+$grid->find(['uploadDate' => ['$gt' => $yesterday]]);</span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## MongoGridFSFile
+
+                        <pre><code class="language-php">$file = $grid->findOne(['filename' => 'photo.jpg']);
+
+$file->getFilename(); // Filename string
+$file->getLength();   // File size
+
+<span class="fragment">$file->getBytes();    // Get all chunks as a byte string
+$file->getResource(); // Stream resource (new in 1.3+)</span>
+
+<span class="fragment">$file->write();               // Write data to stored filename
+$file->write('/tmp/foo.jpg'); // Write data to a new file</span>
+
+<span class="fragment">$file->file; // Files document data
+<span class="stdout">array(
+  "_id" => &lt;object of type MongoId&gt;,
+  "meta" => "data",
+  "filename" => "/data/photo.jpg",
+  "uploadDate" => &lt;object of type MongoDate&gt;,
+  "length" => 1511769,
+  "chunkSize" => 262144,
+  "md5" => "40ad6901b991fc8c6e8d2e1578db4db9",
+)</span></span></code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Removing Files
+
+                        <pre><code class="language-php">// Delete a file (and related chunks) by its _id
+$grid->delete(new MongoId('503ce546e84df14d54000000'));
+
+<span class="fragment">// Remove files and their related chunks
+$grid->remove(['filename' => 'photo.jpg']);</span>
+
+<span class="fragment">// Drop the files and chunks collections
+$grid->drop();</span></code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
                         ## [Geospatial Indexing](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
 
                         * Geo-hashed, 2D coordinates
@@ -1193,21 +1322,12 @@ $db->command([
                     </section>
                 </section>
 
-                <section data-markdown>
-                    ## [GridFS](http://www.mongodb.org/display/DOCS/GridFS)
-
-                    * Large file storage in MongoDB
-                    * BSON collections
-                        * `files`: metadata, custom fields
-                        * `chunks`: binary data (1+ per file)
-                    * PHP classes
-                        * [MongoGridFS](http://php.net/manual/en/class.mongogridfs.php)
-                        * [MongoGridFSFile](http://php.net/manual/en/class.mongogridfsfile.php)
-                        * [MongoGridFSCursor](http://php.net/manual/en/class.mongogridfscursor.php)
-                </section>
-
                 <section data-markdown data-state="final">
                     # Thanks!
+
+                    * [Server and drivers](http://www.mongodb.org/downloads)
+                    * [PHP documentation](http://php.net/manual/en/book.mongo.php)
+                    * [MongoDB documentation](http://docs.mongodb.org/manual/)
 
                     ### Questions?
                 </section>
