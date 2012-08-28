@@ -2,7 +2,8 @@ Reveal.initialize({
     controls: true,
     progress: true,
     history: true,
-    transition: Reveal.getQueryHash().transition || "default",
+    rollingLinks: false,
+    transition: Reveal.getQueryHash().transition || "linear",
     dependencies: [
         { src: "node_modules/reveal.js/lib/js/highlight.js", async: true, callback: function() { window.hljs.initHighlightingOnLoad(); } },
         { src: "node_modules/reveal.js/lib/js/classList.js", condition: function() { return !document.body.classList; } },

@@ -237,6 +237,10 @@
     margin-left: 5%;
 }
 
+.relational-modeling-diagram section table:nth-child(3n+1) {
+    clear: left;
+}
+
 .relational-modeling-segue .state-background {
     background-image: url("../img/sagecrm_schema.gif");
     background-position: center;
