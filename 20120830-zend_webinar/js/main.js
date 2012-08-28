@@ -12,7 +12,7 @@ Reveal.initialize({
     ]
 });
 
-Reveal.addEventListener("relational-modeling-diagram", function() {
+Reveal.addEventListener("relational-diagram", function() {
     jsPlumb.selectEndpoints({scope: "relational"}).delete();
 
     var common = {

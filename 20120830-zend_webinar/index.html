@@ -60,8 +60,8 @@
                 </section>
 
                 <section>
-                    <section data-markdown data-state="analogies">
-                        ## Analogy Time
+                    <section data-markdown data-state="terminology">
+                        # Terminology
 
                         <table>
                             <tr><th>RDBMS</th><th>:</th><th>MongoDB</th></tr>
@@ -72,9 +72,7 @@
                             <tr><td>Primary Key</td><td>:</td><td><code>_id</code></td></tr>
                         </table>
                     </section>
-                </section>
 
-                <section>
                     <section data-markdown>
                         ## RDBMS: The Good Parts
 
@@ -90,7 +88,7 @@
                         * Modeling complex or polymorphic data
                         * Schema migrations
                         * Administration
-                        * Scalability and performance
+                        * Scalability is a trade-off
                         * Partition tolerance
                     </section>
 
@@ -99,7 +97,6 @@
 
                         * Document model
                         * Dynamic schemas
-                        * Wire protocol, BSON
                         * Scalability and performance
                         * Features (aggregation, geo, GridFS)
                     </section>
@@ -108,6 +105,7 @@
                         ## MongoDB: The Bad Parts
 
                         * Limited atomicity
+                        * Consistency is a trade-off
                         * Query language has its limits
                         * Concurrency (improving)
                     </section>
@@ -125,6 +123,14 @@
                             <div class="y-axis">Scalability and Performance</div>
                             <div class="x-axis">Depth of Functionality</div>
                         </div>
+                    </section>
+
+                    <section data-markdown>
+                        # Why MongoDB?
+
+                        <blockquote>
+                            MongoDB has the best features of key/value stores, document databases and relational databases in one.<br>&mdash; <a href="http://twitter.com/jnunemaker">John Nunemaker</a>
+                        </blockquote>
                     </section>
                 </section>
 
@@ -146,7 +152,7 @@
                             * One author
                     </section>
 
-                    <section data-state="relational-modeling-diagram">
+                    <section data-state="relational-diagram">
                         <h2>Relational Modeling</h2>
 
                         <table class="bordered" id="relational-articles">
@@ -268,7 +274,7 @@
                         </table>
                     </section>
 
-                    <section data-markdown data-state="relational-modeling-segue">
+                    <section data-markdown data-state="relational-segue">
                         # Things May Get Out of Hand
 
                         <p class="photo-credit"><a href="http://www.slxdeveloper.com/page.aspx?action=viewarticle&amp;articleid=92">http://www.slxdeveloper.com/page.aspx?action=viewarticle&amp;articleid=92</a></p>
@@ -317,7 +323,7 @@
                     <section data-markdown>
                         ## Documents are BSON
 
-                        * Binary JSON (no grammar parsing)
+                        * Binary JSON
                         * Zero or more key/value pairs
                         * Values are scalars, arrays, and objects
                         * Additional data types
@@ -443,7 +449,7 @@ local   (empty)
 true</code></pre>
                     </section>
 
-                    <section data-markdown>
+                    <section data-markdown data-state="php-driver">
                         ## PHP Driver
 
                         * [PECL extension](http://pecl.php.net/package/mongo)
@@ -452,6 +458,10 @@ true</code></pre>
                         * Persistent connections, logging
                         * [INI configuration](http://us3.php.net/manual/en/mongo.configuration.php)
                         * Track development on [GitHub](https://github.com/mongodb/mongo-php-driver) and [JIRA](https://jira.mongodb.org/browse/PHP)
+
+                        <blockquote class="fragment">
+                            The single, best interface of any PHP extension &mdash; <a href="http://twitter.com/weierophinney">Matthew Weier O'Phinney</a>
+                        </blockquote>
                     </section>
 
                     <section data-markdown>
@@ -837,15 +847,18 @@ $db->articles->update(
                         <pre><code class="language-php">$c->findOne(); // Find one document as an array
 $c->find();    // Find all documents (MongoCursor)
 
-<span class="fragment">// Query on field values
+// Query on field values
 $c->findOne(['lastName' => 'Smith']);
-$c->find(['lastName' => 'Smith']);</span></code></pre>
+$c->find(['lastName' => 'Smith']);</code></pre>
+
+                        * Query criteria is BSON
+                        * No grammar to parse
                     </section>
 
                     <section data-markdown>
                         ## Queries Return Cursors
 
-                        * Navigates query results
+                        * Cursors navigate a query result
                         * Pre-query state
                             * No database contact yet
                             * `limit()`, `skip()`, `sort()`
@@ -896,11 +909,11 @@ $c->save([
     'roles' => ['moderator', 'admin'],
 ]);
 
-// And others…</code></pre>
+// Among others…</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## Criteria and Field Selection
+                        ## Complex Criteria
 
                         <pre><code class="language-php">$lastYear = strtotime('last year');
 
@@ -909,18 +922,16 @@ $db->users->find([
     'email' => new MongoRegex('/gmail\.com$/i');
     'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
     'roles' => 'admin',
-]);
+]);</code></pre>
 
-<span class="fragment">// Optimize by only selecting usernames
-$db->users->find([
-    'email' => new MongoRegex('/gmail\.com$/i');
-    'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
-    'roles' => 'admin',
-], ['_id' => 0, 'username' => 1]);</span></code></pre>
+                        * [Regular expressions](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-RegularExpressions)
+                        * [Matching values in embedded objects](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanEmbeddedObject)
+                        * [Conditional operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators)
+                        * [Matching a value in an array](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanArray)
                     </section>
 
                     <section data-markdown>
-                        ## Criteria and Field Selection
+                        ## Field Selection
 
                         <pre><code class="language-php">// Optimize by only selecting usernames
 $db->users->find([
@@ -929,9 +940,6 @@ $db->users->find([
     'roles' => 'admin',
 ], ['_id' => 0, 'username' => 1]);</code></pre>
 
-                        * [Conditional operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators)
-                        * [Matching values in embedded objects](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanEmbeddedObject)
-                        * [Matching a value in an array](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanArray)
                         * [Retrieving a subset of fields](http://www.mongodb.org/display/DOCS/Retrieving+a+Subset+of+Fields)
                         * [Retrieving a slice of an array](http://www.mongodb.org/display/DOCS/Retrieving+a+Subset+of+Fields#RetrievingaSubsetofFields-RetrievingaSubrangeofArrayElements)
                     </section>
@@ -966,7 +974,7 @@ $db->users->find([
                     <section data-markdown data-state="indexing">
                         # Indexing
 
-                        <p class="photo-credit"><a href="http://www.flickr.com/photos/austinevan/1225274637/">http://www.flickr.com/photos/austinevan/1225274637/</a></p>
+                        <p class="photo-credit"><a href="http://www.sxc.hu/photo/443042">http://www.sxc.hu/photo/443042</a></p>
                     </section>
 
                     <section data-markdown>
@@ -974,7 +982,7 @@ $db->users->find([
 
                         * B-trees
                         * Multiple indexes per collection
-                        * Any field(s) (e.g. top-level, embedded)
+                        * Any field(s), top-level or embedded
                         * [Multikey indexing of array values](http://www.mongodb.org/display/DOCS/Multikeys)
                         * [Sparse](http://www.mongodb.org/display/DOCS/Indexes#Indexes-sparse%3Atrue), [unique](http://www.mongodb.org/display/DOCS/Indexes#Indexes-unique%3Atrue), [geospatial](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
                     </section>
@@ -1004,16 +1012,23 @@ $c->deleteIndexes();  // Delete all indexes on the collection</span></code></pre
 
                         <pre><code class="language-php">$c->ensureIndex(['x' => 1, 'y' => 1, 'z' => -1]);
 
+// These queries will use the index
 $c->find(['x' => 'foo']);
 $c->find(['x' => 'foo', 'y' => ['$gt' => 5]]);
 $c->find(['x' => 'foo', 'y' => 4])->sort(['z' => -1]);
-$c->find(['x' => "foo", 'y' => 8, 'z' => 'baz']);</code></pre>
+$c->find(['x' => "foo", 'y' => 8, 'z' => 'baz']);
+
+// This query will not by default
+$c->find(['y' => 6]);
+</code></pre>
 
                         * Index multiple fields
                         * Direction per field
                             * Range queries
                             * Sorting
-                        * Usable for a subset of fields
+                        * Usable for constituent field queries
+                            * Optimal ordering
+                            * Query hinting
                     </section>
 
                     <section data-markdown>
@@ -1045,19 +1060,25 @@ $cursor->explain();
                             * Single-key, low-selectivity indexes
                             * `$exists`, `$ne`, and `$nin`
                             * `$all` and `$in`
+                        * [Indexing advice and FAQ](http://www.mongodb.org/display/DOCS/Indexing+Advice+and+FAQ)
                     </section>
                 </section>
 
-                <section data-markdown>
+                <section data-markdown data-state="commands">
                     ## Database Commands
 
                     * Queries to `$cmd` collection
-                    * Shell and driver helpers
-                    * [MongoDB::command()](http://php.net/manual/en/mongodb.command.php)
+                    * Shell and driver helpers for some
+                    * [MongoDB::command()](http://php.net/manual/en/mongodb.command.php) for the rest
                     * [Reference list](http://docs.mongodb.org/manual/reference/commands/)
-                        * Sharding, Replication, Aggregation
-                        * Geospatial, Administration, Diagnostic
-                        * Collections, Indexing
+                        * Sharding
+                        * Replication
+                        * Aggregation
+                        * Collections
+                        * Indexing
+                        * Geospatial
+                        * Diagnostic
+                        * Administration
                 </section>
 
                 <section>
@@ -1166,6 +1187,12 @@ politics: jen</span></span></code></pre>
                 </section>
 
                 <section>
+                    <section data-markdown data-state="gridfs-title">
+                        # GridFS
+
+                        <p class="photo-credit"><a href="http://www.flickr.com/photos/mikebaird/3898801499">http://www.flickr.com/photos/mikebaird/3898801499</a></p>
+                    </section>
+
                     <section data-markdown>
                         ## [GridFS](http://www.mongodb.org/display/DOCS/GridFS)
 
@@ -1263,6 +1290,12 @@ $grid->drop();</span></code></pre>
                 </section>
 
                 <section>
+                    <section data-markdown data-state="geospatial-title">
+                        # Geospatial Indexing
+
+                        <p class="photo-credit"><a href="http://history.nasa.gov/ap08fj/photos/a/as08-16-2593hr.jpg">http://history.nasa.gov/ap08fj/photos/a/as08-16-2593hr.jpg</a></p>
+                    </section>
+
                     <section data-markdown>
                         ## [Geospatial Indexing](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
 
