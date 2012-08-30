@@ -94,11 +94,7 @@
     opacity: 0.5;
 }
 
-section[data-state="title"] h1 {
-    font-size: 3em;
-}
-
-section[data-state="title"] h1 span {
+h1 span.mongodb-logo {
     display: block;
     height: 2em;
     width: 100%;
@@ -107,6 +103,10 @@ section[data-state="title"] h1 span {
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
+}
+
+section[data-state="title"] h1 {
+    font-size: 3em;
 }
 
 section[data-state="title"] p.bio {
@@ -401,6 +401,24 @@ section[data-state="commands"] > ul > li > ul > li:nth-child(3n+1) {
     background-size: cover;
 }
 
+.companies .state-background {
+    background-image: url("../img/companies.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+@media screen {
+    section[data-state="companies"] h1 {
+        display: none;
+    }
+
+    .companies .reveal .footer {
+        background-image: none;
+    }
+}
+
+section[data-state="final"] ul,
 section[data-state="final"] h3 {
     margin-top: 2em;
 }
