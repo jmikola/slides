@@ -30,6 +30,13 @@
     margin-bottom: 2em;
 }
 
+/* Do not resize links within headers for print */
+@media print {
+    h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        font-size: 1em !important;
+    }
+}
+
 /* Prevent clipping of underscores in fragments */
 .reveal section pre code span.fragment {
     padding-bottom: 1px;
@@ -60,38 +67,25 @@
     text-align: center;
 }
 
-@media screen {
-    .reveal section p.photo-credit {
-        bottom: 0;
-        font-size: 0.5em;
-        margin: 0 auto;
-        position: absolute;
-        text-align: center;
-        width: 100%;
-    }
-
-    .reveal section p.photo-credit a {
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-}
-
 @media print {
-    .reveal section p.photo-credit {
+    .reveal .footer {
         display: none;
     }
 }
 
-.reveal .footer {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    height: 70px;
-    width: 300px;
-    background-image: url("../img/10gen_white.png");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    opacity: 0.5;
+@media screen {
+    .reveal .footer {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        height: 70px;
+        width: 300px;
+        background-image: url("../img/10gen_white.png");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        opacity: 0.5;
+    }
 }
 
 h1 span.mongodb-logo {
@@ -139,8 +133,10 @@ section[data-state="about-10gen"] h2 {
     background-size: cover;
 }
 
-section[data-state="starting-off"] h2 {
-    color: #000;
+@media screen {
+    section[data-state="starting-off"] h2 {
+        color: #000;
+    }
 }
 
 section[data-state="starting-off"] ul {
@@ -241,9 +237,15 @@ section[data-state="relational-modeling"] > ul > li:nth-child(odd) {
 }
 
 section[data-state="relational-diagram"] table {
+    display: inline-block;
     float: left;
     font-size: 0.5em;
-    margin-left: 5%;
+    margin-left: 2%;
+}
+
+section[data-state="relational-diagram"] table th,
+section[data-state="relational-diagram"] table td {
+    font-size: 1em !important;
 }
 
 section[data-state="relational-diagram"] table#relational-authors {
@@ -257,8 +259,10 @@ section[data-state="relational-diagram"] table#relational-authors {
     background-size: cover;
 }
 
-section[data-state="relational-segue"] h1 {
-    color: #000;
+@media screen {
+    section[data-state="relational-segue"] h1 {
+        color: #000;
+    }
 }
 
 .relational-segue .footer {
@@ -272,10 +276,12 @@ section[data-state="relational-segue"] h1 {
     background-size: cover;
 }
 
-section[data-state="getting-started"] h1,
-section[data-state="getting-started"] h3,
-section[data-state="getting-started"] h6 {
-    color: #000;
+@media screen {
+    section[data-state="getting-started"] h1,
+    section[data-state="getting-started"] h3,
+    section[data-state="getting-started"] h6 {
+        color: #000;
+    }
 }
 
 .getting-started .footer {
@@ -302,8 +308,10 @@ section[data-state="driver-type-classes"] > ul > li:nth-child(even) {
     margin-left: 5%;
 }
 
-section[data-state="identifiers"] blockquote {
-    background-color: rgba(0, 0, 0, 0.5);
+@media screen {
+    section[data-state="identifiers"] blockquote {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 }
 
 .identifiers .state-background {
@@ -338,12 +346,14 @@ section[data-state="atomic-operators"] > ul > li:nth-child(odd) {
     background-size: cover;
 }
 
-section[data-state="business-requirements"] h2 {
-    color: #000;
-}
+@media screen {
+    section[data-state="business-requirements"] h2 {
+        color: #000;
+    }
 
-section[data-state="business-requirements"] blockquote {
-    background-color: rgba(0, 0, 0, 0.5);
+    section[data-state="business-requirements"] blockquote {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 }
 
 .business-requirements .state-background {
@@ -408,17 +418,20 @@ section[data-state="commands"] > ul > li > ul > li:nth-child(3n+1) {
     background-size: cover;
 }
 
-@media screen {
-    section[data-state="companies"] h1 {
-        display: none;
-    }
+section[data-state="companies"] h1 {
+    display: none;
+}
 
-    .companies .reveal .footer {
-        background-image: none;
-    }
+.companies .reveal .footer {
+    background-image: none;
 }
 
 section[data-state="final"] ul,
 section[data-state="final"] h3 {
     margin-top: 2em;
+}
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
 }
