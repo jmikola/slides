@@ -1,0 +1,9 @@
+{
+    "name": "20120906-mongodb_orlando",
+    "description": "MongoDB Aggregation Framework",
+    "author": "Jeremy Mikola",
+    "version": "1.0.0",
+    "dependencies": {
+        "reveal.js": "git://github.com/hakimel/reveal.js.git"
+    }
+}
