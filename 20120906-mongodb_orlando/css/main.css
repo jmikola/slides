@@ -35,7 +35,7 @@
 
 h1 span.mongodb-logo {
     display: block;
-    height: 4em;
+    height: 300px;
     width: 100%;
     text-indent: 9999px;
     background-image: url("../img/mongodb_ondark.png");
@@ -51,10 +51,9 @@ section[data-state="title"] h1 {
 
 section[data-state="title"] span.new {
     position: absolute;
+    display: block;
     float: left;
-    z-index: 2;
-    top: 250px;
-    left: 80px;
+    margin: -100px 0 0 50px;
     width: 200px;
     height: 200px;
     background-image: url("../img/new.png");
