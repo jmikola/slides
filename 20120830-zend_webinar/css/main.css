@@ -2,28 +2,14 @@
     font-family: "Lato";
     font-style: normal;
     font-weight: 700;
-    src: local("Lato Bold"), local("Lato-Bold"), url("../lib/font/lato_bold.woff") format("woff");
-}
-
-@font-face {
-    font-family: "Lato";
-    font-style: italic;
-    font-weight: 400;
-    src: local("Lato Italic"), local("Lato-Italic"), url("../lib/font/lato_italic.woff") format("woff");
-}
-
-@font-face {
-    font-family: "Lato";
-    font-style: italic;
-    font-weight: 700;
-    src: local("Lato Bold Italic"), local("Lato-BoldItalic"), url("../lib/font/lato_bold_italic.woff") format("woff");
+    src: local("Lato Bold"), local("Lato-Bold"), url("../../common/font/lato_bold.woff") format("woff");
 }
 
 @font-face {
     font-family: "Lato";
     font-style: normal;
     font-weight: 400;
-    src: local("Lato Regular"), local("Lato-Regular"), url("../lib/font/lato.woff") format("woff");
+    src: local("Lato Regular"), local("Lato-Regular"), url("../../common/font/lato.woff") format("woff");
 }
 
 .reveal section pre {

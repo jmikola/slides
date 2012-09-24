@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Doctrine MongoDB ODM</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="stylesheet" href="../common/reveal.js/css/main.css">
+        <link rel="stylesheet" href="../common/reveal.js/css/theme/default.css" id="theme">
+        <link rel="stylesheet" href="../common/css/highlight.tomorrow-night.css">
+
+        <script>
+            // If the query includes 'print-pdf' we'll use the PDF print sheet
+            document.write('<link rel="stylesheet" href="../common/reveal.js/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');
+        </script>
+
+        <link rel="stylesheet" href="css/theme.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <!--[if lt IE 9]>
+        <script src="../common/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="state-background"></div>
+
+            <div class="slides">
+                <section data-markdown>
+                    # Doctrine MongoDB ODM
+
+                    ## 10gen Driver Days
+
+                    ### September 18, 2012
+                </section>
+
+                <section data-markdown>
+                    ## Doctrine Ecosystem
+
+                    * Common
+                    * Data Fixtures
+                    * DBAL, MongoDB
+                    * ORM (Doctrine2)
+                    * ODM
+                        * MongoDB
+                        * CouchDB
+                        * PHPCR
+                </section>
+
+                <section data-markdown>
+                    ## Doctrine Common
+
+                    * Annotation parsing
+                        * Lexer
+                    * Cache
+                    * Collections
+                        * Matching
+                    * Event manager
+                    * Persistence
+                        * Interfaces
+                        * Mapping drivers
+                </section>
+
+                <section data-markdown>
+                    ## Doctrine MongoDB ODM
+
+                    * Persistence manangement
+                        * Document manager and Unit of Work (UoW)
+                        * States: new, managed, detached, removed
+                        * Transactional write-behind
+                    * Repositories
+                    * Proxy documents
+                </section>
+
+                <section data-markdown>
+                    ## Mapping Documents
+
+                    <pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/** @ODM\Document(collection="users") */
+class User {
+    /** @ODM\Id */
+    protected $id;
+
+    /** @ODM\String */
+    protected $name;
+
+    /** @ODM\Date */
+    protected $createdAt;
+
+    /** @ODM\EmbedOne(targetDocument="Address") */
+    protected $address;
+
+    /** @ODM\ReferenceMany(targetDocument="Post", mappedBy="user") */
+    protected $posts;
+
+    /** @ODM\Collection */
+    private $logs = array();
+}</code></pre>
+                </section>
+
+                <section data-markdown>
+                    ## Query Builder
+
+                    <pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">// Doctrine\ODM\MongoDB\DocumentRepository::createQueryBuilder()
+$queryBuilder
+    ->update()
+    ->field('id')->equals('50588d4de84df10e0c000000')
+    ->field('version')->inc(1)
+    ->getQuery()
+    ->execute();</code></pre>
+
+                    * Find, update, MR, geo
+                    * Fluent interface
+                    * Eager cursors
+                </section>
+
+                <section data-markdown>
+                    ## Discriminators
+
+                    Multiple documents in one collection
+
+                    <pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/**
+ * @ODM\Document(collection="my_documents")
+ * @ODM\DiscriminatorField(fieldName="type")
+ * @ODM\DiscriminatorMap({"article"="Article", "album"="Album"})
+ */
+class Article
+{
+    // ...
+}
+
+/**
+ * @ODM\Document(collection="my_documents")
+ * @ODM\DiscriminatorField(fieldName="type")
+ * @ODM\DiscriminatorMap({"article"="Article", "album"="Album"})
+ */
+class Album
+{
+    // ...
+}</code></pre>
+                </section>
+
+                <section data-markdown>
+                    ## References
+
+                    * Reference objects
+                        * Discriminators
+                    * Simple references
+                    * Bi-directional references
+                        * `inversedBy` and `mappedBy`
+                    * Complex references
+                        * Criteria or repository method
+                        * Sort, limit, skip
+                    * Cascading persistence operations
+                        * Detach, merge, refresh, remove, persist
+                    * Priming (via query builder)
+                </section>
+
+                <section data-markdown>
+                    ## Events
+
+                    * Document manager or UoW scope
+                        * Document manager is cleared
+                        * Pre-, post- and on-flush
+                    * Document scope
+                        * Remove, persist, update (pre, post)
+                        * Fields loaded (after initial query or refresh)
+                        * Class metadata (mapping) loaded
+                    * Event listeners
+                        * Document method callbacks (no args)
+                        * Listener classes with callbacks (event args)
+                </section>
+
+                <section data-markdown>
+                    ## Data Migrations
+
+                    * Renaming fields
+                        * `@AlsoLoad` on a property
+                    * Transforming Data
+                        * `@AlsoLoad` on a method
+                    * Moving Fields
+                        * `@AlsoLoad`, `@NotSaved`
+                        * `@PostLoad`, `@PrePersist`
+                </section>
+
+                <section data-markdown>
+                    ## Future Development
+
+                    * Sharding support
+                    * Refine GridFS integration
+                    * Field mapping bugs
+                    * Test coverage
+                </section>
+            </div>
+
+            <aside class="controls">
+                <a class="left" href="#">&#x25C4;</a>
+                <a class="right" href="#">&#x25BA;</a>
+                <a class="up" href="#">&#x25B2;</a>
+                <a class="down" href="#">&#x25BC;</a>
+            </aside>
+
+            <div class="footer"></div>
+
+            <div class="progress"><span></span></div>
+        </div>
+
+        <script src="../common/reveal.js/lib/js/head.min.js"></script>
+        <script src="../common/reveal.js/js/reveal.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

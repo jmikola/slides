@@ -819,50 +819,57 @@ db.articles.mapReduce(map, reduce, { out: { inline: 1 }});</code></pre>
 
                         * `collection.aggregate()` method
                             * Mongo shell
-                            * Most drivers
+                            * `MongoCollection::aggregate()`
                         * `aggregate` database command
+                            * `MongoDB::command()`
                         * Result limited by BSON document size
                     </section>
 
                     <section data-markdown>
                         ## Collection Method
 
-                        <pre><code class="language-javascript">db.books.aggregate([
-  { $project: { language: 1 }},
-  { $group: { _id: "$language", numTitles: { $sum: 1 }}}
-])</code></pre>
+                        <pre><code class="language-php">(new Mongo())->test->books->aggregate([
+  [ '$project' => [ 'language' => 1 ] ],
+  [ '$group' => [
+    '_id' => '$language',
+    'numTitles' => [ '$sum' => 1 ],
+  ]],
+]);</code></pre>
 
                         &#x25BC;
 
-                        <pre><code class="language-javascript">{
-  result: [
-    { _id: "Russian", numTitles: 1 },
-    { _id: "English", numTitles: 2 }
+                        <pre><code class="language-php">[
+  'result' => [
+    [ '_id' => 'Russian', 'numTitles' => 1 ],
+    [ '_id' => 'English', 'numTitles' => 2 ],
   ],
-  ok: 1
-}</code></pre>
+  'ok' => 1
+]</code></pre>
                     </section>
 
                     <section data-markdown>
                         ## Database Command
 
-                        <pre><code class="language-javascript">db.runCommand({
-  aggregate: "books",
-  pipeline: [
-    { $project: { language: 1 }},
-    { $group: { _id: "$language", numTitles: { $sum: 1 }}}
+                        <pre><code class="language-php">(new Mongo())->test->command([
+  'aggregate' => 'books',
+  'pipeline' => [
+    [ '$project' => [ 'language' => 1 ] ],
+    [ '$group' => [
+      '_id' => '$language',
+      'numTitles' => [ '$sum' => 1 ],
+    ]],
   ]
-})</code></pre>
+]);</code></pre>
 
                         &#x25BC;
 
-                        <pre><code class="language-javascript">{
-  result: [
-    { _id: "Russian", numTitles: 1 },
-    { _id: "English", numTitles: 2 }
+                        <pre><code class="language-php">[
+  'result' => [
+    [ '_id' => 'Russian', 'numTitles' => 1 ],
+    [ '_id' => 'English', 'numTitles' => 2 ],
   ],
-  ok: 1
-}</code></pre>
+  'ok' => 1
+]</code></pre>
                     </section>
                 </section>
 
@@ -1042,7 +1049,7 @@ db.articles.mapReduce(map, reduce, { out: { inline: 1 }});</code></pre>
 
                     * [mongodb.org/downloads](http://www.mongodb.org/downloads)
                     * [docs.mongodb.org/manual/aggregation](http://docs.mongodb.org/manual/aggregation)
-                    * [github.com/rozza/demos](https://github.com/rozza/demos)
+                    * [github.com/jmikola/li3-mongodb-aggregation-demo](https://github.com/jmikola/li3-mongodb-aggregation-demo)
 
                     ### Questions?
                 </section>

@@ -1,9 +1,0 @@
-{
-    "name": "20120830-zend_webinar",
-    "description": "Getting Acquainted with MongoDB",
-    "author": "Jeremy Mikola",
-    "version": "1.0.0",
-    "dependencies": {
-        "reveal.js": "git://github.com/hakimel/reveal.js.git"
-    }
-}
