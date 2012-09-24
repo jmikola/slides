@@ -3,6 +3,7 @@ Reveal.initialize({
     progress: true,
     history: true,
     rollingLinks: false,
+    theme: Reveal.getQueryHash().theme || 'default',
     transition: Reveal.getQueryHash().transition || "linear",
     dependencies: [
         { src: "../common/reveal.js/lib/js/highlight.js", async: true, callback: function() { window.hljs.initHighlightingOnLoad(); } },
