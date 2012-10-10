@@ -1,0 +1,28 @@
+h1 span.logo-mongodb {
+    height: 300px;
+    width: 100%;
+}
+
+section[data-state="title"] h1 {
+    font-size: 1.8em;
+    text-align: right;
+}
+
+section[data-state="title"] p.bio {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../../common/img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="final"] ul { margin-top: 2em; }
+section[data-state="final"] h3 { margin-top: 1.5em; }
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
