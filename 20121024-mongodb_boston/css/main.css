@@ -1,0 +1,171 @@
+h1 span.logo-mongodb {
+    height: 300px;
+    width: 100%;
+}
+
+section[data-state="title"] h1 {
+    font-size: 1.8em;
+    text-align: right;
+}
+
+section[data-state="title"] span.new {
+    position: absolute;
+    display: block;
+    float: left;
+    margin: -140px 0 0 30px;
+    width: 200px;
+    height: 200px;
+    background-image: url("../img/new.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="title"] p.bio {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../../common/img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="intro"] p {
+    margin-top: 1em;
+}
+
+.something-different .state-background {
+    background-image: url("../img/monty_python.jpg");
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+div.pipeline-step pre {
+    font-size: 0.5em;
+    line-height: 1.2em;
+    width: 100%;
+}
+
+div.pipeline-in {
+    float: left;
+    width: 45%;
+}
+
+div.pipeline-op {
+    float: right;
+    width: 55%;
+}
+
+div.pipeline-op span.arrow {
+    display: block;
+    float: left;
+}
+
+div.pipeline-op span.arrow:first-child {
+    margin-top: 0.1em;
+    text-align: center;
+    width: 17%;
+}
+
+div.pipeline-op span.arrow:last-child {
+    clear: both;
+    margin-left: 55%;
+}
+
+div.pipeline-op pre {
+    float: right;
+    width: 83%;
+}
+
+div.pipeline-op pre code {
+    background-color: rgba(226,224,222,0.75);
+    color: #1d1f21 !important;
+}
+
+div.pipeline-op pre code * {
+    color: #1d1f21 !important;
+}
+
+div.pipeline-out {
+    clear: right;
+    float: right;
+    width: 45%;
+}
+
+section[data-state="pipeline"] pre {
+    font-size: 1em;
+    margin-top: 1em;
+    text-align: center;
+}
+
+section[data-state="sharding-diagram"] div.node-1,
+section[data-state="sharding-diagram"] div.node-3 {
+    clear: both;
+    width: 100%;
+}
+
+section[data-state="sharding-diagram"] div.node-3 > div {
+    display: inline-block;
+    margin-left: 4%;
+    width: 30%;
+    vertical-align: top;
+}
+
+section[data-state="sharding-diagram"] div.node-3 > div:first-child {
+    margin-left: 0;
+}
+
+section[data-state="sharding-diagram"] span.arrow {
+    display: block;
+    font-size: 2em;
+    height: 1em;
+    line-height: 0.8em;
+    padding-bottom: 0.25em;
+    text-align: center;
+}
+
+section[data-state="sharding-diagram"] div.node-3 > div:first-child > span.arrow { text-align: right; }
+section[data-state="sharding-diagram"] div.node-3 > div:last-child > span.arrow { text-align: left; }
+
+section[data-state="sharding-diagram"] div.node-1 > div,
+section[data-state="sharding-diagram"] div.node-1 > span.arrow {
+    width: 30%;
+    margin: 0 auto;
+}
+
+section[data-state="sharding-diagram"] div.node {
+    display: block;
+    background-color: #1d1f21;
+    box-shadow: 0px 0px 6px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 100%;
+}
+
+section[data-state="sharding-diagram"] div.node > span.label {
+    display: block;
+}
+
+section[data-state="sharding-diagram"] div.node > ul {
+    list-style: none;
+    margin: 0 0 0.25em;
+}
+
+section[data-state="sharding-diagram"] div.node > ul > li {
+    font-size: 0.66em;
+    line-height: 1.2em;
+}
+
+section[data-state="sharding-diagram"] sub {
+    font-size: 0.75em;
+}
+
+section[data-state="final"] ul { margin-top: 2em; }
+section[data-state="final"] h3 { margin-top: 1.5em; }
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
