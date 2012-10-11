@@ -19,6 +19,20 @@ section[data-state="title"] p.bio {
     background-size: contain;
 }
 
+section.ul-2col > ul {
+    width: 100%;
+}
+
+section.ul-2col > ul > li {
+    float: left;
+    margin-top: 1em;
+    width: 49%;
+}
+
+section.ul-2col > ul > li:nth-child(odd) {
+    clear: left;
+}
+
 section[data-state="final"] ul { margin-top: 2em; }
 section[data-state="final"] h3 { margin-top: 1.5em; }
 
