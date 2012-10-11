@@ -72,7 +72,8 @@
                     </section>
 
                     <section data-markdown class="ul-2col">
-                        ## Relational Modeling
+                        ## BSON data types
+                        Documentation
 
                         * Scalars
                             * Double
@@ -90,9 +91,6 @@
                             * Documents
                             * Arrays
                     </section>
-
-
-
                 </section>
                 
                 <section>
@@ -159,12 +157,93 @@
                         rows -- documents
                         
                     </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Sample documents
+                    </section>
 
                     <section data-markdown>
-                        ## 
-
+<pre><code class="language-javascript">db.authors.findOne()
+{
+    _id : 1,
+    first_name : "F. Scott",
+    last_name : "Fitzgerald"
+}</code></pre>
                     </section>
-                 </section>
+
+                    <section data-markdown>
+<pre><code class="language-javascript">db.users.findOne()
+{
+    _id : 1,
+    username : "emily@10gen.com",
+    password : "slsjfk4odk84k209dlkdj90009283d"
+}</code></pre>                        
+                    </section> 
+
+                    <section data-markdown>
+<pre><code class="language-javascript">db.books.findOne()
+{   _id: 1,
+    title: "The Great Gatsby",
+    slug: "9781857150193-the-great-gatsby", 
+    author: 1,
+    available: true,
+    isbn: "9781857150193",
+    pages: 176,
+    publisher: {
+        publisher_name: "Everyman’s Library", 
+        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_city: "London"
+    },
+    subjects: ["Love stories", "1920s", "Jazz Age"], 
+    reviews: [
+       { user: 1, note: "One of the best..."},
+       { user: 2, note: "It’s hard to..."} ],
+    language: "English"
+}</code></pre>                        
+                    </section>
+               </section>
+               <section>
+                    <section data-markdown>
+                        # Embedded documents
+                                                 
+                        What advantages do they have?
+
+                        When should they be used?
+                    </section>
+
+                    <section data-markdown>
+<pre><code class="language-javascript">db.books.findOne()
+{   _id: 1,
+    title: "The Great Gatsby",
+    slug: "9781857150193-the-great-gatsby", 
+    author: 1,
+    available: true,
+    isbn: "9781857150193",
+    pages: 176,
+<span style="color:orange;">
+    publisher: {
+        publisher_name: "Everyman’s Library", 
+        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_city: "London"
+    }, 
+</span>
+    subjects: ["Love stories", "1920s", "Jazz Age"], 
+    reviews: [
+       { user: 1, note: "One of the best..."},
+       { user: 2, note: "It’s hard to..."} ],
+    language: "English"
+}</code></pre> 
+                    </section>  
+                </section>
+
+                <section> 
+                    <section data-markdown>
+                        Phase: Development
+                    </section>
+                </section>
+                
 
             </div>
 
