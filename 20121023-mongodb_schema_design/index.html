@@ -40,7 +40,7 @@
                     </section>
 
                     <section data-markdown>
-                        ## 3 inputs to Schema Design
+                        ## 3 inputs to Schema Design in mongoDB
 
                         1. The data your application needs.
                         2. Your application's read usage of the data.
@@ -56,11 +56,11 @@
 
                         Schema is defined at the application-level
 
-                        Flexible schema benefits Development phase is more agile with a flexible schema
+                        Flexible schema benefits Development phase
 
                         Good schema needed for production
 
-                        Schema evolutions possible to meet future business needs
+                        Schema evolves to meet future business needs
                     </section>
 
                     <section data-markdown>
@@ -71,10 +71,28 @@
                         Each document has keys and values
                     </section>
 
+                    <section data-markdown class="ul-2col">
+                        ## Relational Modeling
+
+                        * Articles
+                            * One author
+                            * Many comments
+                            * Many tags
+                        * Authors
+                            * Many articles
+                            * Many comments
+                        * Tags
+                            * Many articles
+                        * Comments
+                            * One article
+                            * One author
+                    </section>
+
+
 
                 </section>
-	            
-	            <section>
+                
+                <section>
                 
                     <section data-markdown>
                         ## Library web application
@@ -83,7 +101,7 @@
                     </section>
                 
                 
-	            <section>
+                <section>
                     <section data-markdown>
                         ## Author schema
 <pre><code class="language-javascript">{
@@ -92,9 +110,9 @@
     "last_name": string
 }</code></pre>
                     </section>
-				</section>
+                </section>
 
-				<section>
+                <section>
                     <section data-markdown>
                         ## User schema
 <pre><code class="language-javascript">{
@@ -103,9 +121,9 @@
     "password": string
 }</code></pre>
                     </section>
-				</section>
+                </section>
    
-   				<section>
+                   <section>
                     <section data-markdown>
                         ## Book schema
 <pre><code class="language-javascript">{
@@ -128,12 +146,12 @@
    ],
     "title" : string
 }</code></pre>
-   					</section>
-				</section>
-			</section>
-			
-			<section>
-				<section data-markdown>
+                       </section>
+                </section>
+            </section>
+            
+            <section>
+                <section data-markdown>
                     ## Terminology
 
                     tables -- collections
@@ -142,13 +160,13 @@
 
                     rows -- documents
 
-				</section>
-				
-				<section data-markdown>
-                    ## i like turtles
+                    </section>
+                
+                <section data-markdown>
+                    ## 
 
-				</section>
-			</section>
+                </section>
+            </section>
 
             </div>
 
