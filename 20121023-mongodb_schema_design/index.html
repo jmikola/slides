@@ -73,7 +73,7 @@
 
                     <section data-markdown class="ul-2col">
                         ## BSON data types
-                        Documentation
+                        <a href="http://bsonspec.org/">BSONSpec.org</a>
 
                         * Scalars
                             * Double
@@ -185,9 +185,9 @@
                     <section data-markdown>
 <pre><code class="language-javascript">db.books.findOne()
 {   _id: 1,
-    title: "The Great Gatsby",
+    title: "The Great Gatsbyss",
     slug: "9781857150193-the-great-gatsby", 
-    author: 1,
+    author:1,
     available: true,
     isbn: "9781857150193",
     pages: 176,
@@ -197,13 +197,15 @@
         publisher_city: "London"
     },
     subjects: ["Love stories", "1920s", "Jazz Age"], 
+    language: "English"    
     reviews: [
        { user: 1, note: "One of the best..."},
        { user: 2, note: "It’s hard to..."} ],
-    language: "English"
-}</code></pre>                        
+
+}</code></pre>
                     </section>
                </section>
+
                <section>
                     <section data-markdown>
                         # Embedded documents
@@ -222,26 +224,262 @@
     available: true,
     isbn: "9781857150193",
     pages: 176,
-<span style="color:orange;">
+    <div class="code-highlight">    publisher: {
+        publisher_name: "Everyman’s Library", 
+        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_city: "London"
+    },</div>
+    subjects: ["Love stories", "1920s", "Jazz Age"],
+    language: "English" 
+    reviews: [
+       { user: 1, note: "One of the best..."},
+       { user: 2, note: "It’s hard to..."} ],
+}</code></pre> 
+                    </section>  
+               </section>
+
+               <section>
+                    <section data-markdown>
+                        # Linked documents
+                                                 
+                        What advantages does this approach have?
+
+                        When should they be used?
+                    </section>
+
+                    <section data-markdown>
+<pre><code class="language-javascript">db.books.findOne()
+{   _id: 1,
+    title: "The Great Gatsby",
+    slug: "9781857150193-the-great-gatsby",
+    <div class="code-highlight">    author: 1, </div> 
+    available: true,
+    isbn: "9781857150193",
+    pages: 176,
     publisher: {
         publisher_name: "Everyman’s Library", 
         date: ISODate("1991-09-19T00:00:00Z"), 
         publisher_city: "London"
     }, 
-</span>
-    subjects: ["Love stories", "1920s", "Jazz Age"], 
+    subjects: ["Love stories", "1920s", "Jazz Age"],
+    language: "English" 
     reviews: [
        { user: 1, note: "One of the best..."},
        { user: 2, note: "It’s hard to..."} ],
-    language: "English"
 }</code></pre> 
-                    </section>  
-                </section>
+                    </section>
+
+                    <section data-markdown>
+                        <img src="img/memory.png">
+                    </section>
+  
+                </section> 
+
+                <section>
+                    <section data-markdown>
+                        # Arrays
+                                                 
+                        When should they be used?
+                    </section>
+
+                    <section data-markdown>
+                        Array of Scalars
+<pre><code class="language-javascript">db.books.findOne()
+{   _id: 1,
+    title: "The Great Gatsby",
+    slug: "9781857150193-the-great-gatsby",
+    author: 1, 
+    available: true,
+    isbn: "9781857150193",
+    pages: 176,
+    publisher: {
+        publisher_name: "Everyman’s Library", 
+        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_city: "London"
+    }, 
+    <div class="code-highlight">    subjects: ["Love stories", "1920s", "Jazz Age"], </div> 
+    language: "English"
+    reviews: [
+       { user: 1, note: "One of the best..."},
+       { user: 2, note: "It’s hard to..."} ],
+}</code></pre>
+                     </section>
+
+                    <section data-markdown>
+                        Array of documents
+<pre><code class="language-javascript">db.books.findOne()
+{   _id: 1,
+    title: "The Great Gatsby",
+    slug: "9781857150193-the-great-gatsby",
+    author: 1, 
+    available: true,
+    isbn: "9781857150193",
+    pages: 176,
+    publisher: {
+        publisher_name: "Everyman’s Library", 
+        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_city: "London"
+    }, 
+    subjects: ["Love stories", "1920s", "Jazz Age"], 
+    language: "English"
+    <div class="code-highlight">    reviews: [
+       { user: 1, note: "One of the best..."},
+       { user: 2, note: "It’s hard to..."} ], 
+    </div>
+}</code></pre>
+                     </section>
+ 
+                </section>  
 
                 <section> 
                     <section data-markdown>
-                        Phase: Development
+                        # Development Phase 
+                        Basic CRUD functions
                     </section>
+                 </section>
+
+                 <section>
+                    <section data-markdown>
+                        # Create
+<pre><code class="language-javascript">
+    author = {  _id: 2,
+               first_name: "Arthur",
+               last_name: "Miller"
+    }
+
+    db.authors.insert(author)
+
+</code></pre>
+                        *  <a href="http://www.mongodb.org/display/DOCS/Object+IDs#ObjectIDs-BSONObjectIDSpecification">_id</a> is unique and automatically indexed
+                        * An ObjectId will be generated by mongoDB if not provided
+                    </section>
+                 </section>
+                 <section>
+                    <section data-markdown>
+                        # Read
+<pre><code class="language-javascript">
+    db.authors.find({ "last_name" : "Miller" })
+
+    {  _id: 2,
+       first_name: "Arthur",
+       last_name: "Miller"
+    }
+
+</code></pre>
+                    </section>
+                    <section data-markdown>
+                        ## Add an Index
+<pre><code class="language-javascript">
+    db.authors.ensureIndex({ "last_name" : 1 })
+</code></pre>
+                        ## Examine the query
+<pre><code class="language-javascript">
+db.authors.find({ "last_name" : "Miller" }).explain()
+{<div class="code-highlight">    "cursor" : "BtreeCursor slug_1",</div>    "isMultiKey" : false,
+    "n" : 1,
+    "nscannedObjects" : 1,
+    "nscanned" : 1,
+    "scanAndOrder" : false,
+    "indexOnly" : false,
+    "nYields" : 0,
+    "nChunkSkips" : 0,
+    "millis" : 0,
+.....
+}
+</code></pre>
+                    </section>
+
+                     <section data-markdown>
+                         ## Multi-key indexes on arrays
+
+<pre><code class="language-javascript">
+     db.books.ensureIndex({ "subjects"})
+
+</code></pre>
+                     </section>
+
+                    <section data-markdown>
+                         ## Indexes on embedded document keys
+
+<pre><code class="language-javascript">
+     db.books.ensureIndex({ "publisher.name"})
+
+</code></pre>
+                     </section>
+ 
+                    <section data-markdown>
+                        ## Query operators
+
+                        * Conditional operators
+                            * <code>$all, $exists, $mod, $ne, $nin, $nor, $or, $and, $size, $type</code>
+                        * Regular Expressions
+                        * Value in an array
+                            * <code>$elemMatch</code>
+                        * Cursor methods
+                            * <code>count(), limit(), skip(), snapshot(), sort(), batchSize()</code>
+                    </section>
+                 </section>
+
+                 <section>
+                    <section data-markdown>
+                        # Update 
+<pre><code class="language-javascript">
+     review = { user : 1, "I did NOT like this book." }
+     db.books.update({ _id: 1 }, {$push: {reviews : review }})
+
+</code></pre>
+                    </section>
+                    <section data-markdown class="ul-2col">
+                        ## Take advantage of atomic operations
+                        * $set
+                        * $unset
+                        * $inc
+                        * $push
+                        * $pushAll
+                        * $pull
+                        * $pullAll
+                        * $bit
+                    </section>
+
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        # Remove
+<pre><code class="language-javascript">
+     db.books.remove({ _id: 1 })
+
+</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        # Production Phase
+                        Evolve schema to meet data usage needs
+                    </section>
+
+                    <section data-markdown>
+                        ## Heavy reads
+<pre><code class="language-javascript">
+     authors = db.authors.find( { first_name: /^f.*/i }, {_id: 1})
+     authorIds = authors.map(function(x) { return x._id; })
+     db.books.find({author: { $in: authorIds } })
+
+</code></pre>
+                        * What are the query patterns?
+                    </section>
+                    <section data-markdown>
+                        ## Heavy writes
+<pre><code class="language-javascript">
+     review = { user : 1, "One of the best..." }
+     db.books.update({ _id: 3 }, {$push: {reviews : review }})
+
+</code></pre>
+                        * 16mb document size limit
+                        * Possible Storage fragmentation with many updates
+                    </section>
+
                 </section>
 
                 <section>
