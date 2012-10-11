@@ -32,6 +32,124 @@
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">@jmikola</a></p>
                 </section>
+
+
+                <section>
+                    <section data-markdown>
+                        # What is a schema?
+                    </section>
+
+                    <section data-markdown>
+                        ## 3 inputs to Schema Design
+
+                        1. The data your application needs.
+                        2. Your application's read usage of the data.
+                        3. Your application's write usage of the data.
+                    </section>
+
+                </section>
+
+                <section>
+
+                    <section data-markdown>
+                        ## Why is schema design important?
+
+                        Schema is defined at the application-level
+
+                        Flexible schema benefits Development phase is more agile with a flexible schema
+
+                        Good schema needed for production
+
+                        Schema evolutions possible to meet future business needs
+                    </section>
+
+                    <section data-markdown>
+                        ## MongoDB is a document database
+
+                        Documents are stored in BSON
+
+                        Each document has keys and values
+                    </section>
+
+
+                </section>
+	            
+	            <section>
+                
+                    <section data-markdown>
+                        ## Library web application
+
+                        Different schemas are possible
+                    </section>
+                
+                
+	            <section>
+                    <section data-markdown>
+                        ## Author schema
+<pre><code class="language-javascript">{
+    "_id": int,
+    "first_name": string,
+    "last_name": string
+}</code></pre>
+                    </section>
+				</section>
+
+				<section>
+                    <section data-markdown>
+                        ## User schema
+<pre><code class="language-javascript">{
+    "_id": int,
+    "username": string,
+    "password": string
+}</code></pre>
+                    </section>
+				</section>
+   
+   				<section>
+                    <section data-markdown>
+                        ## Book schema
+<pre><code class="language-javascript">{
+    "_id" : int,
+    "author" : int,
+    "available" : boolean,
+    "created_at" : date,
+    "created_by" : date,
+    "isbn" : string,
+    "language" : string,
+    "pages" : int,
+    "publisher" : {
+        "city" : string,
+        "name" : string
+    },
+    "slug" : string,
+    "subjects" : [
+         string,
+         string
+   ],
+    "title" : string
+}</code></pre>
+   					</section>
+				</section>
+			</section>
+			
+			<section>
+				<section data-markdown>
+                    ## Terminology
+
+                    tables -- collections
+
+                    joins -- embedding and linking
+
+                    rows -- documents
+
+				</section>
+				
+				<section data-markdown>
+                    ## i like turtles
+
+				</section>
+			</section>
+
             </div>
 
             <div class="footer"></div>
