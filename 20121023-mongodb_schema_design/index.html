@@ -74,18 +74,21 @@
                     <section data-markdown class="ul-2col">
                         ## Relational Modeling
 
-                        * Articles
-                            * One author
-                            * Many comments
-                            * Many tags
-                        * Authors
-                            * Many articles
-                            * Many comments
-                        * Tags
-                            * Many articles
-                        * Comments
-                            * One article
-                            * One author
+                        * Scalars
+                            * Double
+                            * UTF-8 String 
+                            * Binary
+                            * ObjectId
+                            * Boolean
+                            * UTC DateTime
+                            * Null
+                            * Regular Expression
+                            * 32-bit Integer
+                            * Timestamp
+                            * 64-bit Integer
+                        * Rich types
+                            * Documents
+                            * Arrays
                     </section>
 
 
@@ -99,9 +102,7 @@
 
                         Different schemas are possible
                     </section>
-                
-                
-                <section>
+
                     <section data-markdown>
                         ## Author schema
 <pre><code class="language-javascript">{
@@ -110,9 +111,7 @@
     "last_name": string
 }</code></pre>
                     </section>
-                </section>
 
-                <section>
                     <section data-markdown>
                         ## User schema
 <pre><code class="language-javascript">{
@@ -121,9 +120,8 @@
     "password": string
 }</code></pre>
                     </section>
-                </section>
-   
-                   <section>
+
+
                     <section data-markdown>
                         ## Book schema
 <pre><code class="language-javascript">{
@@ -146,27 +144,27 @@
    ],
     "title" : string
 }</code></pre>
-                       </section>
-                </section>
-            </section>
-            
-            <section>
-                <section data-markdown>
-                    ## Terminology
-
-                    tables -- collections
-
-                    joins -- embedding and linking
-
-                    rows -- documents
 
                     </section>
-                
-                <section data-markdown>
-                    ## 
-
                 </section>
-            </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Terminology
+                        
+                        tables -- collections
+                        
+                        joins -- embedding and linking
+                        
+                        rows -- documents
+                        
+                    </section>
+
+                    <section data-markdown>
+                        ## 
+
+                    </section>
+                 </section>
 
             </div>
 
