@@ -330,10 +330,101 @@
                     </section>
                 </section>
 
+<<<<<<< HEAD
                 <section>
                     <section data-markdown>
                         ### Exercise #2: Alternative Schema
 
+=======
+                <section data-markdown>
+                    # I Like Turtles
+                </section>
+
+                <section>
+                    <section data-markdown class="ul-2col">
+                        ## Exercise #1
+
+                        Design a schema for user reviews for books.
+
+                        * Users
+                            * name (string)
+                            * email (string)
+                        * Reviews
+                            * text (string)
+                            * rating (integer)
+                    </section>
+
+                    <section data-markdown class="ul-2col">
+                        ## Exercise #1: Solution A
+
+                        <pre><code class="language-javascript">// db.users (one document per user)
+{
+  _id: ObjectId("…"),
+  username: "bob",
+  email: "bob@example.com"
+}</code></pre>
+
+                        <pre><code class="language-javascript">// db.reviews (one document per review)
+{
+  _id: ObjectId("…"),
+  user: ObjectId("…"),
+  book: ObjectId("…"),
+  text: "This book is excellent!",
+  rating: 5,
+  created_at: ISODate("2012-10-10T21:14:07.096Z")
+}</code></pre>
+                    </section>
+
+                    <section data-markdown class="ul-2col">
+                        ## Exercise #1: Solution B
+
+                        <pre><code class="language-javascript">// db.users (one document per user with all reviews)
+{
+  _id: ObjectId("…"),
+  username: "bob",
+  email: "bob@example.com",
+  reviews: [
+    {
+      book: ObjectId("…"),
+      text: "This book is excellent!",
+      rating: 5,
+      created_at: ISODate("2012-10-10T21:14:07.096Z")
+    }
+  ]
+}</code></pre>
+                    </section>
+
+                    <section data-markdown class="ul-2col">
+                        ## Exercise #1: Solution C
+
+                        <pre><code class="language-javascript">// db.users (one document per user)
+{
+  _id: ObjectId("…"),
+  username: "bob",
+  email: "bob@example.com"
+}</code></pre>
+
+                        <pre><code class="language-javascript">// db.books (one document per book with all reviews)
+{
+  _id: ObjectId("…"),
+  // Other book fields
+  reviews: [
+    {
+      user: ObjectId("…"),
+      text: "This book is excellent!",
+      rating: 5,
+      created_at: ISODate("2012-10-10T21:14:07.096Z")
+    }
+  ]
+}</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ### Exercise #2: Alternative Schema
+
+>>>>>>> 59c7e342aa6a28f36bd380dde7a94c1ee5a3731c
                         Display last 10 book reviews from today.
 
                         Efficiently use memory and disk seeks.
