@@ -199,8 +199,8 @@
     subjects: ["Love stories", "1920s", "Jazz Age"], 
     language: "English"    
     reviews: [
-       { user: 1, note: "One of the best..."},
-       { user: 2, note: "It’s hard to..."} ],
+       { user: 1, text: "One of the best..."},
+       { user: 2, text: "It’s hard to..."} ],
 
 }</code></pre>
                     </section>
@@ -232,8 +232,8 @@
     subjects: ["Love stories", "1920s", "Jazz Age"],
     language: "English" 
     reviews: [
-       { user: 1, note: "One of the best..."},
-       { user: 2, note: "It’s hard to..."} ],
+       { user: 1, text: "One of the best..."},
+       { user: 2, text: "It’s hard to..."} ],
 }</code></pre> 
                     </section>  
                </section>
@@ -264,8 +264,8 @@
     subjects: ["Love stories", "1920s", "Jazz Age"],
     language: "English" 
     reviews: [
-       { user: 1, note: "One of the best..."},
-       { user: 2, note: "It’s hard to..."} ],
+       { user: 1, text: "One of the best..."},
+       { user: 2, text: "It’s hard to..."} ],
 }</code></pre> 
                     </section>
 
@@ -300,8 +300,8 @@
     <div class="code-highlight">    subjects: ["Love stories", "1920s", "Jazz Age"], </div> 
     language: "English"
     reviews: [
-       { user: 1, note: "One of the best..."},
-       { user: 2, note: "It’s hard to..."} ],
+       { user: 1, text: "One of the best..."},
+       { user: 2, text: "It’s hard to..."} ],
 }</code></pre>
                      </section>
 
@@ -323,8 +323,8 @@
     subjects: ["Love stories", "1920s", "Jazz Age"], 
     language: "English"
     <div class="code-highlight">    reviews: [
-       { user: 1, note: "One of the best..."},
-       { user: 2, note: "It’s hard to..."} ], 
+       { user: 1, text: "One of the best..."},
+       { user: 2, text: "It’s hard to..."} ], 
     </div>
 }</code></pre>
                      </section>
@@ -424,7 +424,7 @@ db.authors.find({ "last_name": "Miller" }).explain()
                     <section data-markdown>
                         # Update 
 <pre><code class="language-javascript">
-     review = { user: 1, note: "I did NOT like this book." }
+     review = { user: 1, text: "I did NOT like this book." }
      db.books.update({ _id: 1 }, {$push: {reviews: review }})
 
 </code></pre>
@@ -456,23 +456,50 @@ db.authors.find({ "last_name": "Miller" }).explain()
                 <section>
                     <section data-markdown>
                         # Production Phase
-                        Evolve schema to meet data usage needs
+                        Evolve schema to meet read and write usage needs
                     </section>
+                </section>
+
+                <section>
 
                     <section data-markdown>
-                        ## Heavy reads
+                        ## Read usage
+                        Searches for author by last name
 <pre><code class="language-javascript">
      authors = db.authors.find( { first_name: /^f.*/i }, {_id: 1})
      authorIds = authors.map(function(x) { return x._id; })
      db.books.find({author: { $in: authorIds } })
 
 </code></pre>
-                        * What are the query patterns?
                     </section>
+
                     <section data-markdown>
-                        ## Heavy writes
+                        Searches for books by title
 <pre><code class="language-javascript">
-     review = { user: 1, "One of the best..." }
+     db.books.find({title:"TheGreat Gatsby"})
+
+</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        Find books that I have reviewed
+<pre><code class="language-javascript">
+     db.books.find({reviews.user:1})
+
+</code></pre>
+                    </section>
+
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Write usage
+                        Review a book
+<pre><code class="language-javascript">
+     review = { user: 1, 
+                text: "I did NOT like this book.", 
+                rating: 1 } 
+
      db.books.update({ _id: 3 }, {$push: {reviews: review }})
 
 </code></pre>
