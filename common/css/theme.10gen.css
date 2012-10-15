@@ -55,6 +55,10 @@ body {
     }
 }
 
+.reveal ul {
+    margin-bottom: 0.2em;
+}
+
 .reveal pre code {
     padding-bottom: 2px;
 }
