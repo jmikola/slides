@@ -250,7 +250,6 @@
                     </section>
                 </section>
 
-
                 <section>
                     <section data-markdown class="ul-2col">
                         ## Exercise #1
@@ -258,15 +257,17 @@
                         Design a schema for user reviews for books.
 
                         * Users
-                            * name (string)
+                            * username (string)
                             * email (string)
                         * Reviews
                             * text (string)
                             * rating (integer)
+
+                        *Usernames are immutable.*
                     </section>
 
                     <section data-markdown class="ul-2col">
-                        ## Exercise #1: Solution A
+                        ### Exercise #1: Solution A
 
                         <pre><code class="language-javascript">// db.users (one document per user)
 {
@@ -280,14 +281,14 @@
   _id: ObjectId("…"),
   user: ObjectId("…"),
   book: ObjectId("…"),
-  text: "This book is excellent!",
   rating: 5,
+  text: "This book is excellent!",
   created_at: ISODate("2012-10-10T21:14:07.096Z")
 }</code></pre>
                     </section>
 
                     <section data-markdown class="ul-2col">
-                        ## Exercise #1: Solution B
+                        ### Exercise #1: Solution B
 
                         <pre><code class="language-javascript">// db.users (one document per user with all reviews)
 {
@@ -297,8 +298,8 @@
   reviews: [
     {
       book: ObjectId("…"),
-      text: "This book is excellent!",
       rating: 5,
+      text: "This book is excellent!",
       created_at: ISODate("2012-10-10T21:14:07.096Z")
     }
   ]
@@ -306,7 +307,7 @@
                     </section>
 
                     <section data-markdown class="ul-2col">
-                        ## Exercise #1: Solution C
+                        ### Exercise #1: Solution C
 
                         <pre><code class="language-javascript">// db.users (one document per user)
 {
@@ -322,8 +323,8 @@
   reviews: [
     {
       user: ObjectId("…"),
-      text: "This book is excellent!",
       rating: 5,
+      text: "This book is excellent!",
       created_at: ISODate("2012-10-10T21:14:07.096Z")
     }
   ]
@@ -333,11 +334,157 @@
 
                 <section>
                     <section data-markdown>
-                        ### Exercise #2: Alternative Schema
+                        ## Exercise #2
 
-                        Display last 10 book reviews from today.
+                        Display a user's most recent 10 book reviews.
 
-                        Efficiently use memory and disk seeks.
+                        Make efficient use of memory and disk seeks.
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Store users' reviews in monthly buckets.
+
+                        <pre><code class="language-javascript">// db.reviews (one document per user per month)
+{
+  _id: "bob-2012-10",
+  reviews: [
+    {
+      rating: 5,
+      text: "This book is excellent!",
+      created_at: ISODate("2012-10-10T21:14:07.096Z")
+    },
+    {
+      rating: 2,
+      text: "I didn't really enjoy this book.",
+      created_at: ISODate("2012-10-11T20:12:50.594Z")
+    }
+  ]
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Adding reviews to the appropriate bucket.
+
+                        <pre><code class="language-javascript">myReview = {
+  rating: 3
+  text: "An average read."
+  created_at: ISODate("2012-10-13T12:26:11.502Z")
+}
+
+db.reviews.update(
+  { _id: "bob-2012-10" },
+  { $push: { reviews: myReview }
+);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Display a user's most recent 10 book reviews.
+
+                        <pre><code class="language-javascript">cursor = db.reviews.find(
+  { _id: /^bob-/ },
+  { reviews: { $slice: 10 }}
+).sort({ _id: -1 });
+
+num = 0;
+
+while (cursor.hasNext() &amp;&amp; num &lt; 10) {
+  doc = cursor.next();
+
+  for (var i = 0; i &lt; doc.reviews.length && num < 10; ++i, ++num) {
+    printjson(doc.reviews[i]);
+  }
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Deleting a review.
+
+                        <pre><code class="language-javascript">cursor = db.reviews.update(
+  { _id: "bob-2012-10" },
+  { $pull: {
+      reviews: { created_at: ISODate("2012-10-13T12:26:11.502Z") }
+    }
+  }
+);</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #3
+
+                        Allow users to follow one another.
+
+                        Approval process is asynchronous.
+
+                        * User sends a follow request
+                        * Followee approves or not
+                        * Requests time out after seven days
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+                        * Need to maintain order and state
+                        * Ensure that updates are atomic
+
+                        <pre><code class="language-javascript">db.approvals.insert({
+  _id: { follower: "bob", followee: "mary" },
+  inprogress: false,
+  approved: false,
+  priority: 1,
+});
+
+// Find the highest priority approval and mark as in progress
+approval = db.approvals.findAndModify({
+  query: { inprogress: false },
+  sort: { priority: -1 },
+  update: { $set: { inprogress: true, started: new ISODate() }},
+  new: true
+});</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+                        <pre><code class="language-javascript">{
+  _id: { follower: "bob", followee: "mary" },
+  inprogress: true, // updated
+  approved: false,
+  priority: 1,
+  started: ISODate("2012-10-11T22:09:42.542Z") // added
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+                        <pre><code class="language-javascript">// Followee approves request
+db.approvals.update(
+  { _id: { follower: "bob", followee: "mary" }},
+  { $set: { inprogress: false, approved: true }}
+);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+                        <pre><code class="language-javascript">limit = new Date();
+limit.setDate(limit.getDate() - 7);
+
+// Time out requests after seven days
+db.approvals.update(
+  { inprogress: true, started: { $lt: limit }},
+  { $set: { inprogress: false, approved: false }}
+);</code></pre>
                     </section>
                 </section>
             </div>
