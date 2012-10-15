@@ -725,6 +725,44 @@ db.approvals.update(
 );</code></pre>
                     </section>
                 </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #4
+
+                        Allow users to upvote a review.
+
+                        * Users can upvote a review only once
+                        * Display a review's current upvotes
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #4: Solution
+
+                        <pre><code class="language-javascript">// db.votes (one document per voter per review)
+db.votes.insert({
+  review: ObjectId("…"),
+  user: ObjectId("…")
+});
+
+// Unique index ensures users can't vote twice
+db.votes.ensureIndex({ review: 1, user: 1 }, { unique: true });
+
+// Count the number of upvotes for a review
+db.votes.count({ review: ObjectId("…") });</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #4: Solution
+
+                        Denormalize upvote totals on reviews.
+
+                        <pre><code class="language-javascript">db.reviews.update(
+  { _id: ObjectId("…") },
+  { $inc: { votes: 1 }}
+});</code></pre>
+                    </section>
+                </section>
             </div>
 
             <div class="footer"></div>
