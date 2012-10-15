@@ -393,7 +393,7 @@ db.authors.find({ "last_name" : "Miller" }).explain()
                          ## Multi-key indexes on arrays
 
 <pre><code class="language-javascript">
-     db.books.ensureIndex({ "subjects"})
+     db.books.ensureIndex({ "subjects" : 1 })
 
 </code></pre>
                      </section>
