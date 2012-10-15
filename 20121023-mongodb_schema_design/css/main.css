@@ -1,5 +1,9 @@
 .reveal pre {
     margin-bottom: 30px;
+} 
+
+.reveal pre > code > .code-highlight {
+    background-color: lightgrey;   
 }
 
 h1 span.logo-mongodb {
