@@ -167,18 +167,18 @@
                     <section data-markdown>
 <pre><code class="language-javascript">db.authors.findOne()
 {
-    _id : 1,
-    first_name : "F. Scott",
-    last_name : "Fitzgerald"
+    _id: 1,
+    first_name: "F. Scott",
+    last_name: "Fitzgerald"
 }</code></pre>
                     </section>
 
                     <section data-markdown>
 <pre><code class="language-javascript">db.users.findOne()
 {
-    _id : 1,
-    username : "emily@10gen.com",
-    password : "slsjfk4odk84k209dlkdj90009283d"
+    _id: 1,
+    username: "emily@10gen.com",
+    password: "slsjfk4odk84k209dlkdj90009283d"
 }</code></pre>                        
                     </section> 
 
@@ -358,7 +358,7 @@
                     <section data-markdown>
                         # Read
 <pre><code class="language-javascript">
-    db.authors.find({ "last_name" : "Miller" })
+    db.authors.find({ "last_name": "Miller" })
 
     {  _id: 2,
        first_name: "Arthur",
@@ -370,12 +370,12 @@
                     <section data-markdown>
                         ## Add an Index
 <pre><code class="language-javascript">
-    db.authors.ensureIndex({ "last_name" : 1 })
+    db.authors.ensureIndex({ "last_name": 1 })
 </code></pre>
                         ## Examine the query
 <pre><code class="language-javascript">
-db.authors.find({ "last_name" : "Miller" }).explain()
-{<div class="code-highlight">    "cursor" : "BtreeCursor slug_1",</div>    "isMultiKey" : false,
+db.authors.find({ "last_name": "Miller" }).explain()
+{<div class="code-highlight">    "cursor": "BtreeCursor slug_1",</div>    "isMultiKey" : false,
     "n" : 1,
     "nscannedObjects" : 1,
     "nscanned" : 1,
@@ -393,7 +393,7 @@ db.authors.find({ "last_name" : "Miller" }).explain()
                          ## Multi-key indexes on arrays
 
 <pre><code class="language-javascript">
-     db.books.ensureIndex({ "subjects" : 1 })
+     db.books.ensureIndex({ "subjects": 1 })
 
 </code></pre>
                      </section>
@@ -402,7 +402,7 @@ db.authors.find({ "last_name" : "Miller" }).explain()
                          ## Indexes on embedded document keys
 
 <pre><code class="language-javascript">
-     db.books.ensureIndex({ "publisher.name"})
+     db.books.ensureIndex({ "publisher.name": 1 })
 
 </code></pre>
                      </section>
@@ -424,8 +424,8 @@ db.authors.find({ "last_name" : "Miller" }).explain()
                     <section data-markdown>
                         # Update 
 <pre><code class="language-javascript">
-     review = { user : 1, "I did NOT like this book." }
-     db.books.update({ _id: 1 }, {$push: {reviews : review }})
+     review = { user: 1, note: "I did NOT like this book." }
+     db.books.update({ _id: 1 }, {$push: {reviews: review }})
 
 </code></pre>
                     </section>
@@ -472,8 +472,8 @@ db.authors.find({ "last_name" : "Miller" }).explain()
                     <section data-markdown>
                         ## Heavy writes
 <pre><code class="language-javascript">
-     review = { user : 1, "One of the best..." }
-     db.books.update({ _id: 3 }, {$push: {reviews : review }})
+     review = { user: 1, "One of the best..." }
+     db.books.update({ _id: 3 }, {$push: {reviews: review }})
 
 </code></pre>
                         * 16mb document size limit
