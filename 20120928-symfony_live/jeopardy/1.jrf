@@ -1,0 +1,36 @@
+Notable Mascots
+100: [img]mascot-octocat.png
+200: [img]mascot-composer.png
+300: [img]mascot-twig.png
+400: [img]mascot-knp.png
+500: [img]mascot-silex.png
+Potpourri
+100: Until recently, this standard for class autoloading was the only thing that developers from multiple PHP projects could agree upon. ## PSR-0 ##
+200: This Miami-based VPS hosting company reimplemented their control panel using Symfony2 in October 2010. ## Servergrove ##
+300: Dustin Whittle used Symfony to redevelop this Yahoo! web property in 2008. ## Yahoo! Answers ##
+400: This website employs Symfony2, Redis and Varnish at great scale, serving terabytes of adult video each day. ## YouPorn ##
+500: A teapot may respond with this status code if instructed to BREW coffee via the Hyper Text Coffee Pot Control Protocol. ## 418 ##
+Attack of the Clones
+100: [img]clones-lukas.png
+200: [img]clones-fabpot.png
+300: [img]clones-fabnot.png
+400: [img]clones-harry.png
+500: [img]clones-keynote_c.jpg
+Symfony in OSS
+100: Several Symfony2 components will be used to develop the next version of this CMS project, which powers 2% of all websites. ## Drupal ##
+200: Igor Wiedler helps maintain this micro-framework, which utilizes several Symfony2 components. ## Silex ##
+300: In early 2010, developers of this forum package started talking about using Symfony2 for their next major version. ## phpBB ##
+400: Between blogging about each week in Symfony, Javier Eguiluz used Symfony2 components to create this tool, which lets authors publish PDF books with ease. ## easybook ##
+500: Richard Shank and Daniel Kucharski lead development of this Symfony2-based e-commerce platform, which consists of many interchangeable bundles. ## Vespolina ##
+Dude, Where's my Class?
+100: Request ## HttpFoundation or BrowserKit ##
+200: PropertyPath ## Form ##
+300: CompilerPassInterface ## DependencyInjection ##
+400: NotFoundHttpException ## HttpKernel ##
+500: OutputFormatterStyleInterface ## Console ##
+Anything but PHP Files
+100: Symfony 2.0's standard distribution used this proprietary file to manage its vendor libraries. ## deps ##
+200: You'll list your application's cache and log directories here if you want to avoid committing them by mistake. ## .gitignore ##
+300: A single JSON file combined with Nils Adermann's love for computer science will take care of all of your project dependencies. ## Composer ##
+400: Its *.feature files read like prose and can be interpreted to execute acceptance tests for your application. ## Behat ##
+500: A dot-prefixed YML file in the root directory of your respository hints that you also have a commit hook set for this code-testing service. ## Travis CI ##
