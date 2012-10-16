@@ -3,6 +3,10 @@ h1 span.logo-mongodb {
     width: 100%;
 }
 
+li strike {
+    opacity: 0.5;
+}
+
 section[data-state="title"] h1 {
     font-size: 1.8em;
     text-align: right;
@@ -36,11 +40,35 @@ section[data-state="intro"] p {
     margin-top: 1em;
 }
 
-.something-different .state-background {
-    background-image: url("../img/monty_python.jpg");
-    background-position: top;
-    background-repeat: no-repeat;
-    background-size: cover;
+@media screen {
+    .warehouse .state-background,
+    .mapreduce .state-background,
+    .mapreduce-mongodb .state-background,
+    .framework .state-background {
+        background-position: top;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .warehouse .state-background {
+        background-image: url("../img/warehouse.jpg");
+    }
+
+    .mapreduce .state-background {
+        background-image: url("../img/wenger.jpg");
+    }
+
+    .mapreduce-mongodb .state-background {
+        background-image: url("../img/swiss_army_macro.jpg");
+    }
+
+    .framework .state-background {
+        background-image: url("../img/swiss_army.jpg");
+    }
+
+    section.bg {
+        background: rgba(0,0,0,0.66);
+    }
 }
 
 div.pipeline-step pre {
@@ -67,7 +95,7 @@ div.pipeline-op span.arrow {
 div.pipeline-op span.arrow:first-child {
     margin-top: 0.1em;
     text-align: center;
-    width: 17%;
+    width: 18%;
 }
 
 div.pipeline-op span.arrow:last-child {
@@ -77,12 +105,11 @@ div.pipeline-op span.arrow:last-child {
 
 div.pipeline-op pre {
     float: right;
-    width: 83%;
+    width: 82%;
 }
 
 div.pipeline-op pre code {
-    background-color: rgba(226,224,222,0.75);
-    color: #1d1f21 !important;
+    background-color: rgba(248,248,255,0.66);
 }
 
 div.pipeline-op pre code * {

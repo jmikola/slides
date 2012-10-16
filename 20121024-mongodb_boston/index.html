@@ -7,7 +7,7 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
         <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
-        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/tomorrow-night.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
 
         <script>
             // If the query includes 'print-pdf' we'll use the PDF print sheet
@@ -35,13 +35,21 @@
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">@jmikola</a></p>
                 </section>
 
-                <section>
+                <section data-markdown>
+                    ## Agenda
+
                     <img src="img/dilbert-20120905.gif" alt="dilbert-20120905.gif">
+
+                    * State of Aggregation
+                    * Pipeline and Expressions
+                    * Usage and Limitations
+                    * Optimization and Sharding
+                    * Looking Ahead
                 </section>
 
                 <section>
                     <section data-markdown data-state="intro">
-                        ## Aggregating Big Data
+                        ## State of Aggregation
 
                         We're storing our data in MongoDB.
 
@@ -50,7 +58,7 @@
                         What are we using for this?
                     </section>
 
-                    <section data-markdown>
+                    <section data-markdown data-state="warehouse" class="bg">
                         ## Data Warehousing
 
                         * SQL for reporting and analytics
@@ -61,7 +69,7 @@
                             * Real time?
                     </section>
 
-                    <section data-markdown>
+                    <section data-markdown data-state="mapreduce" class="bg">
                         ## MapReduce
 
                         * Extremely versatile, powerful
@@ -72,7 +80,7 @@
                             * Grouping
                     </section>
 
-                    <section data-markdown>
+                    <section data-markdown data-state="mapreduce-mongodb" class="bg">
                         ## MapReduce in MongoDB
 
                         * Implemented with JavaScript
@@ -84,16 +92,15 @@
                     </section>
 
                     <section data-markdown>
-                        ## And now for something completely different…
+                        And now for something completely different…
 
                         <img src="img/monty_python.jpg">
                     </section>
 
-                    <section data-markdown>
+                    <section data-markdown data-state="framework" class="bg">
                         ## Aggregation Framework
 
-                        * Declarative (BSON, not JavaScript)
-                        * Implemented in C++
+                        * Declared in BSON, executes in C++
                         * Flexible, functional, and *simple*
                             * Operation pipeline
                             * Computational expressions
@@ -104,6 +111,12 @@
                 <section>
                     <section data-markdown>
                         # Pipeline
+
+                        * <strike>State of Aggregation</strike>
+                        * Pipeline and Expressions
+                        * Usage and Limitations
+                        * Optimization and Sharding
+                        * Looking Ahead
                     </section>
 
                     <section data-markdown data-state="pipeline">
@@ -116,7 +129,7 @@
                             * Filter or transform data
                             * Input/output chain
 
-                        <pre class="fragment"><code class="no-highlight">ps ax | grep mongod | head -n 1</code></pre>
+                        <pre><code class="no-highlight">ps ax | grep mongod | head -n 1</code></pre>
                     </section>
 
                     <section data-markdown data-state="pipeline-operators">
@@ -374,8 +387,7 @@
                             * Constant value
                         * Other output fields are computed
                             * `$max`, `$min`, `$avg`, `$sum`
-                            * `$addToSet`, `$push`
-                            * `$first`, `$last`
+                            * `$addToSet`, `$push`, `$first`, `$last`
                         * Processes all data in memory
                     </section>
 
@@ -577,7 +589,7 @@
                         ## $sort
 
                         * Sort documents by one or more fields
-                        * Uses familiar [cursor format](http://docs.mongodb.org/manual/reference/method/cursor.sort/)
+                        * Same order syntax as [cursors](http://docs.mongodb.org/manual/reference/method/cursor.sort/)
                         * Waits for earlier pipeline operator to return
                         * In-memory unless early and indexed
                     </section>
@@ -684,6 +696,12 @@
                 <section>
                     <section data-markdown>
                         # Expressions
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline and</strike> Expressions
+                        * Usage and Limitations
+                        * Optimization and Sharding
+                        * Looking Ahead
                     </section>
 
                     <section data-markdown>
@@ -691,7 +709,8 @@
 
                         * Return computed values
                         * Used with `$project` and `$group`
-                        * May be nested
+                        * Reference fields using `$` (e.g. `"$x"`)
+                        * Expressions may be nested
                     </section>
 
                     <section data-markdown>
@@ -700,10 +719,15 @@
                         * Input array of one or more values
                             * `$and`, `$or`
                             * Short-circuit logic
-                        * Inverse values with `$not`
-                        * BSON standard for converting non-booleans
-                            * `null`, `undefined`, zero values &rarr; `false`
-                            * Non-zero values, strings, dates, objects &rarr; `true`
+                        * Invert values with `$not`
+                        * Evaluation of non-boolean types
+                            * `null`, `undefined`, zero &rarr; `false`
+                            * Non-zero, strings, dates, objects &rarr; `true`
+
+                        <pre><code class="language-javascript">{ $and: [true, false] } &#x25BA; false
+{ $or:  ["foo", 0]    } &#x25BA; true
+{ $not: null          } &#x25BA; true
+</code></pre>
                     </section>
 
                     <section data-markdown data-state="comparison-operators">
@@ -713,6 +737,12 @@
                         * Input array with two operands
                             * `$cmp`, `$eq`, `$ne`
                             * `$gt`, `$gte`, `$lt`, `$lte`
+
+                        <pre><code class="language-javascript">{ $cmp: [3, 4]         } &#x25BA; -1
+{ $eq:  ["foo", "bar"] } &#x25BA; false
+{ $ne:  ["foo", "bar"] } &#x25BA; true
+{ $gt:  [9, 7]         } &#x25BA; true
+</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -722,6 +752,13 @@
                             * `$add`, `$multiply`
                         * Input array of two operands
                             * `$subtract`, `$divide`, `$mod`
+
+                        <pre><code class="language-javascript">{ $add:      [1, 2, 3] } &#x25BA; 6
+{ $multiply: [2, 2, 2] } &#x25BA; 8
+{ $subtract: [10, 7]   } &#x25BA; 3
+{ $divide:   [10, 2]   } &#x25BA; 5
+{ $mod:      [8, 3]    } &#x25BA; 2
+</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -731,8 +768,18 @@
                             * `$cmp` is case-sensitive
                         * `$toLower` and `$toUpper` case change
                         * `$substr` for sub-string extraction
-                        * Not encoding aware
-                        * Assumes Latin alphabet
+                        * Not encoding aware (assumes Latin alphabet)
+
+                        <!--
+                            Note: highlight.js picks up "case" in "$strcasecmp"
+                            as a keyword. A zero-width space is used to prevent
+                            it from matching.
+                        -->
+                        <pre><code class="language-javascript">{ $strca&#8203;secmp: ["foo", "bar"] } &#x25BA; 1
+{ $substr:     ["foo", 1, 2]  } &#x25BA; "oo"
+{ $toUpper:    "foo"          } &#x25BA; "FOO"
+{ $toLower:    "BAR"          } &#x25BA; "bar"
+</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -742,6 +789,14 @@
                             * `$dayOfYear`, `$dayOfMonth`, `$dayOfWeek`
                             * `$year`, `$month`, `$week`
                             * `$hour`, `$minute`, `$second`
+
+                        <pre><code class="language-javascript">{ $dayOfYear:  ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 290
+{ $dayOfMonth: ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 16
+{ $dayOfWeek:  ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 3
+{ $year:       ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 2012
+{ $month:      ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 10
+{ $week:       ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 42
+</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -749,12 +804,24 @@
 
                         * `$cond` ternary operator
                         * `$ifNull`
+
+                        <pre><code class="language-javascript">{ $cond: [{ $eq: [1, 2] }, "same", "different"] } &#x25BA; "different"
+
+{ $ifNull: ["foo", "bar"] } &#x25BA; "foo"
+{ $ifNull: [null, "bar"]  } &#x25BA; "bar"
+</code></pre>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
                         # Usage
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline and Expressions</strike>
+                        * Usage and Limitations
+                        * Optimization and Sharding
+                        * Looking Ahead
                     </section>
 
                     <section data-markdown>
@@ -820,6 +887,12 @@
                 <section>
                     <section data-markdown>
                         # Optimization
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline and Expressions</strike>
+                        * <strike>Usage and Limitations</strike>
+                        * Optimization and Sharding
+                        * Looking Ahead
                     </section>
 
                     <section data-markdown>
@@ -865,6 +938,12 @@
                 <section>
                     <section data-markdown>
                         # Sharding
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline and Expressions</strike>
+                        * <strike>Usage and Limitations</strike>
+                        * <strike>Optimization and</strike> Sharding
+                        * Looking Ahead
                     </section>
 
                     <section data-markdown>
@@ -948,10 +1027,16 @@
                 <section>
                     <section data-markdown>
                         # Where Do We Go From Here?
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline and Expressions</strike>
+                        * <strike>Usage and Limitations</strike>
+                        * <strike>Optimization and Sharding</strike>
+                        * Looking Ahead
                     </section>
 
                     <section data-markdown>
-                        ## Use Cases
+                        ## Framework Use Cases
 
                         * Basic aggregation queries
                         * Ad-hoc reporting
@@ -977,7 +1062,7 @@
                     </section>
 
                     <section data-markdown>
-                        ## Future Optimizations
+                        ## Future Enhancements
 
                         * [Move `$match` earlier when possible](https://jira.mongodb.org/browse/SERVER-4506)
                         * Two-step sorting for sharding
@@ -1002,6 +1087,10 @@
 
                     <ul>
                         <li><a href="http://dilbert.com/strips/comic/2012-09-05">http://dilbert.com/strips/comic/2012-09-05</a></li>
+                        <li><a href="http://www.flickr.com/photos/toolstop/4324416999">http://www.flickr.com/photos/toolstop/4324416999</a></li>
+                        <li><a href="http://www.ristart.ee/web2/files/Product/large/13443203307.jpg">http://www.ristart.ee/web2/files/Product/large/13443203307.jpg</a></li>
+                        <li><a href="http://www.flickr.com/photos/vascorola/3164882131">http://www.flickr.com/photos/vascorola/3164882131</a></li>
+                        <li><a href="http://www.flickr.com/photos/capcase/4970062156">http://www.flickr.com/photos/capcase/4970062156</a></li>
                         <li><a href="http://img.timeinc.net/time/photoessays/2009/monty_python/monty_python_02.jpg">http://img.timeinc.net/time/photoessays/2009/monty_python/monty_python_02.jpg</a></li>
                     </ul>
                 </section>
