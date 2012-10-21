@@ -38,13 +38,24 @@
                 <section data-markdown>
                     ## Agenda
 
-                    <img src="img/dilbert-20120905.gif" alt="dilbert-20120905.gif">
+                    <img src="img/dilbert-20120905.gif" alt="dilbert-20120905.gif" style="width: 80%">
 
-                    * State of Aggregation
-                    * Pipeline and Expressions
-                    * Usage and Limitations
-                    * Optimization and Sharding
-                    * Looking Ahead
+                    <div class="col-left">
+                        <ul>
+                            <li>State of Aggregation</li>
+                            <li>Pipeline</li>
+                            <li>Usage and Limitations</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-right">
+                        <ul>
+                            <li>Optimization</li>
+                            <li>Sharding</li>
+                            <li>Expressions</li>
+                            <li>Looking Ahead</li>
+                        </ul>
+                    </div>
                 </section>
 
                 <section>
@@ -113,9 +124,11 @@
                         # Pipeline
 
                         * <strike>State of Aggregation</strike>
-                        * Pipeline and Expressions
+                        * Pipeline
                         * Usage and Limitations
-                        * Optimization and Sharding
+                        * Optimization
+                        * Sharding
+                        * Expressions
                         * Looking Ahead
                     </section>
 
@@ -147,10 +160,30 @@
 
                 <section>
                     <section data-markdown>
+                        ## Our Example Data
+
+                        Library Books
+
+                        <pre><code class="language-javascript">{ _id: 375,
+  title: "The Great Gatsby",
+  ISBN: "9781857150193",
+  available: true,
+  pages: 218,
+  subjects: [
+    "Long Island",
+    "New York",
+    "1920s"
+  ],
+  language: "English"
+}</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
                         ## $match
 
                         * Filter documents
-                        * Place early in the pipeline if possible
                         * Uses existing [query syntax](http://docs.mongodb.org/manual/reference/operators/)
                         * No [geospatial operations](http://docs.mongodb.org/manual/reference/operators/#geospatial-query-operators) or `$where`
                     </section>
@@ -161,18 +194,15 @@
                         Matching field values
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   pages: 218,
   language: "English"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "War and Peace",
+                            <pre><code class="language-javascript">{ title: "War and Peace",
   pages: 1440,
   language: "Russian"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "Atlas Shrugged",
+                            <pre><code class="language-javascript">{ title: "Atlas Shrugged",
   pages: 1088,
   language: "English"
 }</code></pre>
@@ -187,8 +217,7 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  title: "War and Peace",
+                            <pre><code class="language-javascript">{ title: "War and Peace",
   pages: 1440,
   language: "Russian"
 }</code></pre>
@@ -201,18 +230,15 @@
                         Matching with query operators
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   pages: 218,
   language: "English"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "War and Peace",
+                            <pre><code class="language-javascript">{ title: "War and Peace",
   pages: 1440,
   language: "Russian"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "Atlas Shrugged",
+                            <pre><code class="language-javascript">{ title: "Atlas Shrugged",
   pages: 1088,
   language: "English"
 }</code></pre>
@@ -227,13 +253,11 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  title: "War and Peace",
+                            <pre><code class="language-javascript">{ title: "War and Peace",
   pages: 1440,
   language: "Russian"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "Atlas Shrugged",
+                            <pre><code class="language-javascript">{ title: "Atlas Shrugged",
   pages: 1088,
   language: "English"
 }</code></pre>
@@ -257,8 +281,7 @@
                         Including and excluding fields
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  _id: 375,
+                            <pre><code class="language-javascript">{ _id: 375,
   title: "The Great Gatsby",
   ISBN: "9781857150193",
   available: true,
@@ -283,8 +306,7 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   language: "English"
 }</code></pre>
                         </div>
@@ -296,8 +318,7 @@
                         Renaming and computing fields
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  _id: 375,
+                            <pre><code class="language-javascript">{ _id: 375,
   title: "The Great Gatsby",
   ISBN: "9781857150193",
   available: true,
@@ -314,17 +335,14 @@
                         <div class="pipeline-step pipeline-op">
                             <span class="arrow">&#x25BA;</span>
                             <pre><code class="language-javascript">{ $project: {
-  upperTitle: {
-    $toUpper: "$title"
-  },
+  upperTitle: { $toUpper: "$title" },
   lang: "$language"
 }}</code></pre>
                             <span class="arrow">&#x25BC;</span>
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  _id: 375,
+                            <pre><code class="language-javascript">{ _id: 375,
   upperTitle: "THE GREAT GATSBY",
   lang: "English"
 }</code></pre>
@@ -337,8 +355,7 @@
                         Creating sub-document fields
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  _id: 375,
+                            <pre><code class="language-javascript">{ _id: 375,
   title: "The Great Gatsby",
   ISBN: "9781857150193",
   available: true,
@@ -365,8 +382,7 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  _id: 375,
+                            <pre><code class="language-javascript">{ _id: 375,
   title: "The Great Gatsby",
   stats: {
     pages: 218,
@@ -382,12 +398,11 @@
                         ## $group
 
                         * Group documents by an ID
-                            * Field path reference
-                            * Object with multiple references
-                            * Constant value
+                            * Field reference, object, constant
                         * Other output fields are computed
                             * `$max`, `$min`, `$avg`, `$sum`
-                            * `$addToSet`, `$push`, `$first`, `$last`
+                            * `$addToSet`, `$push`
+                            * `$first`, `$last`
                         * Processes all data in memory
                     </section>
 
@@ -397,18 +412,15 @@
                         Calculating an average
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   pages: 218,
   language: "English"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "War and Peace",
+                            <pre><code class="language-javascript">{ title: "War and Peace",
   pages: 1440,
   language: "Russian"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "Atlas Shrugged",
+                            <pre><code class="language-javascript">{ title: "Atlas Shrugged",
   pages: 1088,
   language: "English"
 }</code></pre>
@@ -424,12 +436,10 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  _id: "Russian",
+                            <pre><code class="language-javascript">{ _id: "Russian",
   avgPages: 1440
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  _id: "English",
+                            <pre><code class="language-javascript">{ _id: "English",
   avgPages: 653
 }</code></pre>
                         </div>
@@ -441,18 +451,15 @@
                         Summating fields and counting
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   pages: 218,
   language: "English"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "War and Peace",
+                            <pre><code class="language-javascript">{ title: "War and Peace",
   pages: 1440,
   language: "Russian"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "Atlas Shrugged",
+                            <pre><code class="language-javascript">{ title: "Atlas Shrugged",
   pages: 1088,
   language: "English"
 }</code></pre>
@@ -469,13 +476,11 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  _id: "Russian",
+                            <pre><code class="language-javascript">{ _id: "Russian",
   numTitles: 1,
   sumPages: 1440
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  _id: "English",
+                            <pre><code class="language-javascript">{ _id: "English",
   numTitles: 2,
   sumPages: 1306
 }</code></pre>
@@ -488,18 +493,15 @@
                         Collecting distinct values
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   pages: 218,
   language: "English"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "War and Peace",
+                            <pre><code class="language-javascript">{ title: "War and Peace",
   pages: 1440,
   language: "Russian"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "Atlas Shrugged",
+                            <pre><code class="language-javascript">{ title: "Atlas Shrugged",
   pages: 1088,
   language: "English"
 }</code></pre>
@@ -515,12 +517,10 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  _id: "Russian",
+                            <pre><code class="language-javascript">{ _id: "Russian",
   titles: [ "War and Peace" ]
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  _id: "English",
+                            <pre><code class="language-javascript">{ _id: "English",
   titles: [
     "Atlas Shrugged",
     "The Great Gatsby"
@@ -535,10 +535,11 @@
                         ## $unwind
 
                         * Operate on an array field
-                        * Yield documents for each array value
-                            * Nothing for absent or empty fields
-                            * Error for non-array fields
-                        * Complements `$group`
+                        * Yield new documents for each array element
+                            * Array replaced by element value
+                            * Missing/empty fields &rarr; no output
+                            * Non-array fields &rarr; error
+                        * Pipe to `$group` to aggregate array values
                     </section>
 
                     <section data-markdown>
@@ -547,8 +548,7 @@
                         Yielding multiple documents from one
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   ISBN: "9781857150193",
   subjects: [
     "Long Island",
@@ -565,18 +565,15 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   ISBN: "9781857150193",
   subjects: "Long Island"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   ISBN: "9781857150193",
   subjects: "New York"
 }</code></pre>
-                            <pre><code class="language-javascript">{
-  title: "The Great Gatsby",
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby",
   ISBN: "9781857150193",
   subjects: "1920s"
 }</code></pre>
@@ -586,12 +583,13 @@
 
                 <section>
                     <section data-markdown>
-                        ## $sort
+                        ## $sort, $limit, $skip
 
                         * Sort documents by one or more fields
-                        * Same order syntax as [cursors](http://docs.mongodb.org/manual/reference/method/cursor.sort/)
-                        * Waits for earlier pipeline operator to return
-                        * In-memory unless early and indexed
+                            * Same order syntax as [cursors](http://docs.mongodb.org/manual/reference/method/cursor.sort/)
+                            * Waits for earlier pipeline operator to return
+                            * In-memory unless early and indexed
+                        * Limit and skip follow cursor behavior
                     </section>
 
                     <section data-markdown>
@@ -627,23 +625,21 @@
                             <pre><code class="language-javascript">{ title: "The Great Gatsby" }</code></pre>
                         </div>
                     </section>
-                </section>
 
-                <section>
                     <section data-markdown>
                         ## $limit
 
                         Limit documents through the pipeline
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{ title: "The Great Gatsby" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Brave New World" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "The Grapes of Wrath" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Animal Farm" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Lord of the Flies" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Brave New World" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Fahrenheit 451" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Fathers and Sons" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Invisible Man" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Fahrenheit 451" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Lord of the Flies" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "The Grapes of Wrath" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "The Great Gatsby" }</code></pre>
                         </div>
 
                         <div class="pipeline-step pipeline-op">
@@ -653,42 +649,255 @@
                         </div>
 
                         <div class="pipeline-step pipeline-out">
-                            <pre><code class="language-javascript">{ title: "The Great Gatsby" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Brave New World" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "The Grapes of Wrath" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Animal Farm" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Lord of the Flies" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Brave New World" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Fahrenheit 451" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Fathers and Sons" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Invisible Man" }</code></pre>
                         </div>
                     </section>
-                </section>
 
-                <section>
                     <section data-markdown>
                         ## $skip
 
                         Skip over documents in the pipeline
 
                         <div class="pipeline-step pipeline-in">
-                            <pre><code class="language-javascript">{ title: "The Great Gatsby" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Brave New World" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "The Grapes of Wrath" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Animal Farm" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Lord of the Flies" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Brave New World" }</code></pre>
+                            <pre><code class="language-javascript">{ title: "Fahrenheit 451" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Fathers and Sons" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Invisible Man" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Fahrenheit 451" }</code></pre>
                         </div>
 
                         <div class="pipeline-step pipeline-op">
                             <span class="arrow">&#x25BA;</span>
-                            <pre><code class="language-javascript">{ $skip: 5 }</code></pre>
+                            <pre><code class="language-javascript">{ $skip: 2 }</code></pre>
                             <span class="arrow">&#x25BC;</span>
                         </div>
 
                         <div class="pipeline-step pipeline-out">
+                            <pre><code class="language-javascript">{ title: "Fahrenheit 451" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Fathers and Sons" }</code></pre>
                             <pre><code class="language-javascript">{ title: "Invisible Man" }</code></pre>
-                            <pre><code class="language-javascript">{ title: "Fahrenheit 451" }</code></pre>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        # Usage
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline</strike>
+                        * Usage and Limitations
+                        * Optimization
+                        * Sharding
+                        * Expressions
+                        * Looking Ahead
+                    </section>
+
+                    <section data-markdown>
+                        ## Usage
+
+                        * `collection.aggregate()` method
+                            * Mongo shell
+                            * Most drivers
+                        * `aggregate` database command
+                    </section>
+
+                    <section data-markdown>
+                        ## Collection Method
+
+                        <pre><code class="language-javascript">db.books.aggregate([
+  { $project: { language: 1 }},
+  { $group: { _id: "$language", numTitles: { $sum: 1 }}}
+])</code></pre>
+
+                        &#x25BC;
+
+                        <pre><code class="language-javascript">{
+  result: [
+    { _id: "Russian", numTitles: 1 },
+    { _id: "English", numTitles: 2 }
+  ],
+  ok: 1
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Database Command
+
+                        <pre><code class="language-javascript">db.runCommand({
+  aggregate: "books",
+  pipeline: [
+    { $project: { language: 1 }},
+    { $group: { _id: "$language", numTitles: { $sum: 1 }}}
+  ]
+})</code></pre>
+
+                        &#x25BC;
+
+                        <pre><code class="language-javascript">{
+  result: [
+    { _id: "Russian", numTitles: 1 },
+    { _id: "English", numTitles: 2 }
+  ],
+  ok: 1
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Limitations
+
+                        * Result limited by BSON document size
+                            * Final command result
+                            * Intermediate shard results
+                        * Pipeline operator memory limits
+                        * Some BSON types unsupported
+                            * Binary, Code, deprecated types
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        # Optimization
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline</strike>
+                        * <strike>Usage and Limitations</strike>
+                        * Optimization
+                        * Sharding
+                        * Expressions
+                        * Looking Ahead
+                    </section>
+
+                    <section data-markdown>
+                        ## Optimization
+
+                        * Be mindful of memory usage
+                        * Conservative projections
+                        * Early matching
+                    </section>
+
+                    <section data-markdown>
+                        ## Early Matching
+
+                        <pre><code class="language-javascript">[
+  { $match:   { /* match criteria          */ }},
+  { $sort:    { /* sort matched documents  */ }},
+  { $limit:   { /* limit document stream   */ }},
+  { $group:   { /* group by a field        */ }},
+  { $sort:    { /* sort by aggregate value */ }},
+  { $project: { /* reshape result          */ }}
+]</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Early Matching
+
+                        <pre><code class="language-javascript">db.collection
+  .find({ /* match criteria         */ })
+  .sort({ /* sort matched documents */ })
+  .limit( /* limit document stream  */  )</code></pre>
+
+                        &#x25BC;
+
+                        <pre><code class="language-javascript">[
+  { $group:   { /* group by a field        */ }},
+  { $sort:    { /* sort by aggregate value */ }},
+  { $project: { /* reshape result          */ }}
+]</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        # Sharding
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline</strike>
+                        * <strike>Usage and Limitations</strike>
+                        * <strike>Optimization</strike>
+                        * Sharding
+                        * Expressions
+                        * Looking Ahead
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding
+
+                        * Split the pipeline at first `$group` or `$sort`
+                            * Shards execute pipeline up to that point
+                            * **mongos** merges results and continues
+                        * Early `$match` may excuse shards
+                        * CPU and memory implications for **mongos**
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding
+
+                        <pre><code class="language-javascript">[
+  { $match:   { /* filter by shard key */ }},
+  { $project: { /* select fields       */ }},
+  { $group:   { /* group by some field */ }},
+  { $sort:    { /* sort by some field  */ }},
+  { $project: { /* reshape result      */ }}
+]</code></pre>
+                    </section>
+
+                    <section data-markdown data-state="sharding-diagram">
+                        ## Sharding
+
+                        <div class="node-3">
+                            <div>
+                                <div class="node">
+                                    <span class="label">shard<sub>1</sub></span>
+                                    <ul>
+                                        <li><code>$match</code></li>
+                                        <li><code>$project</code></li>
+                                        <li><code>$group</code><sub>1</sub></li>
+                                    </ul>
+                                </div>
+                                <span class="arrow">&#x2198;</span>
+                            </div>
+                            <div>
+                                <div class="node">
+                                    <span class="label">shard<sub>2</sub></span>
+                                    <ul>
+                                        <li><code>$match</code></li>
+                                        <li><code>$project</code></li>
+                                        <li><code>$group</code><sub>1</sub></li>
+                                    </ul>
+                                </div>
+                                <span class="arrow">&#x2193;</span>
+                            </div>
+                            <div>
+                                <div class="node">
+                                    <span class="label">shard<sub>3</sub></span>
+                                    <!-- <ul>
+                                        <li><code>$match</code></li>
+                                        <li><code>$project</code></li>
+                                        <li><code>$group</code><sub>1</sub></li>
+                                    </ul> -->
+                                </div>
+                                <!-- <span class="arrow">&#x2199;</span> -->
+                            </div>
+                        </div>
+
+                        <div class="node-1">
+                            <div class="node">
+                                <span class="label">mongos</span>
+                                <ul>
+                                    <li><code>$group</code><sub>2</sub></li>
+                                    <li><code>$sort</code></li>
+                                    <li><code>$project</code></li>
+                                </ul>
+                            </div>
+                            <span class="arrow">&#x2193;</span>
+                            <div class="node">
+                                <span class="label">Result</span>
+                            </div>
                         </div>
                     </section>
                 </section>
@@ -698,9 +907,11 @@
                         # Expressions
 
                         * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline and</strike> Expressions
-                        * Usage and Limitations
-                        * Optimization and Sharding
+                        * <strike>Pipeline</strike>
+                        * <strike>Usage and Limitations</strike>
+                        * <strike>Optimization</strike>
+                        * <strike>Sharding</strike>
+                        * Expressions
                         * Looking Ahead
                     </section>
 
@@ -790,12 +1001,12 @@
                             * `$year`, `$month`, `$week`
                             * `$hour`, `$minute`, `$second`
 
-                        <pre><code class="language-javascript">{ $dayOfYear:  ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 290
-{ $dayOfMonth: ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 16
-{ $dayOfWeek:  ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 3
-{ $year:       ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 2012
-{ $month:      ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 10
-{ $week:       ISODate("2012-10-16T18:07:15.098Z") } &#x25BA; 42
+                        <pre><code class="language-javascript">{ $year:       ISODate("2012-10-24T00:00:00.000Z") } &#x25BA; 2012
+{ $month:      ISODate("2012-10-24T00:00:00.000Z") } &#x25BA; 10
+{ $dayOfMonth: ISODate("2012-10-24T00:00:00.000Z") } &#x25BA; 24
+{ $dayOfWeek:  ISODate("2012-10-24T00:00:00.000Z") } &#x25BA; 4
+{ $dayOfYear:  ISODate("2012-10-24T00:00:00.000Z") } &#x25BA; 299
+{ $week:       ISODate("2012-10-24T00:00:00.000Z") } &#x25BA; 43
 </code></pre>
                     </section>
 
@@ -815,223 +1026,14 @@
 
                 <section>
                     <section data-markdown>
-                        # Usage
+                        # Looking Ahead
 
                         * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline and Expressions</strike>
-                        * Usage and Limitations
-                        * Optimization and Sharding
-                        * Looking Ahead
-                    </section>
-
-                    <section data-markdown>
-                        ## Usage
-
-                        * `collection.aggregate()` method
-                            * Mongo shell
-                            * Most drivers
-                        * `aggregate` database command
-                    </section>
-
-                    <section data-markdown>
-                        ## Collection Method
-
-                        <pre><code class="language-javascript">db.books.aggregate([
-  { $project: { language: 1 }},
-  { $group: { _id: "$language", numTitles: { $sum: 1 }}}
-])</code></pre>
-
-                        &#x25BC;
-
-                        <pre><code class="language-javascript">{
-  result: [
-    { _id: "Russian", numTitles: 1 },
-    { _id: "English", numTitles: 2 }
-  ],
-  ok: 1
-}</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Database Command
-
-                        <pre><code class="language-javascript">db.runCommand({
-  aggregate: "books",
-  pipeline: [
-    { $project: { language: 1 }},
-    { $group: { _id: "$language", numTitles: { $sum: 1 }}}
-  ]
-})</code></pre>
-
-                        &#x25BC;
-
-                        <pre><code class="language-javascript">{
-  result: [
-    { _id: "Russian", numTitles: 1 },
-    { _id: "English", numTitles: 2 }
-  ],
-  ok: 1
-}</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Pipeline Limitations
-
-                        * Result limited by BSON document size
-                        * Unsupported field types
-                            * Binary, Code, MinKey, MaxKey
-                            * Deprecated BSON types
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        # Optimization
-
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline and Expressions</strike>
+                        * <strike>Pipeline</strike>
                         * <strike>Usage and Limitations</strike>
-                        * Optimization and Sharding
-                        * Looking Ahead
-                    </section>
-
-                    <section data-markdown>
-                        ## Early Filtering
-
-                        <pre><code class="language-javascript">[
-  { $match:   { /* match criteria         */ }},
-  { $sort:    { /* sort matched documents */ }},
-  { $limit:   { /* limit document stream  */ }},
-  { $group:   { /* group by a field       */ }},
-  { $sort:    { /* sort by computed value */ }},
-  { $project: { /* reshape result         */ }}
-]</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Early Filtering
-
-                        <pre><code class="language-javascript">db.collection
-  .find({ /* match criteria         */ })
-  .sort({ /* sort matched documents */ })
-  .limit( /* limit document stream  */  )</code></pre>
-
-                        &#x25BC;
-
-                        <pre><code class="language-javascript">[
-  { $group:   { /* group by a field       */ }},
-  { $sort:    { /* sort by computed value */ }},
-  { $project: { /* reshape result         */ }}
-]</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Memory Usage
-
-                        * `$group` and `$sort` entirely in-memory
-                        * System memory limits per-operation
-                            * Warning at &gt;5%
-                            * Error at &gt;10%
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        # Sharding
-
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline and Expressions</strike>
-                        * <strike>Usage and Limitations</strike>
-                        * <strike>Optimization and</strike> Sharding
-                        * Looking Ahead
-                    </section>
-
-                    <section data-markdown>
-                        ## Sharding
-
-                        * Split the pipeline at first `$group` or `$sort`
-                            * Shards execute pipeline up to that point
-                            * **mongos** merges results and continues
-                        * Early `$match` may excuse shards
-                        * CPU and memory implications for **mongos**
-                    </section>
-
-                    <section data-markdown>
-                        ## Sharding
-
-                        <pre><code class="language-javascript">[
-  { $match:   { /* filter by shard key */ }},
-  { $project: { /* select fields       */ }},
-  { $group:   { /* group by some field */ }},
-  { $sort:    { /* sort by some field  */ }},
-  { $project: { /* reshape result      */ }}
-]</code></pre>
-                    </section>
-
-                    <section data-markdown data-state="sharding-diagram">
-                        ## Sharding
-
-                        <div class="node-3">
-                            <div>
-                                <div class="node">
-                                    <span class="label">shard<sub>1</sub></span>
-                                    <ul>
-                                        <li><code>$match</code></li>
-                                        <li><code>$project</code></li>
-                                        <li><code>$group</code><sub>1</sub></li>
-                                    </ul>
-                                </div>
-                                <span class="arrow">&#x2198;</span>
-                            </div>
-                            <div>
-                                <div class="node">
-                                    <span class="label">shard<sub>2</sub></span>
-                                    <ul>
-                                        <li><code>$match</code></li>
-                                        <li><code>$project</code></li>
-                                        <li><code>$group</code><sub>1</sub></li>
-                                    </ul>
-                                </div>
-                                <span class="arrow">&#x2193;</span>
-                            </div>
-                            <div>
-                                <div class="node">
-                                    <span class="label">shard<sub>3</sub></span>
-                                    <!-- <ul>
-                                        <li><code>$match</code></li>
-                                        <li><code>$project</code></li>
-                                        <li><code>$group</code><sub>1</sub></li>
-                                    </ul> -->
-                                </div>
-                                <!-- <span class="arrow">&#x2199;</span> -->
-                            </div>
-                        </div>
-
-                        <div class="node-1">
-                            <div class="node">
-                                <span class="label">mongos</span>
-                                <ul>
-                                    <li><code>$group</code><sub>2</sub></li>
-                                    <li><code>$sort</code></li>
-                                    <li><code>$project</code></li>
-                                </ul>
-                            </div>
-                            <span class="arrow">&#x2193;</span>
-                            <div class="node">
-                                <span class="label">Result</span>
-                            </div>
-                        </div>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        # Where Do We Go From Here?
-
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline and Expressions</strike>
-                        * <strike>Usage and Limitations</strike>
-                        * <strike>Optimization and Sharding</strike>
+                        * <strike>Optimization</strike>
+                        * <strike>Sharding</strike>
+                        * <strike>Expressions</strike>
                         * Looking Ahead
                     </section>
 
@@ -1042,15 +1044,6 @@
                         * Ad-hoc reporting
                         * Real-time analytics
                         * Visualizing time series data
-                    </section>
-
-                    <section data-markdown>
-                        ## Enabling Developers
-
-                        * Doing more within MongoDB, faster
-                        * Refactoring MapReduce and groupings
-                            * Replace pages of JavaScript
-                            * Work with reshaped or sub-documents
                     </section>
 
                     <section data-markdown>
@@ -1071,6 +1064,62 @@
                             * [Grouping input sorted by `_id`](https://jira.mongodb.org/browse/SERVER-4507)
                             * [Sorting with limited output](https://jira.mongodb.org/browse/SERVER-4656)
                     </section>
+
+                    <section data-markdown>
+                        ## Enabling Developers
+
+                        * Doing more within MongoDB, faster
+                        * Refactoring MapReduce and groupings
+                            * Replace pages of JavaScript
+                            * Longer aggregation pipelines
+                        * Quick aggregations from the shell
+                    </section>
+
+                    <section data-markdown>
+                        ## Shell Enhancements
+
+                        Create helper functions for common tasks
+
+                        <pre><code class="language-javascript">&gt; db.books.gavg("language", "pages")
+{ "result": [
+    { "_id": "Spanish", "avg": 628 },
+    { "_id": "French", "avg": 332.2 },
+    { "_id": "English", "avg": 332.96666666666664 }
+  ],
+  "ok": 1
+}
+
+&gt; db.books.gsum("language", "pages")
+{ "result": [
+    { "_id": "Spanish", "sum": 1256 },
+    { "_id": "French", "sum": 1661 },
+    { "_id": "English", "sum": 9989 }
+  ],
+  "ok": 1
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Shell Enhancements
+
+                        <pre><code class="language-javascript">&gt; db.books.gcount("language")
+{ "result": [
+    { "_id": "Spanish", "count": 2 },
+    { "_id": "French", "count": 5 },
+    { "_id": "English", "count": 30 }
+  ],
+  "ok": 1
+}
+
+&gt; db.books.gcount("language", { available: true })
+{ "result": [
+    { "_id": "Spanish", "count": 1 },
+    { "_id": "French", "count": 4 },
+    { "_id": "English", "count": 24 }
+  ],
+  "ok": 1
+}</code></pre>
+                    </section>
                 </section>
 
                 <section data-markdown data-state="final">
@@ -1078,6 +1127,8 @@
 
                     * [mongodb.org/downloads](http://www.mongodb.org/downloads)
                     * [docs.mongodb.org/manual/aggregation](http://docs.mongodb.org/manual/aggregation)
+                    * [github.com/TylerBrock/mongo-hacker](https://github.com/TylerBrock/mongo-hacker)
+                    * [github.com/rozza/demos](https://github.com/rozza/demos)
 
                     ### Questions?
                 </section>

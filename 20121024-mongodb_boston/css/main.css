@@ -7,6 +7,16 @@ li strike {
     opacity: 0.5;
 }
 
+div.col-left {
+    float: left;
+    width: 50%;
+}
+
+div.col-right {
+    float: right;
+    width: 50%;
+}
+
 section[data-state="title"] h1 {
     font-size: 1.8em;
     text-align: right;
@@ -147,7 +157,7 @@ section[data-state="sharding-diagram"] div.node-3 > div:first-child {
 
 section[data-state="sharding-diagram"] span.arrow {
     display: block;
-    font-size: 2em;
+    font-size: 1.3em;
     height: 1em;
     line-height: 0.8em;
     padding-bottom: 0.25em;
