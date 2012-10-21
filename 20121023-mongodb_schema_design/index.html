@@ -77,7 +77,7 @@
 
                         * Scalars
                             * Double
-                            * UTF-8 String 
+                            * UTF-8 String
                             * Binary
                             * ObjectId
                             * Boolean
@@ -92,9 +92,9 @@
                             * Arrays
                     </section>
                 </section>
-                
+
                 <section>
-                
+
                     <section data-markdown>
                         ## Library web application
 
@@ -149,13 +149,13 @@
                 <section>
                     <section data-markdown>
                         ## Terminology
-                        
+
                         tables -- collections
-                        
+
                         joins -- embedding and linking
-                        
+
                         rows -- documents
-                        
+
                     </section>
                 </section>
 
@@ -179,28 +179,28 @@
     _id: 1,
     username: "emily@10gen.com",
     password: "slsjfk4odk84k209dlkdj90009283d"
-}</code></pre>                        
-                    </section> 
+}</code></pre>
+                    </section>
 
                     <section data-markdown>
 <pre><code class="language-javascript">db.books.findOne()
 {   _id: 1,
     title: "The Great Gatsbyss",
-    slug: "9781857150193-the-great-gatsby", 
+    slug: "9781857150193-the-great-gatsby",
     author:1,
     available: true,
     isbn: "9781857150193",
     pages: 176,
     publisher: {
-        publisher_name: "Everyman’s Library", 
-        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_name: "Everyman's Library",
+        date: ISODate("1991-09-19T00:00:00Z"),
         publisher_city: "London"
     },
-    subjects: ["Love stories", "1920s", "Jazz Age"], 
-    language: "English"    
+    subjects: ["Love stories", "1920s", "Jazz Age"],
+    language: "English"
     reviews: [
        { user: 1, text: "One of the best..."},
-       { user: 2, text: "It’s hard to..."} ],
+       { user: 2, text: "It's hard to..."} ],
 
 }</code></pre>
                     </section>
@@ -209,7 +209,7 @@
                <section>
                     <section data-markdown>
                         # Embedded documents
-                                                 
+
                         What advantages do they have?
 
                         When should they be used?
@@ -219,29 +219,29 @@
 <pre><code class="language-javascript">db.books.findOne()
 {   _id: 1,
     title: "The Great Gatsby",
-    slug: "9781857150193-the-great-gatsby", 
+    slug: "9781857150193-the-great-gatsby",
     author: 1,
     available: true,
     isbn: "9781857150193",
     pages: 176,
     <div class="code-highlight">    publisher: {
-        publisher_name: "Everyman’s Library", 
-        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_name: "Everyman's Library",
+        date: ISODate("1991-09-19T00:00:00Z"),
         publisher_city: "London"
     },</div>
     subjects: ["Love stories", "1920s", "Jazz Age"],
-    language: "English" 
+    language: "English"
     reviews: [
        { user: 1, text: "One of the best..."},
-       { user: 2, text: "It’s hard to..."} ],
-}</code></pre> 
-                    </section>  
+       { user: 2, text: "It's hard to..."} ],
+}</code></pre>
+                    </section>
                </section>
 
                <section>
                     <section data-markdown>
                         # Linked documents
-                                                 
+
                         What advantages does this approach have?
 
                         When should they be used?
@@ -252,33 +252,33 @@
 {   _id: 1,
     title: "The Great Gatsby",
     slug: "9781857150193-the-great-gatsby",
-    <div class="code-highlight">    author: 1, </div> 
+    <div class="code-highlight">    author: 1, </div>
     available: true,
     isbn: "9781857150193",
     pages: 176,
     publisher: {
-        publisher_name: "Everyman’s Library", 
-        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_name: "Everyman's Library",
+        date: ISODate("1991-09-19T00:00:00Z"),
         publisher_city: "London"
-    }, 
+    },
     subjects: ["Love stories", "1920s", "Jazz Age"],
-    language: "English" 
+    language: "English"
     reviews: [
        { user: 1, text: "One of the best..."},
-       { user: 2, text: "It’s hard to..."} ],
-}</code></pre> 
+       { user: 2, text: "It's hard to..."} ],
+}</code></pre>
                     </section>
 
                     <section data-markdown>
                         <img src="img/memory.png">
                     </section>
-  
-                </section> 
+
+                </section>
 
                 <section>
                     <section data-markdown>
                         # Arrays
-                                                 
+
                         When should they be used?
                     </section>
 
@@ -288,20 +288,20 @@
 {   _id: 1,
     title: "The Great Gatsby",
     slug: "9781857150193-the-great-gatsby",
-    author: 1, 
+    author: 1,
     available: true,
     isbn: "9781857150193",
     pages: 176,
     publisher: {
-        publisher_name: "Everyman’s Library", 
-        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_name: "Everyman's Library",
+        date: ISODate("1991-09-19T00:00:00Z"),
         publisher_city: "London"
-    }, 
-    <div class="code-highlight">    subjects: ["Love stories", "1920s", "Jazz Age"], </div> 
+    },
+    <div class="code-highlight">    subjects: ["Love stories", "1920s", "Jazz Age"], </div>
     language: "English"
     reviews: [
        { user: 1, text: "One of the best..."},
-       { user: 2, text: "It’s hard to..."} ],
+       { user: 2, text: "It's hard to..."} ],
 }</code></pre>
                      </section>
 
@@ -311,29 +311,29 @@
 {   _id: 1,
     title: "The Great Gatsby",
     slug: "9781857150193-the-great-gatsby",
-    author: 1, 
+    author: 1,
     available: true,
     isbn: "9781857150193",
     pages: 176,
     publisher: {
-        publisher_name: "Everyman’s Library", 
-        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_name: "Everyman's Library",
+        date: ISODate("1991-09-19T00:00:00Z"),
         publisher_city: "London"
-    }, 
-    subjects: ["Love stories", "1920s", "Jazz Age"], 
+    },
+    subjects: ["Love stories", "1920s", "Jazz Age"],
     language: "English"
     <div class="code-highlight">    reviews: [
        { user: 1, text: "One of the best..."},
-       { user: 2, text: "It’s hard to..."} ], 
+       { user: 2, text: "It's hard to..."} ],
     </div>
 }</code></pre>
                      </section>
- 
-                </section>  
 
-                <section> 
+                </section>
+
+                <section>
                     <section data-markdown>
-                        # Development Phase 
+                        # Development Phase
                         Basic CRUD functions
                     </section>
                  </section>
@@ -406,7 +406,7 @@ db.authors.find({ "last_name": "Miller" }).explain()
 
 </code></pre>
                      </section>
- 
+
                     <section data-markdown>
                         ## Query operators
 
@@ -422,7 +422,7 @@ db.authors.find({ "last_name": "Miller" }).explain()
 
                  <section>
                     <section data-markdown>
-                        # Update 
+                        # Update
 <pre><code class="language-javascript">
      review = { user: 1, text: "I did NOT like this book." }
      db.books.update({ _id: 1 }, {$push: {reviews: review }})
@@ -496,9 +496,9 @@ db.authors.find({ "last_name": "Miller" }).explain()
                         ## Write usage
                         Review a book
 <pre><code class="language-javascript">
-     review = { user: 1, 
-                text: "I did NOT like this book.", 
-                rating: 1 } 
+     review = { user: 1,
+                text: "I did NOT like this book.",
+                rating: 1 }
 
      db.books.update({ _id: 3 }, {$push: {reviews: review }})
 
@@ -632,7 +632,7 @@ db.authors.find({ "last_name": "Miller" }).explain()
                     <section data-markdown>
                         ### Exercise #2: Solution
 
-                        Adding reviews to the appropriate bucket.
+                        Adding a new review to the appropriate bucket.
 
                         <pre><code class="language-javascript">myReview = {
   rating: 3
@@ -688,11 +688,11 @@ while (cursor.hasNext() &amp;&amp; num &lt; 10) {
 
                         Allow users to follow one another.
 
-                        Approval process is asynchronous.
-
                         * User sends a follow request
                         * Followee approves or not
                         * Requests time out after seven days
+
+                        Approval process is asynchronous.
                     </section>
 
                     <section data-markdown>
@@ -703,16 +703,16 @@ while (cursor.hasNext() &amp;&amp; num &lt; 10) {
 
                         <pre><code class="language-javascript">db.approvals.insert({
   _id: { follower: "bob", followee: "mary" },
-  inprogress: false,
+  in_progress: false,
   approved: false,
   priority: 1,
 });
 
 // Find the highest priority approval and mark as in progress
 approval = db.approvals.findAndModify({
-  query: { inprogress: false },
+  query: { in_progress: false },
   sort: { priority: -1 },
-  update: { $set: { inprogress: true, started: new ISODate() }},
+  update: { $set: { in_progress: true, started: new ISODate() }},
   new: true
 });</code></pre>
                     </section>
@@ -722,7 +722,7 @@ approval = db.approvals.findAndModify({
 
                         <pre><code class="language-javascript">{
   _id: { follower: "bob", followee: "mary" },
-  inprogress: true, // updated
+  in_progress: true, // updated
   approved: false,
   priority: 1,
   started: ISODate("2012-10-11T22:09:42.542Z") // added
@@ -770,6 +770,45 @@ db.approvals.update(
 db.votes.insert({
   review: ObjectId("…"),
   user: ObjectId("…")
+});
+
+// Unique index ensures users can't vote twice
+db.votes.ensureIndex({ review: 1, user: 1 }, { unique: true });
+
+// Count the number of upvotes for a review
+db.votes.count({ review: ObjectId("…") });</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #4: Solution
+
+                        Denormalize upvote totals on reviews.
+
+                        <pre><code class="language-javascript">db.reviews.update(
+  { _id: ObjectId("…") },
+  { $inc: { votes: 1 }}
+});</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #5
+
+                        Tracking time series data.
+
+                        * Count upvotes by: day, hour, minute
+                        * Show time series of votes cast
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #5: Solution
+
+                        <pre><code class="language-javascript">// db.votes_ts (one document per review per day of votes)
+db.votes_ts.update(
+  { review: ObjectId("…"),
+    day: ISODate("2012-10-11T00:00:00.000Z") }
+  { user: ObjectId("…")
 });
 
 // Unique index ensures users can't vote twice
