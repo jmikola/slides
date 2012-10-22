@@ -43,41 +43,26 @@ section[data-state="title"] p.bio {
     }
 }
 
-
-section[data-state="normalize-denormalize"] div.node-1,
 section[data-state="normalize-denormalize"] div.node-3 {
     clear: both;
     width: 100%;
     margin-bottom: 20px;
 }
 
-section[data-state="normalize-denormalize"] div.node-3 > div {
+section[data-state="normalize-denormalize"] div.node-3 > div.node {
     display: inline-block;
-    margin-left: 4%;
-    width: 30%;
+    width: 25%;
     vertical-align: top;
 }
 
-section[data-state="normalize-denormalize"] div.node-3 > div:first-child {
-    margin-left: 0;
-}
-
-section[data-state="normalize-denormalize"] span.arrow {
-    display: inline;
-    font-size: 2em;
+section[data-state="normalize-denormalize"] div.node-3 > div.arrow {
+    display: inline-block;
+    font-size: 1em;
     height: 1em;
     line-height: 0.8em;
-    padding-bottom: 0.25em;
+    margin: 0;
     text-align: center;
-}
-
-section[data-state="normalize-denormalize"] div.node-3 > div:first-child > span.arrow { text-align: right; }
-section[data-state="normalize-denormalize"] div.node-3 > div:last-child > span.arrow { text-align: left; }
-
-section[data-state="normalize-denormalize"] div.node-1 > div,
-section[data-state="normalize-denormalize"] div.node-1 > span.arrow {
-    width: 30%;
-    margin: 0 auto;
+    width: 5%;
 }
 
 section[data-state="normalize-denormalize"] div.node {
@@ -102,18 +87,13 @@ section[data-state="normalize-denormalize"] div.node > ul > li {
     line-height: 1.2em;
 }
 
-section[data-state="normalize-denormalize"] sub {
-    font-size: 0.75em;
+section[data-state="normalize-denormalize"] li.embedded-object {
+    color:red;
 }
 
-section[data-state="normalize-denormalize"] span.embedded-doc-obj {
-    margin-left:20px;
-    color:red;
-} 
-
-section[data-state="normalize-denormalize"] span.embedded-doc-attr {
-    margin-left:30px;
-    color:red;
+section[data-state="normalize-denormalize"] li.embedded-object > ul {
+    list-style: none;
+    margin: 0 0 0.25em 1em;
 }
 
 section[data-state="two-col-list"] div.list > span.label {

@@ -70,77 +70,73 @@
                     </section>
 
                     <section data-markdown data-state="normalize-denormalize">
-                        ## Normalize versus denormalize
-
+                        ## Normalization
 
                         <div class="node-3">
-                            <div>
-                                <div class="node">
-                                    <span class="label">users</span>
-                                    <ul>
-                                        <li><code>username</code></li>
-                                        <li><code>first_name</code></li>
-                                        <li><code>last_name</code></li>
-                                    </ul>
-                                </div>
-                                <!--<span class="arrow">&#8594;</span>-->
+                            <div class="node">
+                                <span class="label">users</span>
+                                <ul>
+                                    <li><code>username</code></li>
+                                    <li><code>first_name</code></li>
+                                    <li><code>last_name</code></li>
+                                </ul>
                             </div>
-                            <div>
-                                <div class="node">
-                                    <span class="label">books</span>
-                                    <ul>
-                                        <li><code>title</code></li>
-                                        <li><code>isbn</code></li>
-                                        <li><code>language</code></li>
-                                        <li><code>created_by</code></li>
-                                        <li><code>author</code></li>
-                                    </ul>
-                                </div>
+                            <div class="arrow">&#8592;</div>
+                            <div class="node">
+                                <span class="label">books</span>
+                                <ul>
+                                    <li><code>title</code></li>
+                                    <li><code>isbn</code></li>
+                                    <li><code>language</code></li>
+                                    <li><code>created_by</code></li>
+                                    <li><code>author</code></li>
+                                </ul>
                             </div>
-
-                            <div>
-                                <div class="node">
-                                    <span class="label">authors</span>
-                                    <ul>
-                                        <li><code>first_name</code></li>
-                                        <li><code>last_name</code></li>
-                                    </ul>
-                                </div>
+                            <div class="arrow">&#8594;</div>
+                            <div class="node">
+                                <span class="label">authors</span>
+                                <ul>
+                                    <li><code>first_name</code></li>
+                                    <li><code>last_name</code></li>
+                                </ul>
                             </div>
                         </div>
-                        ____
+                    </section>
+
+                    <section data-markdown data-state="normalize-denormalize">
+                        ## Denormalization
+
                         <div class="node-3">
-                            <div>
-                                <div class="node">
-                                    <span class="label">users</span>
-                                    <ul>
-                                        <li><code>username</code></li>
-                                        <li><code>first_name</code></li>
-                                        <li><code>last_name</code></li>
-                                    </ul>
-                                </div>
+                            <div class="node">
+                                <span class="label">users</span>
+                                <ul>
+                                    <li><code>username</code></li>
+                                    <li><code>first_name</code></li>
+                                    <li><code>last_name</code></li>
+                                </ul>
                             </div>
-                            <div>
-                                <div class="node">
-                                    <span class="label">books</span>
-                                    <ul>
-                                        <li><code>title</code></li>
-                                        <li><code>isbn</code></li>
-                                        <li><code>language</code></li>
-                                        <li><code>created_by</code></li>
-                                        <li><code><span class="embedded-doc-obj">author</span></code></li>
-                                        <li><code><span class="embedded-doc-attr">first_name</span></code></li>
-                                        <li><code><span class="embedded-doc-attr">last_name</span></code></li>
-                                    </ul>
-                                </div>
+                            <div class="arrow">&#8592;</div>
+                            <div class="node">
+                                <span class="label">books</span>
+                                <ul>
+                                    <li><code>title</code></li>
+                                    <li><code>isbn</code></li>
+                                    <li><code>language</code></li>
+                                    <li><code>created_by</code></li>
+                                    <li class="embedded-object">
+                                        <code>author</code>
+                                        <ul>
+                                            <li><code>first_name</code></li>
+                                            <li><code>last_name</code></li>
+                                        </ul>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </section>
                 </section>
 
-
                 <section>
-
                     <section data-markdown>
                         ## What is schema design like in MongoDB?
 
