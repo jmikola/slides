@@ -28,10 +28,10 @@
 
             <div class="slides">
                 <section data-state="title">
-                    <h1><span class="logo-mongodb">MongoDB</span> Schema Design</h1>
+                    <h1><span class="logo-mongodb">MongoDB</span> Schema Design Workshop</h1>
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">@jmikola</a></p>
-                </section> 
+                </section>
 
                 <section>
                     <section data-markdown>
@@ -54,7 +54,6 @@
                     <section data-markdown>
                         # What is a schema and why is it important?
                     </section>
-
                 </section>
 
                 <section>
@@ -93,7 +92,7 @@
                                         <li><code>title</code></li>
                                         <li><code>isbn</code></li>
                                         <li><code>language</code></li>
-                                        <li><code>created_by</code></li> 
+                                        <li><code>created_by</code></li>
                                         <li><code>author</code></li>
                                     </ul>
                                 </div>
@@ -135,8 +134,7 @@
                                     </ul>
                                 </div>
                             </div>
-                        </div> 
-
+                        </div>
                     </section>
                 </section>
 
@@ -155,42 +153,41 @@
 
                     <section data-markdown data-state="two-col-list">
                         ## MongoDB documents
-                        
+
                         Storage in BSON > <a href="http://bsonspec.org/">BSONSpec.org</a>
 
                         <div class="col-left">
-	                        <div class="list">
+                            <div class="list">
                                 <span class="label">Scalars</span>
                                 <ul>
                                     <li><code>Double</code></li>
                                     <li><code>UTF-8 String</code></li>
                                     <li><code>Binary</code></li>
-                                    <li><code>ObjectId</code></li> 
-                                    <li><code>UTC DateTime</code></li> 
-                                    <li><code>Null</code></li> 
-                                    <li><code>Regular Expression</code></li> 
-                                    <li><code>32-bit Integer</code></li> 
+                                    <li><code>ObjectId</code></li>
+                                    <li><code>UTC DateTime</code></li>
+                                    <li><code>Null</code></li>
+                                    <li><code>Regular Expression</code></li>
+                                    <li><code>32-bit Integer</code></li>
                                     <li><code>Timestamp</code></li>
-                                    <li><code>64-bit Integer</code></li> 
+                                    <li><code>64-bit Integer</code></li>
                                 </ul>
-                            </div>                              
+                            </div>
                         </div>
 
                         <div class="col-right">
-	                        <div class="list-rich-types">
+                            <div class="list-rich-types">
                                 <span class="label">Rich Types</span>
                                 <ul>
                                     <li><code>Sub-documents</code></li>
                                     <li><code>Arrays</code></li>
                                 </ul>
-                            </div>                              
+                            </div>
                         </div>
-
                     </section>
 
                     <section data-markdown>
                         ## Terminology
-                        
+
 <pre><code class="language-javascript">{
     "mongodb" : "relational_db",
     "database" : "database",
@@ -202,7 +199,6 @@
         "shard key" : "partition key"
     }
 }</code></pre>
-                        
                     </section>
 
                     <section data-markdown>
@@ -212,10 +208,9 @@
                         2. Your application's read usage of the data.
                         3. Your application's write usage of the data.
                     </section>
-                </section>  
-                
+                </section>
+
                 <section>
-                
                     <section data-markdown data-state="library" class="bg">
                         ## Library web application
                         ## Case Study
@@ -333,11 +328,11 @@
     available: true,
     isbn: "9781857150193",
     pages: 176,<div class="code-highlight">    publisher: {
-        publisher_name: "Everyman’s Library", 
-        date: ISODate("1991-09-19T00:00:00Z"), 
+        publisher_name: "Everyman’s Library",
+        date: ISODate("1991-09-19T00:00:00Z"),
         publisher_city: "London"
     },</div>    subjects: ["Love stories", "1920s", "Jazz Age"],
-    language: "English" 
+    language: "English"
     reviews: [
        { user: 1, text: "One of the best..."},
        { user: 2, text: "It's hard to..."} ],
@@ -422,8 +417,8 @@
         publisher_name: "Everyman's Library",
         date: ISODate("1991-09-19T00:00:00Z"),
         publisher_city: "London"
-    }, 
-    subjects: ["Love stories", "1920s", "Jazz Age"], 
+    },
+    subjects: ["Love stories", "1920s", "Jazz Age"],
     language: "English"<div class="code-highlight">    reviews: [
        { user: 1, text: "One of the best..."},
        { user: 2, text: "It’s hard to..."} ],</div>}</code></pre>
@@ -437,9 +432,9 @@
                     </section>
                  </section>
 
-                <section> 
+                <section>
                     <section data-markdown>
-                        # Development Phase 
+                        # Development Phase
                         Basic CRUD functions
                     </section>
                  </section>
@@ -537,26 +532,27 @@
                     </section>
                     <section data-markdown data-state="two-col-list">
                         ## Take advantage of atomic operations
+
                         <div class="col-left">
-	                        <div class="list">
+                            <div class="list">
                                 <ul>
                                     <li><code>$set</code></li>
                                     <li><code>$unset</code></li>
                                     <li><code>$inc</code></li>
                                     <li><code>$push</code></li>
                                 </ul>
-                            </div>                              
-                        </div> 
+                            </div>
+                        </div>
 
                         <div class="col-right">
-	                        <div class="list">
+                            <div class="list">
                                 <ul>
                                     <li><code>$pushAll</code></li>
                                     <li><code>$pull</code></li>
                                     <li><code>$pullAll</code></li>
                                     <li><code>$bit</code></li>
                                 </ul>
-                            </div>                              
+                            </div>
                         </div>
                     </section>
 
@@ -603,7 +599,7 @@
     },</div>    ...
 }</code></pre>
                         Queries are now one step
-<pre><code class="language-javascript">  
+<pre><code class="language-javascript">
   db.books.find({ author.first_name: /^f.*/i })
 
 </code></pre>
@@ -655,26 +651,26 @@
                         ## Implementing a tree structure
 <pre><code class="language-javascript">  db.subjects.find()
 {   _id: "American Literature"}
-{   _id : "1920s", 
-          ancestors: ["American Literature"], 
-          parent: "American Literature" 
+{   _id : "1920s",
+          ancestors: ["American Literature"],
+          parent: "American Literature"
 }
-{   _id: "Jazz Age", 
-         ancestors: ["American Literature", "1920s"], 
-         parent: "1920s" 
+{   _id: "Jazz Age",
+         ancestors: ["American Literature", "1920s"],
+         parent: "1920s"
 }
-{   _id: "Jazz Age in New York", 
-         ancestors: ["American Literature", "1920s", "Jazz Age"], 
-         parent: "Jazz Age" 
+{   _id: "Jazz Age in New York",
+         ancestors: ["American Literature", "1920s", "Jazz Age"],
+         parent: "Jazz Age"
 }
 </code></pre>
                         Find sub-categories of a given subject
 <pre><code class="language-javascript">  db.subjects.find({ ancestors: "1920s" })
-</code></pre> 
+</code></pre>
 
                     </section>
-                </section> 
-                
+                </section>
+
                 <section>
                     <section data-markdown>
                         # Common patterns
@@ -684,7 +680,7 @@
                 <section>
                     <section data-markdown>
                         # One-to-one
-                    </section> 
+                    </section>
 
                     <section data-markdown>
                         # Linking
@@ -717,7 +713,7 @@
                 <section>
                     <section data-markdown>
                         # One-to-many
-                    </section> 
+                    </section>
 
                     <section data-markdown>
                         ## Array of documents
@@ -743,7 +739,7 @@
 </div>    ....
 }</code></pre>
                         * More flexible
-                        * More queries necessary 
+                        * More queries necessary
                     </section>
                     <section data-markdown>
                         ## *direction is a choice
@@ -760,7 +756,7 @@
                 <section>
                     <section data-markdown>
                         # Many-to-many
-                    </section> 
+                    </section>
 
                     <section data-markdown>
                         ## Array of ids on both ends
@@ -780,7 +776,7 @@
 </code></pre>
                         Query for all authors of a given book
 <pre><code class="language-javascript">  db.authors.find({ book : 1 })
-</code></pre> 
+</code></pre>
 
                     </section>
 
@@ -795,7 +791,7 @@
 <pre><code class="language-javascript">  db.authors.findOne()
 {   _id: 1,
     first_name: "F. Scott",
-    last_name: "Fitzgerald" 
+    last_name: "Fitzgerald"
 }</code></pre>
 
                         Query for all books by a given author
@@ -806,7 +802,7 @@
   db.authors.find( { _id : { $in : book.authors }})
 </code></pre>
 
-                    </section>               
+                    </section>
 
                 </section>
 
@@ -815,7 +811,7 @@
                         # Single collection inheritance
 
                         Take advantage of MongoDB's features
-                        
+
                         * Missing values are not stored
                         * Sparse indexes index only present values
                     </section>
@@ -829,7 +825,7 @@
 }</code></pre>
                         Find all books that are part of a series
 <pre><code class="language-javascript">
-  db.books.find({ volume: { $exists: true }})  
+  db.books.find({ volume: { $exists: true }})
 
 </code></pre>
                     </section>
@@ -837,16 +833,16 @@
                     <section data-markdown>
                         ## Index only present values
 <pre><code class="language-javascript">
-  db.books.ensureIndex({ series_title: 1 }, {sparse: true } )  
+  db.books.ensureIndex({ series_title: 1 }, {sparse: true } )
 
 </code></pre>
 <pre><code class="language-javascript">
-  db.books.ensureIndex({ volume: 1 }, {sparse: true } )  
+  db.books.ensureIndex({ volume: 1 }, {sparse: true } )
 
 </code></pre>
                     </section>
 
-                </section>     
+                </section>
 
                 <section>
                     <section data-markdown>
@@ -858,7 +854,7 @@
                     <section data-markdown class="ul-2col">
                         ## Exercise #1
 
-                        Design a schema for user reviews for books.
+                        Design a schema for users and their book reviews.
 
                         * Users
                             * username (string)
@@ -866,23 +862,24 @@
                         * Reviews
                             * text (string)
                             * rating (integer)
+                            * created_at (date)
 
                         *Usernames are immutable.*
                     </section>
 
-                    <section data-markdown class="ul-2col">
+                    <section data-markdown>
                         ### Exercise #1: Solution A
 
+                        Reviews may be queried by user or book.
+
                         <pre><code class="language-javascript">// db.users (one document per user)
-{
-  _id: ObjectId("…"),
+{ _id: ObjectId("…"),
   username: "bob",
   email: "bob@example.com"
 }</code></pre>
 
                         <pre><code class="language-javascript">// db.reviews (one document per review)
-{
-  _id: ObjectId("…"),
+{ _id: ObjectId("…"),
   user: ObjectId("…"),
   book: ObjectId("…"),
   rating: 5,
@@ -891,17 +888,17 @@
 }</code></pre>
                     </section>
 
-                    <section data-markdown class="ul-2col">
+                    <section data-markdown>
                         ### Exercise #1: Solution B
 
+                        Optimized to retrieve reviews for a user.
+
                         <pre><code class="language-javascript">// db.users (one document per user with all reviews)
-{
-  _id: ObjectId("…"),
+{ _id: ObjectId("…"),
   username: "bob",
   email: "bob@example.com",
   reviews: [
-    {
-      book: ObjectId("…"),
+    { book: ObjectId("…"),
       rating: 5,
       text: "This book is excellent!",
       created_at: ISODate("2012-10-10T21:14:07.096Z")
@@ -910,23 +907,22 @@
 }</code></pre>
                     </section>
 
-                    <section data-markdown class="ul-2col">
+                    <section data-markdown>
                         ### Exercise #1: Solution C
 
+                        Optimized to retrieve reviews for a book.
+
                         <pre><code class="language-javascript">// db.users (one document per user)
-{
-  _id: ObjectId("…"),
+{ _id: ObjectId("…"),
   username: "bob",
   email: "bob@example.com"
 }</code></pre>
 
                         <pre><code class="language-javascript">// db.books (one document per book with all reviews)
-{
-  _id: ObjectId("…"),
+{ _id: ObjectId("…"),
   // Other book fields
   reviews: [
-    {
-      user: ObjectId("…"),
+    { user: ObjectId("…"),
       rating: 5,
       text: "This book is excellent!",
       created_at: ISODate("2012-10-10T21:14:07.096Z")
@@ -951,15 +947,14 @@
                         Store users' reviews in monthly buckets.
 
                         <pre><code class="language-javascript">// db.reviews (one document per user per month)
-{
-  _id: "bob-2012-10",
+{ _id: "bob-2012-10",
   reviews: [
-    {
+    { _id: ObjectId("…"),
       rating: 5,
       text: "This book is excellent!",
       created_at: ISODate("2012-10-10T21:14:07.096Z")
     },
-    {
+    { _id: ObjectId("…"),
       rating: 2,
       text: "I didn't really enjoy this book.",
       created_at: ISODate("2012-10-11T20:12:50.594Z")
@@ -974,14 +969,14 @@
                         Adding a new review to the appropriate bucket.
 
                         <pre><code class="language-javascript">myReview = {
-  rating: 3
-  text: "An average read."
+  rating: 3,
+  text: "An average read.",
   created_at: ISODate("2012-10-13T12:26:11.502Z")
-}
+};
 
 db.reviews.update(
   { _id: "bob-2012-10" },
-  { $push: { reviews: myReview }
+  { $push: { reviews: myReview }}
 );</code></pre>
                     </section>
 
