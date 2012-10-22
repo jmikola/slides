@@ -1,9 +1,22 @@
 .reveal pre {
     margin-bottom: 30px;
-} 
+}
 
-.reveal pre > code > .code-highlight {
-    background-color: lightgrey;   
+.reveal code {
+    max-height: inherit;
+}
+
+.reveal pre > code > span.code-highlight {
+    background-color: #d3d3d3;
+}
+
+.reveal pre > code > span.inline-block {
+    display: inline-block;
+    width: 100%;
+}
+
+.reveal h1 span.crud {
+    opacity: 0.5;
 }
 
 h1 span.logo-mongodb {
@@ -94,24 +107,6 @@ section[data-state="normalize-denormalize"] li.embedded-object {
 section[data-state="normalize-denormalize"] li.embedded-object > ul {
     list-style: none;
     margin: 0 0 0.25em 1em;
-}
-
-section[data-state="two-col-list"] div.list > span.label {
-    display: block;
-}
-
-section[data-state="two-col-list"] div.col-left {
-    width: 49%;
-    float: left;
-}  
- 
-section[data-state="two-col-list"] div.col-right {
-    width: 49%;
-    float: right;
-}
-
-section[data-state="two-col-list"] div.list-rich-types {
-    color: yellow;
 }
 
 section.ul-2col > ul {

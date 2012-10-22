@@ -37,36 +37,33 @@
                     <section data-markdown>
                         # Agenda
 
-                        1. Basic Schema Design in MongoDB
-                        2. Schema Design in each phase of an application's lifetime
-                        3. Designing a schema for common patterns
-                        4. Labs
+                        1. Basic schema design principles for MongoDB
+                        2. Schema design over an application's lifetime
+                        3. Common design patterns
+                        4. Sharding
                     </section>
 
                     <section data-markdown>
                         # Goals
 
                         * Learn the schema design process in MongoDB
-                        * Practice applying common principles using examples
+                        * Practice applying common principles via exercises
                         * Understand the implications of sharding
-                    </section>
-
-                    <section data-markdown>
-                        # What is a schema and why is it important?
                     </section>
                 </section>
 
                 <section>
+                    <section data-markdown>
+                        ## What is a schema and why is it important?
+                    </section>
+
                     <section data-markdown data-state="library" class="bg">
                         # Schema
 
-                        Maps concepts and relationships to data
-
-                        Expectations are set for the data
-
-                        Minimize overhead of iterative modifications
-
-                        Compatibility is ensured
+                        * Map concepts and relationships to data
+                        * Set expectations for the data
+                        * Minimize overhead of iterative modifications
+                        * Ensure compatibility
                     </section>
 
                     <section data-markdown data-state="normalize-denormalize">
@@ -140,82 +137,66 @@
                     <section data-markdown>
                         ## What is schema design like in MongoDB?
 
-                        Schema is defined at the application-level
-
-                        Schema design is a part of each phase of an application's lifetime
-
-                        There is no formula
+                        * Schema is defined at the application-level
+                        * Design is part of each phase in its lifetime
+                        * There is no magic formula
                     </section>
 
-                    <section data-markdown data-state="two-col-list">
-                        ## MongoDB documents
+                    <section data-markdown class="ul-2col">
+                        ## MongoDB Documents
 
-                        Storage in BSON > <a href="http://bsonspec.org/">BSONSpec.org</a>
+                        Storage in BSON &#8594; <a href="http://bsonspec.org/">BSONSpec.org</a>
 
-                        <div class="col-left">
-                            <div class="list">
-                                <span class="label">Scalars</span>
-                                <ul>
-                                    <li><code>Double</code></li>
-                                    <li><code>UTF-8 String</code></li>
-                                    <li><code>Binary</code></li>
-                                    <li><code>ObjectId</code></li>
-                                    <li><code>UTC DateTime</code></li>
-                                    <li><code>Null</code></li>
-                                    <li><code>Regular Expression</code></li>
-                                    <li><code>32-bit Integer</code></li>
-                                    <li><code>Timestamp</code></li>
-                                    <li><code>64-bit Integer</code></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="col-right">
-                            <div class="list-rich-types">
-                                <span class="label">Rich Types</span>
-                                <ul>
-                                    <li><code>Sub-documents</code></li>
-                                    <li><code>Arrays</code></li>
-                                </ul>
-                            </div>
-                        </div>
+                        * Scalars
+                            * Doubles
+                            * Integers (32 or 64-bit)
+                            * UTF-8 strings
+                            * UTC Date, timestamp
+                            * Binary, regex, code
+                            * Object ID
+                            * `null`
+                        * Rich types
+                            * Objects
+                            * Arrays
                     </section>
 
                     <section data-markdown>
                         ## Terminology
 
 <pre><code class="language-javascript">{
-    "mongodb" : "relational_db",
-    "database" : "database",
+    "mongodb"    : "relational db",
+    "database"   : "database",
     "collection" : "table",
-    "document" : "row",
-    "index" : "index",
+    "document"   : "row",
+    "index"      : "index",
     "sharding" : {
-        "shard" : "partition",
+        "shard"     : "partition",
         "shard key" : "partition key"
     }
 }</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## 3 inputs to Schema Design in MongoDB
+                        ## Three Influences for Schema Design in MongoDB
 
-                        1. The data your application needs.
-                        2. Your application's read usage of the data.
-                        3. Your application's write usage of the data.
+                        1. The data your application needs
+                        2. Your application's read usage of the data
+                        3. Your application's write usage of the data
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown data-state="library" class="bg">
-                        ## Library web application
-                        ## Case Study
+                        # Case Study
+
+                        ## Library Web Application
 
                         Different schemas are possible
                     </section>
 
                     <section data-markdown>
-                        ## Author schema
+                        ## Author Schema
+
 <pre><code class="language-javascript">{
     "_id": int,
     "first_name": string,
@@ -224,7 +205,8 @@
                     </section>
 
                     <section data-markdown>
-                        ## User schema
+                        ## User Schema
+
 <pre><code class="language-javascript">{
     "_id": int,
     "username": string,
@@ -232,40 +214,41 @@
 }</code></pre>
                     </section>
 
-
                     <section data-markdown>
-                        ## Book schema
-<pre><code class="language-javascript">{
-    "_id" : int,
-    "title" : string
-    "author" : int,
-    "available" : boolean,
-    "created_at" : date,
-    "created_by" : date,
-    "isbn" : string,
-    "language" : string,
-    "pages" : int,
-    "publisher" : {
-        "city" : string,
-        "name" : string
-    },
-    "slug" : string,
-    "subjects" : [ string, string ],
-    reviews: [
-       { "user": int, "text": string },
-       { "user": int, "text": string } ],
-}</code></pre>
+                        ## Book Schema
 
+<pre><code class="language-javascript">{
+    "_id": int,
+    "title": string,
+    "slug": string,
+    "author": int,
+    "available": boolean,
+    "isbn": string,
+    "pages": int,
+    "publisher": {
+        "city": string,
+        "date": date,
+        "name": string
+    },
+    "subjects": [ string, string ],
+    "language": string,
+    "reviews": [
+       { "user": int, "text": string },
+       { "user": int, "text": string }
+    ],
+}</code></pre>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Sample documents
+                        # Example Documents
                     </section>
 
                     <section data-markdown>
-<pre><code class="language-javascript">  db.authors.findOne()
+                        ## Author Document
+
+<pre><code class="language-javascript">&gt; db.authors.findOne()
 {
     _id: 1,
     first_name: "F. Scott",
@@ -274,7 +257,8 @@
                     </section>
 
                     <section data-markdown>
-<pre><code class="language-javascript">  db.users.findOne()
+                        ## User Document
+<pre><code class="language-javascript">&gt; db.users.findOne()
 {
     _id: 1,
     username: "emily@10gen.com",
@@ -283,32 +267,37 @@
                     </section>
 
                     <section data-markdown>
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Great Gatsbyss",
+                        ## Book Document
+
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
+    title: "The Great Gatsby",
     slug: "9781857150193-the-great-gatsby",
-    author:1,
+    author: 1,
     available: true,
     isbn: "9781857150193",
     pages: 176,
     publisher: {
-        publisher_name: "Everyman's Library",
+        name: "Everyman's Library",
         date: ISODate("1991-09-19T00:00:00Z"),
-        publisher_city: "London"
+        city: "London"
     },
     subjects: ["Love stories", "1920s", "Jazz Age"],
-    language: "English"
+    language: "English",
     reviews: [
-       { user: 1, text: "One of the best..."},
-       { user: 2, text: "It's hard to..."} ],
-
+       { user: 1, text: "One of the best…" },
+       { user: 2, text: "It's hard to…" }
+    ]
 }</code></pre>
                     </section>
                </section>
 
                <section>
                     <section data-markdown>
-                        # Embedded documents
+                        # Embedded Objects
+
+                        #### AKA embedded or sub-documents
 
                         What advantages do they have?
 
@@ -316,29 +305,33 @@
                     </section>
 
                     <section data-markdown>
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
     title: "The Great Gatsby",
     slug: "9781857150193-the-great-gatsby",
     author: 1,
     available: true,
     isbn: "9781857150193",
-    pages: 176,<div class="code-highlight">    publisher: {
-        publisher_name: "Everyman’s Library",
+    pages: 176,
+<span class="code-highlight inline-block">    publisher: {
+        name: "Everyman's Library",
         date: ISODate("1991-09-19T00:00:00Z"),
-        publisher_city: "London"
-    },</div>    subjects: ["Love stories", "1920s", "Jazz Age"],
-    language: "English"
+        city: "London"
+    },</span>
+    subjects: ["Love stories", "1920s", "Jazz Age"],
+    language: "English",
     reviews: [
-       { user: 1, text: "One of the best..."},
-       { user: 2, text: "It's hard to..."} ],
+       { user: 1, text: "One of the best…" },
+       { user: 2, text: "It's hard to…" }
+    ]
 }</code></pre>
                     </section>
                </section>
 
                <section>
                     <section data-markdown>
-                        # Linked documents
+                        # Linked Documents
 
                         What advantages does this approach have?
 
@@ -346,10 +339,13 @@
                     </section>
 
                     <section data-markdown>
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
     title: "The Great Gatsby",
-    slug: "9781857150193-the-great-gatsby",<div class="code-highlight">    author: 1, </div>    available: true,
+    slug: "9781857150193-the-great-gatsby",
+<span class="code-highlight inline-block">    author: 1,</span>
+    available: true,
     isbn: "9781857150193",
     pages: 176,
     publisher: {
@@ -358,17 +354,17 @@
         publisher_city: "London"
     },
     subjects: ["Love stories", "1920s", "Jazz Age"],
-    language: "English"
+    language: "English",
     reviews: [
-       { user: 1, text: "One of the best..."},
-       { user: 2, text: "It's hard to..."} ],
+       { <span class="code-highlight">user: 1</span>, text: "One of the best…" },
+       { <span class="code-highlight">user: 2</span>, text: "It's hard to…" }
+    ]
 }</code></pre>
                     </section>
 
-                    <section data-markdown>
-                        <img src="img/memory.png">
+                    <section>
+                        <img src="img/memory.png" alt="memory.jpg">
                     </section>
-
                 </section>
 
                 <section>
@@ -379,9 +375,11 @@
                     </section>
 
                     <section data-markdown>
-                        Array of Scalars
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
+                        ### Array of Scalars
+
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
     title: "The Great Gatsby",
     slug: "9781857150193-the-great-gatsby",
     author: 1,
@@ -389,18 +387,22 @@
     isbn: "9781857150193",
     pages: 176,
     publisher: {
-        publisher_name: "Everyman's Library",
+        name: "Everyman's Library",
         date: ISODate("1991-09-19T00:00:00Z"),
-        publisher_city: "London"
-    },<div class="code-highlight">    subjects: ["Love stories", "1920s", "Jazz Age"], </div>    language: "English"
+        city: "London"
+    },
+<span class="code-highlight inline-block">    subjects: ["Love stories", "1920s", "Jazz Age"],</span>
+    language: "English",
     reviews: [
-       { user: 1, text: "One of the best..."},
-       { user: 2, text: "It's hard to..."} ],
+       { user: 1, text: "One of the best…" },
+       { user: 2, text: "It's hard to…" }
+    ]
 }</code></pre>
-                     </section>
+                    </section>
 
                     <section data-markdown>
-                        Array of documents
+                        ### Array of Objects
+
 <pre><code class="language-javascript">  db.books.findOne()
 {   _id: 1,
     title: "The Great Gatsby",
@@ -410,69 +412,78 @@
     isbn: "9781857150193",
     pages: 176,
     publisher: {
-        publisher_name: "Everyman's Library",
+        name: "Everyman's Library",
         date: ISODate("1991-09-19T00:00:00Z"),
-        publisher_city: "London"
+        city: "London"
     },
     subjects: ["Love stories", "1920s", "Jazz Age"],
-    language: "English"<div class="code-highlight">    reviews: [
-       { user: 1, text: "One of the best..."},
-       { user: 2, text: "It’s hard to..."} ],</div>}</code></pre>
-                     </section>
-
+    language: "English",
+<span class="code-highlight inline-block">    reviews: [
+       { user: 1, text: "One of the best…" },
+       { user: 2, text: "It's hard to…" }
+    ],</span>
+}</code></pre>
+                    </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # Schema design in each phase of an application's lifetime
+                        ## Schema design over an application's lifetime
+
+                        * Development
+                        * Production
+                        * Iterative Modifications
                     </section>
                  </section>
 
                 <section>
                     <section data-markdown>
                         # Development Phase
-                        Basic CRUD functions
+
+                        Basic CRUD functionality
                     </section>
                  </section>
 
                  <section>
                     <section data-markdown>
-                        # Create
-<pre><code class="language-javascript">
-    author = {  _id: 2,
-               first_name: "Arthur",
-               last_name: "Miller"
-    }
+                        # Create<span class="crud">RUD</span>
 
-    db.authors.insert(author)
+<pre><code class="language-javascript">author = {
+    _id: 2,
+    first_name: "Arthur",
+    last_name: "Miller"
+};
 
-</code></pre>
-                        *  <a href="http://www.mongodb.org/display/DOCS/Object+IDs#ObjectIDs-BSONObjectIDSpecification">_id</a> is unique and automatically indexed
-                        * An ObjectId will be generated by MongoDB if not provided
+db.authors.insert(author);</code></pre>
+
+                        * The `_id` field is unique and automatically indexed
+                        * MongoDB will generate an [ObjectId](http://www.mongodb.org/display/DOCS/Object+IDs#ObjectIDs-BSONObjectIDSpecification) if omitted
                     </section>
-                 </section>
-                 <section>
+                </section>
+
+                <section>
                     <section data-markdown>
-                        # Read
-<pre><code class="language-javascript">
-    db.authors.find({ "last_name": "Miller" })
+                        # <span class="crud">C</span>Read<span class="crud">UD</span>
 
-    {  _id: 2,
-       first_name: "Arthur",
-       last_name: "Miller"
-    }
-
-</code></pre>
+<pre><code class="language-javascript">&gt; db.authors.find({ "last_name": "Miller" })
+{
+    _id: 2,
+    first_name: "Arthur",
+    last_name: "Miller"
+}</code></pre>
                     </section>
+
                     <section data-markdown>
-                        ## Add an Index
-<pre><code class="language-javascript">
-    db.books.ensureIndex({ "slug": 1 })
-</code></pre>
-                        ## Examine the query
-<pre><code class="language-javascript">
-  db.books.find({ "slug": "the-great-gatsby" }).explain()
-{<div class="code-highlight">    "cursor": "BtreeCursor slug_1",</div>    "isMultiKey" : false,
+                        ## Reads and Indexing
+
+                        Examine the query after creating an index.
+
+<pre><code class="language-javascript">&gt; db.books.ensureIndex({ "slug": 1 })
+
+&gt; db.books.find({ "slug": "the-great-gatsby" }).explain()
+{
+<span class="code-highlight inline-block">    "cursor": "BtreeCursor slug_1",</span>
+    "isMultiKey" : false,
     "n" : 1,
     "nscannedObjects" : 1,
     "nscanned" : 1,
@@ -481,141 +492,138 @@
     "nYields" : 0,
     "nChunkSkips" : 0,
     "millis" : 0,
-.....
-}
-</code></pre>
+    // Other fields follow…
+}</code></pre>
                     </section>
 
-                     <section data-markdown>
-                         ## Multi-key indexes on arrays
+                    <section data-markdown>
+                        ## Multi-key Indexes
 
-<pre><code class="language-javascript">
-     db.books.ensureIndex({ "subjects": 1 })
+                        Index all values in an array field.
 
-</code></pre>
+<pre><code class="language-javascript">db.books.ensureIndex({ "subjects": 1 });</code></pre>
                      </section>
 
                     <section data-markdown>
-                         ## Indexes on embedded document keys
+                         ## Indexing Embedded Fields
 
-<pre><code class="language-javascript">
-     db.books.ensureIndex({ "publisher.name": 1 })
+                         Index an embedded object's field.
 
-</code></pre>
+<pre><code class="language-javascript">db.books.ensureIndex({ "publisher.name": 1 })</code></pre>
                      </section>
 
                     <section data-markdown>
                         ## Query operators
 
                         * Conditional operators
-                            * <code>$all, $exists, $mod, $ne, $nin, $nor, $or, $and, $size, $type</code>
-                        * Regular Expressions
+                            * `$gt`, `$gte`, `$lt`, `$lte`, `$ne`, `$all`, `$in`, `$nin`, `$size`, `$and`, `$or`, `$nor`, `$mod`, `$type`, `$exists`
+                        * Regular expressions
                         * Value in an array
-                            * <code>$elemMatch</code>
-                        * Cursor methods
-                            * <code>count(), limit(), skip(), snapshot(), sort(), batchSize()</code>
+                            * `$elemMatch`
+                        * Cursor methods and modifiers
+                            * `count()`, `limit()`, `skip()`, `snapshot()`, `sort()`, `batchSize()`, `explain()`, `hint()`
                     </section>
                  </section>
 
                  <section>
                     <section data-markdown>
-                        # Update
-<pre><code class="language-javascript">
-     review = { user: 1, text: "I did NOT like this book." }
-     db.books.update({ _id: 1 }, {$push: {reviews: review }})
+                        # <span class="crud">CR</span>Update<span class="crud">D</span>
 
-</code></pre>
-                    </section>
-                    <section data-markdown data-state="two-col-list">
-                        ## Take advantage of atomic operations
+<pre><code class="language-javascript">review = {
+    user: 1,
+    text: "I did NOT like this book."
+};
 
-                        <div class="col-left">
-                            <div class="list">
-                                <ul>
-                                    <li><code>$set</code></li>
-                                    <li><code>$unset</code></li>
-                                    <li><code>$inc</code></li>
-                                    <li><code>$push</code></li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="col-right">
-                            <div class="list">
-                                <ul>
-                                    <li><code>$pushAll</code></li>
-                                    <li><code>$pull</code></li>
-                                    <li><code>$pullAll</code></li>
-                                    <li><code>$bit</code></li>
-                                </ul>
-                            </div>
-                        </div>
+db.books.update(
+    { _id: 1 },
+    { $push: { reviews: review }}
+);</code></pre>
                     </section>
 
+                    <section data-markdown>
+                        ## Atomic Modifiers
+
+                        Update specific fields within a document
+
+                        * `$set`, `$unset`
+                        * `$push`, `$pushAll`
+                        * `$addToSet`, `$pop`
+                        * `$pull`, `$pullAll`
+                        * `$rename`
+                        * `$bit`
+                    </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # Remove
-<pre><code class="language-javascript">
-     db.books.remove({ _id: 1 })
+                        # <span class="crud">CRU</span>Delete
 
-</code></pre>
+<pre><code class="language-javascript">db.books.remove({ _id: 1 })</code></pre>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
                         # Production Phase
-                        Evolve schema to meet application read and write patterns
+
+                        Evolve schema to meet the application's read and write patterns
                     </section>
                 </section>
 
                 <section>
-
                     <section data-markdown>
-                        ## Read usage
-                        Searches for author by first name
-<pre><code class="language-javascript">
-     authors = db.authors.find( { first_name: /^f.*/i }, {_id: 1})
-     authorIds = authors.map(function(x) { return x._id; })
-     db.books.find({author: { $in: authorIds } })
+                        ## Read Usage
 
-</code></pre>
+                        Finding books by an author's first name
+
+<pre><code class="language-javascript">authors = db.authors.find({ first_name: /^f.*/i }, { _id: 1 });
+
+authorIds = authors.map(function(x) { return x._id; });
+
+db.books.find({author: { $in: authorIds }});</code></pre>
                     </section>
+
                     <section data-markdown>
+                        ## Read Usage
+
                         "Cache" the author name in an embedded document
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Great Gatsby",
-<div class="code-highlight">    author: {
-              _id: 1,
-              first_name: "F. Scott",
-              last_name: "Fitzgerald"
-    },</div>    ...
-}</code></pre>
-                        Queries are now one step
-<pre><code class="language-javascript">
-  db.books.find({ author.first_name: /^f.*/i })
 
-</code></pre>
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
+    title: "The Great Gatsby",
+<span class="code-highlight inline-block">    author: {
+        first_name: "F. Scott",
+        last_name: "Fitzgerald"
+    }</span>
+    // Other fields follow…
+}</code></pre>
+
+                        Queries are now one step
+
+<pre><code class="language-javascript">db.books.find({ author.first_name: /^f.*/i })</code></pre>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Write usage
-                        Review a book
-<pre><code class="language-javascript">
-     review = { user: 1,
-                text: "I did NOT like this book.",
-                rating: 1 }
+                        ## Write Usage
 
-     db.books.update({ _id: 3 }, {$push: {reviews: review }})
+                        Users can review a book
 
-</code></pre>
-                        * 16mb document size limit
-                        * Possible storage fragmentation with many updates
+<pre><code class="language-javascript">review = {
+    user: 1,
+    text: "I thought this book was great!",
+    rating: 5
+};
+
+db.books.update(
+    { _id: 3 },
+    { $push: { reviews: review }}
+);</code></pre>
+
+                        * Document size limit (16MB)
+                        * Storage fragmentation after many updates
                     </section>
 
                 </section>
@@ -623,6 +631,7 @@
                 <section>
                     <section data-markdown>
                         # Iterative Modifications
+
                         Schema design is evolutionary
                     </section>
                 </section>
@@ -630,38 +639,62 @@
                 <section>
                     <section data-markdown>
                         ## Allow users to browse by book subject
-<pre><code class="language-javascript">  db.subjects.findOne()
-{   _id: 1,
+
+<pre><code class="language-javascript">&gt; db.subjects.findOne()
+{
+    _id: 1,
     name: "American Literature",
     sub_category: {
-                     name: "1920s",
-                     sub_category: { name: "Jazz Age" }
-                   }
+         name: "1920s",
+         sub_category: { name: "Jazz Age" }
+   }
 }</code></pre>
+
                         * How can you search this collection?
                         * Be aware of document size limitations
                         * Benefit from hierarchy being in same document
                     </section>
 
                     <section data-markdown>
-                        ## Implementing a tree structure
-<pre><code class="language-javascript">  db.subjects.find()
-{   _id: "American Literature"}
+                        ## Tree Structures
+
+<pre><code class="language-javascript">&gt; db.subjects.find()
+{   _id: "American Literature" }
+
 {   _id : "1920s",
-          ancestors: ["American Literature"],
-          parent: "American Literature"
+    ancestors: ["American Literature"],
+    parent: "American Literature"
 }
+
 {   _id: "Jazz Age",
-         ancestors: ["American Literature", "1920s"],
-         parent: "1920s"
+    ancestors: ["American Literature", "1920s"],
+    parent: "1920s"
 }
+
 {   _id: "Jazz Age in New York",
-         ancestors: ["American Literature", "1920s", "Jazz Age"],
-         parent: "Jazz Age"
+    ancestors: ["American Literature", "1920s", "Jazz Age"],
+    parent: "Jazz Age"
 }
 </code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Tree Structures
+
                         Find sub-categories of a given subject
-<pre><code class="language-javascript">  db.subjects.find({ ancestors: "1920s" })
+
+<pre><code class="language-javascript">&gt; db.subjects.find({ ancestors: "1920s" })
+{
+    _id: "Jazz Age",
+    ancestors: ["American Literature", "1920s"],
+    parent: "1920s"
+}
+
+{
+    _id: "Jazz Age in New York",
+    ancestors: ["American Literature", "1920s", "Jazz Age"],
+    parent: "Jazz Age"
+}
 </code></pre>
 
                     </section>
@@ -669,175 +702,245 @@
 
                 <section>
                     <section data-markdown>
-                        # Common patterns
+                        # Common Design Patterns
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # One-to-one
+                        # One-to-one Relationship
+
+                        Let's pretend that authors only write one book.
                     </section>
 
                     <section data-markdown>
                         # Linking
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Great Gatsby",
-    slug: "9781857150193-the-great-gatsby",<div class="code-highlight">    author: 1,</div>    ....
-}</code></pre>
 
-<pre><code class="language-javascript">  db.authors.findOne(1)
+                        Either side, or both, can track the relationship.
+
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
+    title: "The Great Gatsby",
+    slug: "9781857150193-the-great-gatsby",
+<span class="code-highlight inline-block">    author: 1,</span>
+    // Other fields follow…
+}
+
+&gt; db.authors.findOne({ _id: 1 })
 {
     _id: 1,
     first_name: "F. Scott",
     last_name: "Fitzgerald"
 }</code></pre>
                     </section>
+
                     <section data-markdown>
-                        ## Embedded document
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
+                        ## Embedded Object
+
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
     title: "The Great Gatsby",
-    slug: "9781857150193-the-great-gatsby",<div class="code-highlight">    author: {
-    first_name: "F. Scott",
-    last_name: "Fitzgerald"
-},</div>    ....
+    slug: "9781857150193-the-great-gatsby",
+<span class="code-highlight inline-block">    author: {
+        first_name: "F. Scott",
+        last_name: "Fitzgerald"
+    }</span>
+    // Other fields follow…
 }</code></pre>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # One-to-many
+                        # One-to-many Relationship
+
+                        In reality, authors may write multiple books.
                     </section>
 
                     <section data-markdown>
-                        ## Array of documents
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Great Gatsby",
-    slug: "9781857150193-the-great-gatsby",<div class="code-highlight">    authors: [
-      { first_name: "F. Scott",
-        last_name: "Fitzgerald"},
-      { first_name: "Another",
-        last_name: "Author"}
-     ],</div>    ....
-}</code></pre>
-                        * Use $slice operator to return a subset of authors
-                        * Some queries are more difficult, like finding last array element
-                    </section>
-                    <section data-markdown>
-                        ## Array of ids
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Great Gatsby",
-    slug: "9781857150193-the-great-gatsby",<div class="code-highlight">    authors: [1, 5]
-</div>    ....
-}</code></pre>
-                        * More flexible
-                        * More queries necessary
-                    </section>
-                    <section data-markdown>
-                        ## *direction is a choice
-<pre><code class="language-javascript">  db.authors.findOne()
+                        ## Array of ID's
+
+                        The "one" side tracks the relationship.
+
+<pre><code class="language-javascript">&gt; db.authors.findOne()
 {
     _id: 1,
     first_name: "F. Scott",
     last_name: "Fitzgerald",
-    books: [1, 3, 20]
+<span class="code-highlight inline-block">    books: [1, 3, 20]</span>
 }</code></pre>
+
+                        * Flexible and space-efficient
+                        * Additional query needed for non-ID lookups
+                    </section>
+
+                    <section data-markdown>
+                        ## Single Field with ID
+
+                        The "many" side tracks the relationship.
+
+<pre><code class="language-javascript">&gt; db.books.find({ author: 1 })
+{
+    _id: 1,
+    title: "The Great Gatsby",
+    slug: "9781857150193-the-great-gatsby",
+<span class="code-highlight inline-block">    author: 1,</span>
+    // Other fields follow…
+}
+
+{
+    _id: 3,
+    title: "This Side of Paradise",
+    slug: "9780679447238-this-side-of-paradise",
+<span class="code-highlight inline-block">    author: 1,</span>
+    // Other fields follow…
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Array of Objects
+
+<pre><code class="language-javascript">&gt; db.authors.findOne()
+{
+    _id: 1,
+    first_name: "F. Scott",
+    last_name: "Fitzgerald",
+<span class="code-highlight inline-block">    books: [
+        { _id: 1, title: "The Great Gatsby" },
+        { _id: 3, title: "This Side of Paradise" }
+    ]</span>
+    // Other fields follow…
+}</code></pre>
+
+                        Use `$slice` operator to return a subset of books
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # Many-to-many
+                        # Many-to-many Relationship
+
+                        Some books may also have co-authors.
                     </section>
 
                     <section data-markdown>
-                        ## Array of ids on both ends
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Great Gatsby",<div class="code-highlight">    authors: [1, 5]
-</div>    ....
+                        ## Array of ID's on Both Sides
+
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
+    title: "The Great Gatsby",
+<span class="code-highlight inline-block">    authors: [1, 5]</span>
+    // Other fields follow…
 }</code></pre>
 
-<pre><code class="language-javascript">  db.authors.findOne()
-{   _id: 1,
+<pre><code class="language-javascript">&gt; db.authors.findOne()
+{
+    _id: 1,
     first_name: "F. Scott",
-    last_name: "Fitzgerald",<div class="code-highlight">    books: [1, 3, 20]</div> }</code></pre>
+    last_name: "Fitzgerald",
+<span class="code-highlight inline-block">    books: [1, 3, 20]</span>
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Array of ID's on Both Sides
 
                         Query for all books by a given author
-<pre><code class="language-javascript">  db.books.find({ authors : 1 })
-</code></pre>
-                        Query for all authors of a given book
-<pre><code class="language-javascript">  db.authors.find({ book : 1 })
-</code></pre>
 
+<pre><code class="language-javascript">db.books.find({ authors: 1 });</code></pre>
+
+                        Query for all authors of a given book
+
+<pre><code class="language-javascript">db.authors.find({ books: 1 });</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## Array of ids on one end
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Great Gatsby",<div class="code-highlight">    authors: [1, 5]
-</div>    ....
+                        ## Array of ID's on One Side
+
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 1,
+    title: "The Great Gatsby",
+<span class="code-highlight inline-block">    authors: [1, 5]</span>
+    // Other fields follow…
 }</code></pre>
 
-<pre><code class="language-javascript">  db.authors.findOne()
-{   _id: 1,
+<pre><code class="language-javascript">&gt; db.authors.findOne({ _id: { $in: [1, 5] }})
+{
+    _id: 1,
     first_name: "F. Scott",
     last_name: "Fitzgerald"
+}
+
+{
+    _id: 5,
+    first_name: "Unknown",
+    last_name: "Co-author"
 }</code></pre>
-
-                        Query for all books by a given author
-<pre><code class="language-javascript">  db.books.find({ authors : 1 })
-</code></pre>
-                        Query for all authors of a given book
-<pre><code class="language-javascript">  book = db.books.findOne({ title : "The Great Gatsby" })
-  db.authors.find( { _id : { $in : book.authors }})
-</code></pre>
-
                     </section>
 
+                    <section data-markdown>
+                        ## Array of ID's on One Side
+
+                        Query for all books by a given author
+
+<pre><code class="language-javascript">db.books.find({ authors: 1 });</code></pre>
+
+                        Query for all authors of a given book
+
+<pre><code class="language-javascript">book = db.books.findOne(
+    { title: "The Great Gatsby" },
+    { authors: 1 }
+);
+
+db.authors.find({ _id: { $in: book.authors }});</code></pre>
+                    </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # Single collection inheritance
+                        ## Single-collection Inheritance
 
                         Take advantage of MongoDB's features
 
-                        * Missing values are not stored
-                        * Sparse indexes index only present values
+                        * Documents need not all have the same fields
+                        * [Sparse indexing](http://www.mongodb.org/display/DOCS/Indexes#Indexes-sparse%3Atrue) of only present fields
                     </section>
 
                     <section data-markdown>
                         ## Take advantage of MongoDB's flexibility
-<pre><code class="language-javascript">  db.books.findOne()
-{   _id: 1,
-    title: "The Wizard Chase",
-    series_title: "The Wizard's Trilogy",<div class="code-highlight">    volume: 2</div>    ....
-}</code></pre>
-                        Find all books that are part of a series
-<pre><code class="language-javascript">
-  db.books.find({ volume: { $exists: true }})
 
-</code></pre>
+<pre><code class="language-javascript">&gt; db.books.findOne()
+{
+    _id: 47,
+    title: "The Wizard Chase",
+<span class="code-highlight inline-block">    type: "series",
+    series_title: "The Wizard's Trilogy",
+    volume: 2</span>
+    // Other fields follow…
+}</code></pre>
+
+                        Find all books that are part of a series
+
+<pre><code class="language-javascript">db.books.find({ type: "series" });
+
+db.books.find({ series_title: { $exists: true }});
+
+db.books.find({ volume: { $gt: 0 }});</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## Index only present values
-<pre><code class="language-javascript">
-  db.books.ensureIndex({ series_title: 1 }, {sparse: true } )
+                        ## Index only present fields
 
-</code></pre>
-<pre><code class="language-javascript">
-  db.books.ensureIndex({ volume: 1 }, {sparse: true } )
+                        The indexes will omit documents without these fields.
 
-</code></pre>
+<pre><code class="language-javascript">&gt; db.books.ensureIndex({ series_title: 1 }, { sparse: true })
+
+&gt; db.books.ensureIndex({ volume: 1 }, { sparse: true })</code></pre>
                     </section>
-
                 </section>
 
                 <section>
@@ -991,7 +1094,7 @@ num = 0;
 while (cursor.hasNext() &amp;&amp; num &lt; 10) {
   doc = cursor.next();
 
-  for (var i = 0; i &lt; doc.reviews.length && num < 10; ++i, ++num) {
+  for (var i = 0; i &lt; doc.reviews.length && num &lt; 10; ++i, ++num) {
     printjson(doc.reviews[i]);
   }
 }</code></pre>
