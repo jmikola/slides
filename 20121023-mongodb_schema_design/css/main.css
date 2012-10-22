@@ -141,7 +141,7 @@ section.ul-2col > ul {
 section.ul-2col > ul > li {
     float: left;
     margin-top: 1em;
-    width: 49%;
+    width: 50%;
 }
 
 section.ul-2col > ul > li:nth-child(odd) {
