@@ -323,6 +323,7 @@
   ISBN: "9781857150193",
   available: true,
   pages: 218,
+  chapters: 9
   subjects: [
     "Long Island",
     "New York",
@@ -335,7 +336,9 @@
                         <div class="pipeline-step pipeline-op">
                             <span class="arrow">&#x25BA;</span>
                             <pre><code class="language-javascript">{ $project: {
-  upperTitle: { $toUpper: "$title" },
+  avgPagesPerChapter: {
+    $divide: ["$pages", "$chapters"]
+  },
   lang: "$language"
 }}</code></pre>
                             <span class="arrow">&#x25BC;</span>
@@ -343,7 +346,7 @@
 
                         <div class="pipeline-step pipeline-out">
                             <pre><code class="language-javascript">{ _id: 375,
-  upperTitle: "THE GREAT GATSBY",
+  avgPagesPerChapter: 24.22222222222222,
   lang: "English"
 }</code></pre>
                         </div>
