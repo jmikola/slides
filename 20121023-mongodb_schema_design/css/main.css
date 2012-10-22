@@ -27,6 +27,113 @@ section[data-state="title"] p.bio {
     background-size: contain;
 }
 
+@media screen {
+    .library .state-background {
+        background-position: top;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .library .state-background {
+        background-image: url("../img/library.jpeg");
+    }
+
+    section.bg {
+        background: rgba(0,0,0,0.66);
+    }
+}
+
+
+section[data-state="normalize-denormalize"] div.node-1,
+section[data-state="normalize-denormalize"] div.node-3 {
+    clear: both;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+section[data-state="normalize-denormalize"] div.node-3 > div {
+    display: inline-block;
+    margin-left: 4%;
+    width: 30%;
+    vertical-align: top;
+}
+
+section[data-state="normalize-denormalize"] div.node-3 > div:first-child {
+    margin-left: 0;
+}
+
+section[data-state="normalize-denormalize"] span.arrow {
+    display: inline;
+    font-size: 2em;
+    height: 1em;
+    line-height: 0.8em;
+    padding-bottom: 0.25em;
+    text-align: center;
+}
+
+section[data-state="normalize-denormalize"] div.node-3 > div:first-child > span.arrow { text-align: right; }
+section[data-state="normalize-denormalize"] div.node-3 > div:last-child > span.arrow { text-align: left; }
+
+section[data-state="normalize-denormalize"] div.node-1 > div,
+section[data-state="normalize-denormalize"] div.node-1 > span.arrow {
+    width: 30%;
+    margin: 0 auto;
+}
+
+section[data-state="normalize-denormalize"] div.node {
+    display: block;
+    background-color: #1d1f21;
+    box-shadow: 0px 0px 6px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 100%;
+}
+
+section[data-state="normalize-denormalize"] div.node > span.label {
+    display: block;
+}
+
+section[data-state="normalize-denormalize"] div.node > ul {
+    list-style: none;
+    margin: 0 0 0.25em;
+}
+
+section[data-state="normalize-denormalize"] div.node > ul > li {
+    font-size: 0.66em;
+    line-height: 1.2em;
+}
+
+section[data-state="normalize-denormalize"] sub {
+    font-size: 0.75em;
+}
+
+section[data-state="normalize-denormalize"] span.embedded-doc-obj {
+    margin-left:20px;
+    color:red;
+} 
+
+section[data-state="normalize-denormalize"] span.embedded-doc-attr {
+    margin-left:30px;
+    color:red;
+}
+
+section[data-state="two-col-list"] div.list > span.label {
+    display: block;
+}
+
+section[data-state="two-col-list"] div.col-left {
+    width: 49%;
+    float: left;
+}  
+ 
+section[data-state="two-col-list"] div.col-right {
+    width: 49%;
+    float: right;
+}
+
+section[data-state="two-col-list"] div.list-rich-types {
+    color: yellow;
+}
+
 section.ul-2col > ul {
     width: 100%;
 }
