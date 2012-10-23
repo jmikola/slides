@@ -177,7 +177,7 @@
                     </section>
 
                     <section data-markdown>
-                        ## Three Influences for Schema Design in MongoDB
+                        ## Three Considerations in MongoDB Schema Design
 
                         1. The data your application needs
                         2. Your application's read usage of the data
@@ -572,16 +572,19 @@
                     <section data-markdown>
                         # Create<span class="crud">RUD</span>
 
-<pre><code class="language-javascript">author = {
+<pre><code class="language-javascript">
+  author = {
     _id: 2,
     first_name: "Arthur",
     last_name: "Miller"
-};
+  };
 
-db.authors.insert(author);</code></pre>
+  db.authors.insert(author);
+
+</code></pre>
 
                         * The `_id` field is unique and automatically indexed
-                        * MongoDB will generate an [ObjectId](http://www.mongodb.org/display/DOCS/Object+IDs#ObjectIDs-BSONObjectIDSpecification) if omitted
+                        * MongoDB will generate an [ObjectId](http://www.mongodb.org/display/DOCS/Object+IDs#ObjectIDs-BSONObjectIDSpecification) if not provided
                     </section>
                 </section>
 
@@ -625,7 +628,10 @@ db.authors.insert(author);</code></pre>
 
                         Index all values in an array field.
 
-<pre><code class="language-javascript">db.books.ensureIndex({ "subjects": 1 });</code></pre>
+<pre><code class="language-javascript">
+  &gt; db.books.ensureIndex({ "subjects": 1 });
+
+</code></pre>
                      </section>
 
                     <section data-markdown>
@@ -633,7 +639,10 @@ db.authors.insert(author);</code></pre>
 
                          Index an embedded object's field.
 
-<pre><code class="language-javascript">db.books.ensureIndex({ "publisher.name": 1 })</code></pre>
+<pre><code class="language-javascript">  
+  &gt; db.books.ensureIndex({ "publisher.name": 1 }) 
+
+</code></pre>
                      </section>
 
                     <section data-markdown>
@@ -653,15 +662,18 @@ db.authors.insert(author);</code></pre>
                     <section data-markdown>
                         # <span class="crud">CR</span>Update<span class="crud">D</span>
 
-<pre><code class="language-javascript">review = {
+<pre><code class="language-javascript">
+  review = {
     user: 1,
     text: "I did NOT like this book."
-};
+  };
 
-db.books.update(
+  db.books.update(
     { _id: 1 },
     { $push: { reviews: review }}
-);</code></pre>
+  );
+
+</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -682,7 +694,10 @@ db.books.update(
                     <section data-markdown>
                         # <span class="crud">CRU</span>Delete
 
-<pre><code class="language-javascript">db.books.remove({ _id: 1 })</code></pre>
+<pre><code class="language-javascript">
+  &gt; db.books.remove({ _id: 1 })
+
+</code></pre>
                     </section>
                 </section>
 
@@ -700,11 +715,14 @@ db.books.update(
 
                         Finding books by an author's first name
 
-<pre><code class="language-javascript">authors = db.authors.find({ first_name: /^f.*/i }, { _id: 1 });
+<pre><code class="language-javascript">
+  authors = db.authors.find({ first_name: /^f.*/i }, { _id: 1 });
 
-authorIds = authors.map(function(x) { return x._id; });
+  authorIds = authors.map(function(x) { return x._id; });
 
-db.books.find({author: { $in: authorIds }});</code></pre>
+  db.books.find({author: { $in: authorIds }});
+
+</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -725,7 +743,10 @@ db.books.find({author: { $in: authorIds }});</code></pre>
 
                         Queries are now one step
 
-<pre><code class="language-javascript">db.books.find({ author.first_name: /^f.*/i })</code></pre>
+<pre><code class="language-javascript">
+  &gt; db.books.find({ author.first_name: /^f.*/i })
+
+</code></pre>
                     </section>
                 </section>
 
@@ -741,7 +762,7 @@ db.books.find({author: { $in: authorIds }});</code></pre>
     rating: 5
 };
 
-db.books.update(
+  &gt; db.books.update(
     { _id: 3 },
     { $push: { reviews: review }}
 );</code></pre>
@@ -793,7 +814,7 @@ db.books.update(
     created_at: ISODate("2012-10-13T12:26:11.502Z")
 };
 
-db.reviews.update(
+&gt; db.reviews.update(
       { _id: "bob-2012-10" },
       { $push: { reviews: myReview }}
 );</code></pre>
@@ -923,7 +944,7 @@ while (cursor.hasNext() &amp;&amp; num &lt; 10) {
                         * Ensure that updates are atomic
 
 <pre><code class="language-javascript">// Create a new loan request
-db.loans.insert({
+&gt; db.loans.insert({
     _id: { borrower: "bob", book: ObjectId("…") },
     pending: false,
     approved: false,
@@ -958,7 +979,7 @@ request = db.loans.findAndModify({
                         ### Exercise #3: Solution
 
 <pre><code class="language-javascript">// Library approves the loan request
-db.loans.update(
+&gt; db.loans.update(
     { _id: { borrower: "bob", book: ObjectId("…") }},
     { $set: { pending: false, approved: true }}
 );</code></pre>
@@ -971,7 +992,7 @@ db.loans.update(
 limit = new Date();
 limit.setDate(limit.getDate() - 7);
 
-db.loans.update(
+&gt; db.loans.update(
     { pending: true, started: { $lt: limit }},
     { $set: { pending: false, approved: false }}
 );</code></pre>
@@ -992,19 +1013,19 @@ db.loans.update(
                         ### Exercise #4: Solution
 
 <pre><code class="language-javascript">// db.recommendations (one document per user per book)
-db.recommendations.insert({
+&gt; db.recommendations.insert({
     book: ObjectId("…"),
     user: ObjectId("…")
 });
 
 // Unique index ensures users can't recommend twice
-db.recommendations.ensureIndex(
+&gt; db.recommendations.ensureIndex(
     { book: 1, user: 1 },
     { unique: true }
 );
 
 // Count the number of recommendations for a book
-db.recommendations.count({ book: ObjectId("…") });</code></pre>
+&gt; db.recommendations.count({ book: ObjectId("…") });</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -1014,7 +1035,7 @@ db.recommendations.count({ book: ObjectId("…") });</code></pre>
                         * Counts are computed via index scans
                         * Denormalize totals on books
 
-<pre><code class="language-javascript">db.books.update(
+<pre><code class="language-javascript">&gt; db.books.update(
     { _id: ObjectId("…") },
     { $inc: { recommendations: 1 }}
 });</code></pre>
@@ -1172,11 +1193,17 @@ db.recommendations.count({ book: ObjectId("…") });</code></pre>
 
                         Query for all books by a given author
 
-<pre><code class="language-javascript">db.books.find({ authors: 1 });</code></pre>
+<pre><code class="language-javascript">
+&gt; db.books.find({ authors: 1 });
+
+</code></pre>
 
                         Query for all authors of a given book
 
-<pre><code class="language-javascript">db.authors.find({ books: 1 });</code></pre>
+<pre><code class="language-javascript">
+&gt; db.authors.find({ books: 1 });
+
+</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -1209,7 +1236,10 @@ db.recommendations.count({ book: ObjectId("…") });</code></pre>
 
                         Query for all books by a given author
 
-<pre><code class="language-javascript">db.books.find({ authors: 1 });</code></pre>
+<pre><code class="language-javascript">
+  &gt; db.books.find({ authors: 1 });
+
+</code></pre>
 
                         Query for all authors of a given book
 
@@ -1235,7 +1265,7 @@ db.authors.find({ _id: { $in: book.authors }});</code></pre>
                         ### Exercise #5: Solution A
 
 <pre><code class="language-javascript">// db.rec_ts (time series buckets, hour and minute sub-docs)
-db.rec_ts.insert({
+&gt; db.rec_ts.insert({
     book: ObjectId("…"),
     day: ISODate("2012-10-11T00:00:00.000Z")
     total: 0,
@@ -1244,7 +1274,7 @@ db.rec_ts.insert({
 });
 
 // Record a recommendation created one minute before midnight
-db.rec_ts.update(
+&gt; db.rec_ts.update(
     { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
     { $inc: { total: 1, "hour.23": 1, "minute.1439": 1 }}
 });</code></pre>
@@ -1293,7 +1323,7 @@ db.rec_ts.update(
                         ### Exercise #5: Solution B
 
 <pre><code class="language-javascript">// db.rec_ts (time series buckets, each hour a sub-doc)
-db.rec_ts.insert({
+&gt; db.rec_ts.insert({
     book: ObjectId("…"),
     day: ISODate("2012-10-11T00:00:00.000Z")
     total: 148,
@@ -1306,7 +1336,7 @@ db.rec_ts.insert({
 });
 
 // Record a recommendation created one minute before midnight
-db.rec_ts.update(
+&gt; db.rec_ts.update(
     { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
     { $inc: { total: 1, "hour.23.total": 1, "hour.23.1439": 1 }}
 });</code></pre>
@@ -1340,9 +1370,9 @@ db.rec_ts.update(
 
 <pre><code class="language-javascript">db.books.find({ type: "series" });
 
-db.books.find({ series_title: { $exists: true }});
+&gt; db.books.find({ series_title: { $exists: true }});
 
-db.books.find({ volume: { $gt: 0 }});</code></pre>
+&gt; db.books.find({ volume: { $gt: 0 }});</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -1367,14 +1397,14 @@ db.books.find({ volume: { $gt: 0 }});</code></pre>
                         ## Exercise #6: Solution
 
 <pre><code class="language-javascript">// db.user_recs (track user's remaining and given recommendations)
-db.user_recs.insert({
+&gt; db.user_recs.insert({
     _id: "bob",
     remaining: 8,
     books: [3, 10]
 });
 
 // Record a recommendation if possible
-db.user_recs.update(
+&gt; db.user_recs.update(
     { _id: "bob", remaining: { $gt: 0 }, books: { $ne: 4 }},
     { $inc: { remaining: -1 }, $push: { books: 4 }}
 });</code></pre>
@@ -1495,9 +1525,9 @@ db.user_recs.update(
                     <section data-markdown>
                         ## Sharding a Collection
 
-<pre><code class="language-javascript">db.runCommand({ addshard : "shard1.example.com" });
+<pre><code class="language-javascript">&gt; db.runCommand({ addshard : "shard1.example.com" });
 
-db.runCommand({
+&gt; db.runCommand({
     shardCollection: "library.books",
     key: { _id : 1}
 });</code></pre>
@@ -1509,10 +1539,10 @@ db.runCommand({
                     <section data-markdown>
                         ## Sharding Data by Chunks
 
-<pre><code class="language-javascript">db.books.save({ _id: 35, title: "Call of the Wild" });
-db.books.save({ _id: 40, title: "Tropic of Cancer" });
-db.books.save({ _id: 45, title: "The Jungle" });
-db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
+<pre><code class="language-javascript">&gt; db.books.save({ _id: 35, title: "Call of the Wild" });
+&gt; db.books.save({ _id: 40, title: "Tropic of Cancer" });
+&gt; db.books.save({ _id: 45, title: "The Jungle" });
+&gt; db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
 
                         <div class="node-3">
                             <div class="node">
@@ -1559,7 +1589,10 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
                     <section data-markdown>
                         ## Adding New Shards
 
-<pre><code class="language-javascript">db.runCommand({ addshard : "shard2.example.com" });</code></pre>
+<pre><code class="language-javascript">
+  &gt; db.runCommand({ addshard : "shard2.example.com" });
+
+</code></pre>
 
                         <div class="node-3">
                             <div class="node">
@@ -1588,7 +1621,10 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
                     <section data-markdown>
                         ## Adding New Shards
 
-<pre><code class="language-javascript">db.runCommand({ addshard : "shard3.example.com" });</code></pre>
+<pre><code class="language-javascript">
+  &gt; db.runCommand({ addshard : "shard3.example.com" });
+
+</code></pre>
 
                         <div class="node-3">
                             <div class="node">
@@ -1722,11 +1758,11 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
                     <section data-markdown>
                         # Summary
 
-                        * Schema design is different in MongoDB
-                        * Basic data design principles stay the same
-                        * Focus on how the application manipulates data
-                        * Evolve schema to meet your requirements
-                        * Consider sharding early
+                        * Schema design is different in MongoDB.
+                        * Basic data design principles apply.
+                        * It's about your application.
+                        * It's about your data and how it's used.
+                        * It's about the entire lifetime of your application.
                     </section>
 
                     <section data-markdown data-state="final">
@@ -1735,56 +1771,7 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
                         ### Questions?
                     </section>
                 </section>
-
-                <section>
-                    <section data-markdown>
-                        ## Exercise #8
-
-                        Users can upload images for books
-
-                        <br>
-                        <div class="node-3">
-                            <div class="node">
-                                <span class="label">images</span>
-                                <ul>
-                                    <li><code>image_id: ???</code></li>
-                                    <li><code>data: binary</code></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <br>
-
-                        What should `image_id` be?
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #8: Solutions
-
-                        What's the best shard key for our use case?
-
-                        * Auto-increment (ObjectId)
-                        * MD5 of data
-                        * Time (e.g. month) and MD5
-                    </section>
-
-                    <section data-markdown>
-                        ## Right-balanced Access
-
-                        <img src="img/shard_key-1.png" alt="shard_key-1.png">
-                    </section>
-
-                    <section data-markdown>
-                        ## Random Access
-
-                        <img src="img/shard_key-2.png" alt="shard_key-2.png">
-                    </section>
-
-                    <section data-markdown>
-                        ## Segmented Access
-
-                        <img src="img/shard_key-3.png" alt="shard_key-3.png">
-                    </section>
-                </section>
+               
             </div>
 
             <div class="footer"></div>
