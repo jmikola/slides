@@ -305,6 +305,8 @@
                     </section>
 
                     <section data-markdown>
+                        ## Embedded Objects
+
 <pre><code class="language-javascript">&gt; db.books.findOne()
 {
     _id: 1,
@@ -327,6 +329,15 @@
     ]
 }</code></pre>
                     </section>
+
+                    <section data-markdown>
+                        ## Embedded Objects
+
+                        * Great for read performance
+                        * One seek to load the entire document
+                        * One round trip to the database
+                        * Writes can be slow if constantly adding to objects
+                    </section>
                </section>
 
                <section>
@@ -339,6 +350,8 @@
                     </section>
 
                     <section data-markdown>
+                        ## Linked Documents
+
 <pre><code class="language-javascript">&gt; db.books.findOne()
 {
     _id: 1,
@@ -360,6 +373,15 @@
        { <span class="code-highlight">user: 2</span>, text: "It's hard to…" }
     ]
 }</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Linked Documents
+
+                        * More, smaller documents
+                        * Can make queries by ID very simple
+                        * Accessing linked document data requires extra read
+                        * What effect does this have on the system?
                     </section>
 
                     <section data-markdown>
@@ -395,7 +417,7 @@
                     </section>
 
                     <section data-markdown>
-                        ### Array of Scalars
+                        ## Array of Scalars
 
 <pre><code class="language-javascript">&gt; db.books.findOne()
 {
@@ -421,7 +443,7 @@
                     </section>
 
                     <section data-markdown>
-                        ### Array of Objects
+                        ## Array of Objects
 
 <pre><code class="language-javascript">  db.books.findOne()
 {   _id: 1,
@@ -447,8 +469,90 @@
                 </section>
 
                 <section>
+                    <section data-markdown class="ul-2col">
+                        ## Exercise #1
+
+                        Design a schema for users and their book reviews
+
+                        * Users
+                            * username (string)
+                            * email (string)
+                        * Reviews
+                            * text (string)
+                            * rating (integer)
+                            * created_at (date)
+
+                        *Usernames are immutable*
+                    </section>
+
                     <section data-markdown>
-                        ## Schema design over an application's lifetime
+                        ### Exercise #1: Solution A
+
+                        Reviews may be queried by user or book
+
+<pre><code class="language-javascript">// db.users (one document per user)
+{   _id: ObjectId("…"),
+    username: "bob",
+    email: "bob@example.com"
+}</code></pre>
+
+<pre><code class="language-javascript">// db.reviews (one document per review)
+{   _id: ObjectId("…"),
+    user: ObjectId("…"),
+    book: ObjectId("…"),
+    rating: 5,
+    text: "This book is excellent!",
+    created_at: ISODate("2012-10-10T21:14:07.096Z")
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #1: Solution B
+
+                        Optimized to retrieve reviews by user
+
+<pre><code class="language-javascript">// db.users (one document per user with all reviews)
+{   _id: ObjectId("…"),
+    username: "bob",
+    email: "bob@example.com",
+    reviews: [
+        {   book: ObjectId("…"),
+            rating: 5,
+            text: "This book is excellent!",
+            created_at: ISODate("2012-10-10T21:14:07.096Z")
+        }
+    ]
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #1: Solution C
+
+                        Optimized to retrieve reviews by book
+
+<pre><code class="language-javascript">// db.users (one document per user)
+{   _id: ObjectId("…"),
+    username: "bob",
+    email: "bob@example.com"
+}</code></pre>
+
+<pre><code class="language-javascript">// db.books (one document per book with all reviews)
+{   _id: ObjectId("…"),
+    // Other book fields…
+    reviews: [
+        {   user: ObjectId("…"),
+            rating: 5,
+            text: "This book is excellent!",
+            created_at: ISODate("2012-10-10T21:14:07.096Z")
+        }
+    ]
+}</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Schema Design Over an Application's Lifetime
 
                         * Development
                         * Production
@@ -645,7 +749,87 @@ db.books.update(
                         * Document size limit (16MB)
                         * Storage fragmentation after many updates/deletes
                     </section>
+                </section>
 
+                <section>
+                    <section data-markdown>
+                        ## Exercise #2
+
+                        * Display the 10 most recent reviews by a user
+                        * Make efficient use of memory and disk seeks
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Store users' reviews in monthly buckets
+
+<pre><code class="language-javascript">// db.reviews (one document per user per month)
+{   _id: "bob-201210",
+    reviews: [
+        {   _id: ObjectId("…"),
+            rating: 5,
+            text: "This book is excellent!",
+            created_at: ISODate("2012-10-10T21:14:07.096Z")
+        },
+        {   _id: ObjectId("…"),
+            rating: 2,
+            text: "I didn't really enjoy this book.",
+            created_at: ISODate("2012-10-11T20:12:50.594Z")
+        }
+    ]
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Adding a new review to the appropriate bucket
+
+<pre><code class="language-javascript">myReview = {
+    _id: ObjectId("…"),
+    rating: 3,
+    text: "An average read.",
+    created_at: ISODate("2012-10-13T12:26:11.502Z")
+};
+
+db.reviews.update(
+      { _id: "bob-2012-10" },
+      { $push: { reviews: myReview }}
+);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Display the 10 most recent reviews by a user
+
+<pre><code class="language-javascript">cursor = db.reviews.find(
+    { _id: /^bob-/ },
+    { reviews: { $slice: 10 }}
+).sort({ _id: -1 });
+
+num = 0;
+
+while (cursor.hasNext() &amp;&amp; num &lt; 10) {
+    doc = cursor.next();
+
+    for (var i = 0; i &lt; doc.reviews.length && num &lt; 10; ++i, ++num) {
+        printjson(doc.reviews[i]);
+    }
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #2: Solution
+
+                        Deleting a review
+
+<pre><code class="language-javascript">cursor = db.reviews.update(
+    { _id: "bob-2012-10" },
+    { $pull: { reviews: { _id: ObjectId("…") }}}
+);</code></pre>
+                    </section>
                 </section>
 
                 <section>
@@ -722,6 +906,123 @@ db.books.update(
 
                 <section>
                     <section data-markdown>
+                        ## Exercise #3
+
+                        * Allow users to borrow library books
+                            * User sends a loan request
+                            * Library approves or not
+                            * Requests time out after seven days
+                        * Approval process is asynchronous
+                        * Requests may be prioritized
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+                        * Need to maintain order and state
+                        * Ensure that updates are atomic
+
+<pre><code class="language-javascript">// Create a new loan request
+db.loans.insert({
+    _id: { borrower: "bob", book: ObjectId("…") },
+    pending: false,
+    approved: false,
+    priority: 1,
+});
+
+// Find the highest priority request and mark as pending approval
+request = db.loans.findAndModify({
+<span class="code-highlight inline-block">    query: { pending: false },
+    sort: { priority: -1 },</span>
+    update: { $set: { pending: true, started: new ISODate() }},
+    new: true
+});</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+                        * Updated and added fields
+                        * Modified document was returned
+
+<pre><code class="language-javascript">{
+    _id: { borrower: "bob", book: ObjectId("…") },
+<span class="code-highlight inline-block">    pending: true,</span>
+    approved: false,
+    priority: 1,
+<span class="code-highlight inline-block">    started: ISODate("2012-10-11T22:09:42.542Z")</span>
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+<pre><code class="language-javascript">// Library approves the loan request
+db.loans.update(
+    { _id: { borrower: "bob", book: ObjectId("…") }},
+    { $set: { pending: false, approved: true }}
+);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #3: Solution
+
+<pre><code class="language-javascript">// Request times out after seven days
+limit = new Date();
+limit.setDate(limit.getDate() - 7);
+
+db.loans.update(
+    { pending: true, started: { $lt: limit }},
+    { $set: { pending: false, approved: false }}
+);</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #4
+
+                        Allow users to recommend books
+
+                        * Users can recommend each book only once
+                        * Display a book's current recommendations
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #4: Solution
+
+<pre><code class="language-javascript">// db.recommendations (one document per user per book)
+db.recommendations.insert({
+    book: ObjectId("…"),
+    user: ObjectId("…")
+});
+
+// Unique index ensures users can't recommend twice
+db.recommendations.ensureIndex(
+    { book: 1, user: 1 },
+    { unique: true }
+);
+
+// Count the number of recommendations for a book
+db.recommendations.count({ book: ObjectId("…") });</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #4: Solution
+
+                        * Indexes in MongoDB are not counting
+                        * Counts are computed via index scans
+                        * Denormalize totals on books
+
+<pre><code class="language-javascript">db.books.update(
+    { _id: ObjectId("…") },
+    { $inc: { recommendations: 1 }}
+});</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
                         # Common Design Patterns
                     </section>
                 </section>
@@ -734,7 +1035,7 @@ db.books.update(
                     </section>
 
                     <section data-markdown>
-                        # Linking
+                        ## Linking
 
                         Either side, or both, can track the relationship.
 
@@ -923,16 +1224,107 @@ db.authors.find({ _id: { $in: book.authors }});</code></pre>
 
                 <section>
                     <section data-markdown>
+                        ## Exercise #5
+
+                        * Tracking time series data
+                            * Graph recommendations per unit of time
+                            * Count by: day, hour, minute
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #5: Solution A
+
+<pre><code class="language-javascript">// db.rec_ts (time series buckets, hour and minute sub-docs)
+db.rec_ts.insert({
+    book: ObjectId("…"),
+    day: ISODate("2012-10-11T00:00:00.000Z")
+    total: 0,
+    hour:   { "0": 0, "1": 0, /* … */ "23": 0 },
+    minute: { "0": 0, "1": 0, /* … */ "1439": 0 }
+});
+
+// Record a recommendation created one minute before midnight
+db.rec_ts.update(
+    { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
+    { $inc: { total: 1, "hour.23": 1, "minute.1439": 1 }}
+});</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## BSON Storage
+
+                        * Sequence of key/value pairs
+                        * Not a hash map
+                        * Optimized to scan quickly
+
+                        <br>
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">minute</span>
+                                <small><code>[0] [1] … [1439]</code></small>
+                            </div>
+                        </div>
+
+                        What is the cost of updating the minute before midnight?
+                    </section>
+
+                    <section data-markdown>
+                        ## BSON Storage
+
+                        We can skip sub-documents
+
+                        <br>
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">hour<sub>0</sub></span>
+                                <small><code>[0] [1] … [59]</code></small>
+                            </div>
+                            <div class="arrow">…</div>
+                            <div class="node">
+                                <span class="label">hour<sub>23</sub></span>
+                                <small><code>[1380] … [1439]</code></small>
+                            </div>
+                        </div>
+
+                        How could this change the schema?
+                    </section>
+
+                    <section data-markdown>
+                        ### Exercise #5: Solution B
+
+<pre><code class="language-javascript">// db.rec_ts (time series buckets, each hour a sub-doc)
+db.rec_ts.insert({
+    book: ObjectId("…"),
+    day: ISODate("2012-10-11T00:00:00.000Z")
+    total: 148,
+    hour: {
+        "0": { total: 7, "0": 0, /* … */ "59": 2 },
+        "1": { total: 3, "60": 1, /* … */ "119": 0 },
+        // Other hours…
+        "23": { total: 12, "1380": 0, /* … */ "1439": 3 }
+    }
+});
+
+// Record a recommendation created one minute before midnight
+db.rec_ts.update(
+    { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
+    { $inc: { total: 1, "hour.23.total": 1, "hour.23.1439": 1 }}
+});</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
                         ## Single-collection Inheritance
 
                         Take advantage of MongoDB's features
 
                         * Documents need not all have the same fields
-                        * [Sparse indexing](http://www.mongodb.org/display/DOCS/Indexes#Indexes-sparse%3Atrue) of only present fields
+                        * [Sparsely index](http://www.mongodb.org/display/DOCS/Indexes#Indexes-sparse%3Atrue) only present fields
                     </section>
 
                     <section data-markdown>
-                        ## Take advantage of MongoDB's flexibility
+                        ## Schema Flexibility
 
 <pre><code class="language-javascript">&gt; db.books.findOne()
 {
@@ -954,13 +1346,123 @@ db.books.find({ volume: { $gt: 0 }});</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## Index only present fields
+                        ## Index Only Present Fields
 
                         Documents without these fields will not be indexed.
 
 <pre><code class="language-javascript">&gt; db.books.ensureIndex({ series_title: 1 }, { sparse: true })
 
 &gt; db.books.ensureIndex({ volume: 1 }, { sparse: true })</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #6
+
+                        Users can recommend at most 10 books
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #6: Solution
+
+<pre><code class="language-javascript">// db.user_recs (track user's remaining and given recommendations)
+db.user_recs.insert({
+    _id: "bob",
+    remaining: 8,
+    books: [3, 10]
+});
+
+// Record a recommendation if possible
+db.user_recs.update(
+    { _id: "bob", remaining: { $gt: 0 }, books: { $ne: 4 }},
+    { $inc: { remaining: -1 }, $push: { books: 4 }}
+});</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #6: Solution
+
+                        * One less unassigned recommendation remaining
+                        * Newly-recommended book is now linked
+
+<pre><code class="language-javascript">&gt; db.user_recs.findOne()
+{
+    _id: "bob",
+<span class="code-highlight inline-block">    remaining: 7,
+    books: [3, 10, 4]</span>
+}</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #7
+
+                        * Statistic buckets
+                            * Each book has a listing page in our application
+                            * Record referring website domains for each book
+                            * Count each domain independently
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #7: Solution A
+
+<pre><code class="language-javascript">&gt; db.book_refs.findOne()
+{   book: 1,
+    referrers: [
+        { domain: "google.com", count: 4 },
+        { domain: "yahoo.com", count: 1 }
+    ]
+}</code></pre>
+
+<pre><code class="language-javascript">&gt; db.book_refs.update(
+    { book: 1, "referrers.domain": "google.com" },
+    { $inc: { "referrers.$.count": 1 }}
+);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #7: Solution A
+
+                        Update the position of the first matched element.
+
+<pre><code class="language-javascript">&gt; db.book_refs.update(
+    { book: 1, "referrers.domain": "google.com" },
+    { $inc: { <span class="code-highlight">"referrers.$.count"</span>: 1 }}
+);</code></pre>
+
+<pre><code class="language-javascript">&gt; db.book_refs.findOne()
+{   book: 1,
+    referrers: [
+<span class="code-highlight inline-block">        { domain: "google.com", count: 5 },</span>
+        { domain: "yahoo.com", count: 1 }
+    ]
+}</code></pre>
+
+                        What if a new referring website is used?
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #7: Solution B
+
+<pre><code class="language-javascript">&gt; db.book_refs.findOne()
+{   book: 1,
+    referrers: [
+        { "google_com": 5 },
+        { "yahoo_com": 1 }
+    ]
+}</code></pre>
+
+<pre><code class="language-javascript">&gt; db.book_refs.update(
+    { book: 1 },
+    { $inc: { "referrers.bing_com": 1 }},
+    true
+);</code></pre>
+
+                        * Replace dots with underscores for key names
+                        * Increment to add a new referring website
+                        * Upsert in case this is the book's first referrer
                     </section>
                 </section>
 
@@ -1166,488 +1668,71 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
 
                 <section>
                     <section data-markdown>
-                        # I Like Turtles
-                    </section>
-                </section>
+                        ## Exercise #8
 
-                <section>
-                    <section data-markdown class="ul-2col">
-                        ## Exercise #1
-
-                        Design a schema for users and their book reviews
-
-                        * Users
-                            * username (string)
-                            * email (string)
-                        * Reviews
-                            * text (string)
-                            * rating (integer)
-                            * created_at (date)
-
-                        *Usernames are immutable*
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #1: Solution A
-
-                        Reviews may be queried by user or book
-
-<pre><code class="language-javascript">// db.users (one document per user)
-{   _id: ObjectId("…"),
-    username: "bob",
-    email: "bob@example.com"
-}</code></pre>
-
-<pre><code class="language-javascript">// db.reviews (one document per review)
-{   _id: ObjectId("…"),
-    user: ObjectId("…"),
-    book: ObjectId("…"),
-    rating: 5,
-    text: "This book is excellent!",
-    created_at: ISODate("2012-10-10T21:14:07.096Z")
-}</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #1: Solution B
-
-                        Optimized to retrieve reviews by user
-
-<pre><code class="language-javascript">// db.users (one document per user with all reviews)
-{   _id: ObjectId("…"),
-    username: "bob",
-    email: "bob@example.com",
-    reviews: [
-        {   book: ObjectId("…"),
-            rating: 5,
-            text: "This book is excellent!",
-            created_at: ISODate("2012-10-10T21:14:07.096Z")
-        }
-    ]
-}</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #1: Solution C
-
-                        Optimized to retrieve reviews by book
-
-<pre><code class="language-javascript">// db.users (one document per user)
-{   _id: ObjectId("…"),
-    username: "bob",
-    email: "bob@example.com"
-}</code></pre>
-
-<pre><code class="language-javascript">// db.books (one document per book with all reviews)
-{   _id: ObjectId("…"),
-    // Other book fields…
-    reviews: [
-        {   user: ObjectId("…"),
-            rating: 5,
-            text: "This book is excellent!",
-            created_at: ISODate("2012-10-10T21:14:07.096Z")
-        }
-    ]
-}</code></pre>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        ## Exercise #2
-
-                        * Display a user's most recent 10 book reviews
-                        * Make efficient use of memory and disk seeks
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #2: Solution
-
-                        Store users' reviews in monthly buckets
-
-<pre><code class="language-javascript">// db.reviews (one document per user per month)
-{   _id: "bob-201210",
-    reviews: [
-        {   _id: ObjectId("…"),
-            rating: 5,
-            text: "This book is excellent!",
-            created_at: ISODate("2012-10-10T21:14:07.096Z")
-        },
-        {   _id: ObjectId("…"),
-            rating: 2,
-            text: "I didn't really enjoy this book.",
-            created_at: ISODate("2012-10-11T20:12:50.594Z")
-        }
-    ]
-}</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #2: Solution
-
-                        Adding a new review to the appropriate bucket
-
-<pre><code class="language-javascript">myReview = {
-    _id: ObjectId("…"),
-    rating: 3,
-    text: "An average read.",
-    created_at: ISODate("2012-10-13T12:26:11.502Z")
-};
-
-db.reviews.update(
-      { _id: "bob-2012-10" },
-      { $push: { reviews: myReview }}
-);</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #2: Solution
-
-                        Display a user's most recent 10 book reviews
-
-<pre><code class="language-javascript">cursor = db.reviews.find(
-    { _id: /^bob-/ },
-    { reviews: { $slice: 10 }}
-).sort({ _id: -1 });
-
-num = 0;
-
-while (cursor.hasNext() &amp;&amp; num &lt; 10) {
-    doc = cursor.next();
-
-    for (var i = 0; i &lt; doc.reviews.length && num &lt; 10; ++i, ++num) {
-        printjson(doc.reviews[i]);
-    }
-}</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #2: Solution
-
-                        Deleting a review
-
-<pre><code class="language-javascript">cursor = db.reviews.update(
-    { _id: "bob-2012-10" },
-    { $pull: { reviews: { _id: ObjectId("…") }}}
-);</code></pre>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        ## Exercise #3
-
-                        * Allow users to borrow library books
-                            * User sends a loan request
-                            * Library approves or not
-                            * Requests time out after seven days
-                        * Approval process is asynchronous
-                        * Requests may be prioritized
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #3: Solution
-
-                        * Need to maintain order and state
-                        * Ensure that updates are atomic
-
-<pre><code class="language-javascript">// Create a new loan request
-db.loans.insert({
-    _id: { borrower: "bob", book: ObjectId("…") },
-    pending: false,
-    approved: false,
-    priority: 1,
-});
-
-// Find the highest priority request and mark as pending approval
-request = db.loans.findAndModify({
-<span class="code-highlight inline-block">    query: { pending: false },
-    sort: { priority: -1 },</span>
-    update: { $set: { pending: true, started: new ISODate() }},
-    new: true
-});</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #3: Solution
-
-                        * Updated and added fields
-                        * Modified document was returned
-
-<pre><code class="language-javascript">{
-    _id: { borrower: "bob", book: ObjectId("…") },
-<span class="code-highlight inline-block">    pending: true,</span>
-    approved: false,
-    priority: 1,
-<span class="code-highlight inline-block">    started: ISODate("2012-10-11T22:09:42.542Z")</span>
-}</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #3: Solution
-
-<pre><code class="language-javascript">// Library approves the loan request
-db.loans.update(
-    { _id: { borrower: "bob", book: ObjectId("…") }},
-    { $set: { pending: false, approved: true }}
-);</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Exercise #3: Solution
-
-<pre><code class="language-javascript">// Request times out after seven days
-limit = new Date();
-limit.setDate(limit.getDate() - 7);
-
-db.loans.update(
-    { pending: true, started: { $lt: limit }},
-    { $set: { pending: false, approved: false }}
-);</code></pre>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        ## Exercise #4
-
-                        Allow users to recommend books
-
-                        * Users can recommend each book only once
-                        * Display a book's current recommendations
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #4: Solution
-
-<pre><code class="language-javascript">// db.recommendations (one document per user per book)
-db.recommendations.insert({
-    book: ObjectId("…"),
-    user: ObjectId("…")
-});
-
-// Unique index ensures users can't recommend twice
-db.recommendations.ensureIndex(
-    { book: 1, user: 1 },
-    { unique: true }
-);
-
-// Count the number of recommendations for a book
-db.recommendations.count({ book: ObjectId("…") });</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #4: Solution
-
-                        * Indexes in MongoDB are not counting
-                        * Counts are computed via index scans
-                        * Denormalize totals on books
-
-<pre><code class="language-javascript">db.books.update(
-    { _id: ObjectId("…") },
-    { $inc: { recommendations: 1 }}
-});</code></pre>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        ## Exercise #5
-
-                        * Tracking time series data
-                            * Graph recommendations per unit of time
-                            * Count by: day, hour, minute
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #5: Solution
-
-<pre><code class="language-javascript">// db.rec_ts (time series buckets, hour and minute sub-docs)
-db.rec_ts.insert({
-    book: ObjectId("…"),
-    day: ISODate("2012-10-11T00:00:00.000Z")
-    total: 0,
-    hour:   { "0": 0, "1": 0, /* … */ "23": 0 },
-    minute: { "0": 0, "1": 0, /* … */ "1439": 0 }
-});
-
-// Record a recommendation created one minute before midnight
-db.rec_ts.update(
-    { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
-    { $inc: { total: 1, "hour.23": 1, "minute.1439": 1 }}
-});</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## BSON Storage
-
-                        * Sequence of key/value pairs
-                        * Not a hash map
-                        * Optimized to scan quickly
+                        Users can upload images for books
 
                         <br>
                         <div class="node-3">
                             <div class="node">
-                                <span class="label">minute</span>
-                                <small><code>[0] [1] … [1439]</code></small>
+                                <span class="label">images</span>
+                                <ul>
+                                    <li><code>image_id: ???</code></li>
+                                    <li><code>data: binary</code></li>
+                                </ul>
                             </div>
                         </div>
-
-                        What is the cost of updating the minute before midnight?
-                    </section>
-
-                    <section data-markdown>
-                        ## BSON Storage
-
-                        We can skip sub-documents
-
                         <br>
-                        <div class="node-3">
-                            <div class="node">
-                                <span class="label">hour<sub>0</sub></span>
-                                <small><code>[0] [1] … [59]</code></small>
-                            </div>
-                            <div class="arrow">…</div>
-                            <div class="node">
-                                <span class="label">hour<sub>23</sub></span>
-                                <small><code>[1380] … [1439]</code></small>
-                            </div>
-                        </div>
 
-                        How could this change the schema?
+                        The collection will be sharded by `image_id`.
+
+                        What should `image_id` be?
                     </section>
 
                     <section data-markdown>
-                        ## Exercise #5: Solution B
+                        ## Exercise #8: Solutions
 
-<pre><code class="language-javascript">// db.rec_ts (time series buckets, each hour a sub-doc)
-db.rec_ts.insert({
-    book: ObjectId("…"),
-    day: ISODate("2012-10-11T00:00:00.000Z")
-    total: 148,
-    hour: {
-        "0": { total: 7, "0": 0, /* … */ "59": 2 },
-        "1": { total: 3, "60": 1, /* … */ "119": 0 },
-        // Other hours…
-        "23": { total: 12, "1380": 0, /* … */ "1439": 3 }
-    }
-});
+                        What's the best shard key for our use case?
 
-// Record a recommendation created one minute before midnight
-db.rec_ts.update(
-    { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
-    { $inc: { total: 1, "hour.23.total": 1, "hour.23.1439": 1 }}
-});</code></pre>
+                        * Auto-increment (ObjectId)
+                        * MD5 of data
+                        * Time (e.g. month) and MD5
+                    </section>
+
+                    <section data-markdown>
+                        ## Right-balanced Access
+
+                        <img src="img/shard_key-1.png" alt="shard_key-1.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Random Access
+
+                        <img src="img/shard_key-2.png" alt="shard_key-2.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Segmented Access
+
+                        <img src="img/shard_key-3.png" alt="shard_key-3.png">
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Exercise #6
+                        # Summary
 
-                        Users can recommend at most 10 books
+                        * Schema design is different in MongoDB
+                        * Basic data design principles stay the same
+                        * Focus on how the application manipulates data
+                        * Evolve schema to meet your requirements
+                        * Consider sharding early
                     </section>
 
-                    <section data-markdown>
-                        ## Exercise #6: Solution
+                    <section data-markdown data-state="final">
+                        # Thanks!
 
-<pre><code class="language-javascript">// db.user_recs (track user's remaining and given recommendations)
-db.user_recs.insert({
-    _id: "bob",
-    remaining: 8,
-    books: [3, 10]
-});
-
-// Record a recommendation if possible
-db.user_recs.update(
-    { _id: "bob", remaining: { $gt: 0 }, books: { $ne: 4 }},
-    { $inc: { remaining: -1 }, $push: { books: 4 }}
-});</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #6: Solution
-
-                        * One less unassigned recommendation remaining
-                        * Newly-recommended book is now linked
-
-<pre><code class="language-javascript">&gt; db.user_recs.findOne()
-{
-    _id: "bob",
-<span class="code-highlight inline-block">    remaining: 7,
-    books: [3, 10, 4]</span>
-}</code></pre>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        ## Exercise #7
-
-                        * Statistic buckets
-                            * Each book has a listing page in our application
-                            * Record referring website domains for each book
-                            * Count each domain independently
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #7: Solution A
-
-<pre><code class="language-javascript">&gt; db.book_refs.findOne()
-{   book: 1,
-    referrers: [
-        { domain: "google.com", count: 4 },
-        { domain: "yahoo.com", count: 1 }
-    ]
-}</code></pre>
-
-<pre><code class="language-javascript">&gt; db.book_refs.update(
-    { book: 1, "referrers.domain": "google.com" },
-    { $inc: { "referrers.$.count": 1 }}
-);</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #7: Solution A
-
-                        Update the position of the first matched element.
-
-<pre><code class="language-javascript">&gt; db.book_refs.update(
-    { book: 1, "referrers.domain": "google.com" },
-    { $inc: { <span class="code-highlight">"referrers.$.count"</span>: 1 }}
-);</code></pre>
-
-<pre><code class="language-javascript">&gt; db.book_refs.findOne()
-{   book: 1,
-    referrers: [
-<span class="code-highlight inline-block">        { domain: "google.com", count: 5 },</span>
-        { domain: "yahoo.com", count: 1 }
-    ]
-}</code></pre>
-
-                        What if a new referring website is used?
-                    </section>
-
-                    <section data-markdown>
-                        ## Exercise #7: Solution B
-
-<pre><code class="language-javascript">&gt; db.book_refs.findOne()
-{   book: 1,
-    referrers: [
-        { "google_com": 5 },
-        { "yahoo_com": 1 }
-    ]
-}</code></pre>
-
-<pre><code class="language-javascript">&gt; db.book_refs.update(
-    { book: 1 },
-    { $inc: { "referrers.bing_com": 1 }},
-    true
-);</code></pre>
-
-                        * Replace dots with underscores for key names
-                        * Increment to add a new referring website
-                        * Upsert in case this is the book's first referrer
+                        ### Questions?
                     </section>
                 </section>
 
