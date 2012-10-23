@@ -643,7 +643,7 @@ db.books.update(
 );</code></pre>
 
                         * Document size limit (16MB)
-                        * Storage fragmentation after many updates
+                        * Storage fragmentation after many updates/deletes
                     </section>
 
                 </section>
@@ -752,6 +752,7 @@ db.books.update(
     _id: 1,
     first_name: "F. Scott",
     last_name: "Fitzgerald"
+<span class="code-highlight inline-block">    book: 1,</span>
 }</code></pre>
                     </section>
 
@@ -955,7 +956,7 @@ db.books.find({ volume: { $gt: 0 }});</code></pre>
                     <section data-markdown>
                         ## Index only present fields
 
-                        The indexes will omit documents without these fields.
+                        Documents without these fields will not be indexed.
 
 <pre><code class="language-javascript">&gt; db.books.ensureIndex({ series_title: 1 }, { sparse: true })
 
@@ -1173,7 +1174,7 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
                     <section data-markdown class="ul-2col">
                         ## Exercise #1
 
-                        Design a schema for users and their book reviews.
+                        Design a schema for users and their book reviews
 
                         * Users
                             * username (string)
@@ -1183,70 +1184,70 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
                             * rating (integer)
                             * created_at (date)
 
-                        *Usernames are immutable.*
+                        *Usernames are immutable*
                     </section>
 
                     <section data-markdown>
                         ### Exercise #1: Solution A
 
-                        Reviews may be queried by user or book.
+                        Reviews may be queried by user or book
 
-                        <pre><code class="language-javascript">// db.users (one document per user)
-{ _id: ObjectId("…"),
-  username: "bob",
-  email: "bob@example.com"
+<pre><code class="language-javascript">// db.users (one document per user)
+{   _id: ObjectId("…"),
+    username: "bob",
+    email: "bob@example.com"
 }</code></pre>
 
-                        <pre><code class="language-javascript">// db.reviews (one document per review)
-{ _id: ObjectId("…"),
-  user: ObjectId("…"),
-  book: ObjectId("…"),
-  rating: 5,
-  text: "This book is excellent!",
-  created_at: ISODate("2012-10-10T21:14:07.096Z")
+<pre><code class="language-javascript">// db.reviews (one document per review)
+{   _id: ObjectId("…"),
+    user: ObjectId("…"),
+    book: ObjectId("…"),
+    rating: 5,
+    text: "This book is excellent!",
+    created_at: ISODate("2012-10-10T21:14:07.096Z")
 }</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #1: Solution B
 
-                        Optimized to retrieve reviews for a user.
+                        Optimized to retrieve reviews by user
 
-                        <pre><code class="language-javascript">// db.users (one document per user with all reviews)
-{ _id: ObjectId("…"),
-  username: "bob",
-  email: "bob@example.com",
-  reviews: [
-    { book: ObjectId("…"),
-      rating: 5,
-      text: "This book is excellent!",
-      created_at: ISODate("2012-10-10T21:14:07.096Z")
-    }
-  ]
+<pre><code class="language-javascript">// db.users (one document per user with all reviews)
+{   _id: ObjectId("…"),
+    username: "bob",
+    email: "bob@example.com",
+    reviews: [
+        {   book: ObjectId("…"),
+            rating: 5,
+            text: "This book is excellent!",
+            created_at: ISODate("2012-10-10T21:14:07.096Z")
+        }
+    ]
 }</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #1: Solution C
 
-                        Optimized to retrieve reviews for a book.
+                        Optimized to retrieve reviews by book
 
-                        <pre><code class="language-javascript">// db.users (one document per user)
-{ _id: ObjectId("…"),
-  username: "bob",
-  email: "bob@example.com"
+<pre><code class="language-javascript">// db.users (one document per user)
+{   _id: ObjectId("…"),
+    username: "bob",
+    email: "bob@example.com"
 }</code></pre>
 
-                        <pre><code class="language-javascript">// db.books (one document per book with all reviews)
-{ _id: ObjectId("…"),
-  // Other book fields
-  reviews: [
-    { user: ObjectId("…"),
-      rating: 5,
-      text: "This book is excellent!",
-      created_at: ISODate("2012-10-10T21:14:07.096Z")
-    }
-  ]
+<pre><code class="language-javascript">// db.books (one document per book with all reviews)
+{   _id: ObjectId("…"),
+    // Other book fields…
+    reviews: [
+        {   user: ObjectId("…"),
+            rating: 5,
+            text: "This book is excellent!",
+            created_at: ISODate("2012-10-10T21:14:07.096Z")
+        }
+    ]
 }</code></pre>
                     </section>
                 </section>
@@ -1255,82 +1256,79 @@ db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
                     <section data-markdown>
                         ## Exercise #2
 
-                        Display a user's most recent 10 book reviews.
-
-                        Make efficient use of memory and disk seeks.
+                        * Display a user's most recent 10 book reviews
+                        * Make efficient use of memory and disk seeks
                     </section>
 
                     <section data-markdown>
                         ### Exercise #2: Solution
 
-                        Store users' reviews in monthly buckets.
+                        Store users' reviews in monthly buckets
 
-                        <pre><code class="language-javascript">// db.reviews (one document per user per month)
-{ _id: "bob-2012-10",
-  reviews: [
-    { _id: ObjectId("…"),
-      rating: 5,
-      text: "This book is excellent!",
-      created_at: ISODate("2012-10-10T21:14:07.096Z")
-    },
-    { _id: ObjectId("…"),
-      rating: 2,
-      text: "I didn't really enjoy this book.",
-      created_at: ISODate("2012-10-11T20:12:50.594Z")
-    }
-  ]
+<pre><code class="language-javascript">// db.reviews (one document per user per month)
+{   _id: "bob-201210",
+    reviews: [
+        {   _id: ObjectId("…"),
+            rating: 5,
+            text: "This book is excellent!",
+            created_at: ISODate("2012-10-10T21:14:07.096Z")
+        },
+        {   _id: ObjectId("…"),
+            rating: 2,
+            text: "I didn't really enjoy this book.",
+            created_at: ISODate("2012-10-11T20:12:50.594Z")
+        }
+    ]
 }</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #2: Solution
 
-                        Adding a new review to the appropriate bucket.
+                        Adding a new review to the appropriate bucket
 
-                        <pre><code class="language-javascript">myReview = {
-  rating: 3,
-  text: "An average read.",
-  created_at: ISODate("2012-10-13T12:26:11.502Z")
+<pre><code class="language-javascript">myReview = {
+    _id: ObjectId("…"),
+    rating: 3,
+    text: "An average read.",
+    created_at: ISODate("2012-10-13T12:26:11.502Z")
 };
 
 db.reviews.update(
-  { _id: "bob-2012-10" },
-  { $push: { reviews: myReview }}
+      { _id: "bob-2012-10" },
+      { $push: { reviews: myReview }}
 );</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #2: Solution
 
-                        Display a user's most recent 10 book reviews.
+                        Display a user's most recent 10 book reviews
 
-                        <pre><code class="language-javascript">cursor = db.reviews.find(
-  { _id: /^bob-/ },
-  { reviews: { $slice: 10 }}
+<pre><code class="language-javascript">cursor = db.reviews.find(
+    { _id: /^bob-/ },
+    { reviews: { $slice: 10 }}
 ).sort({ _id: -1 });
 
 num = 0;
 
 while (cursor.hasNext() &amp;&amp; num &lt; 10) {
-  doc = cursor.next();
+    doc = cursor.next();
 
-  for (var i = 0; i &lt; doc.reviews.length && num &lt; 10; ++i, ++num) {
-    printjson(doc.reviews[i]);
-  }
+    for (var i = 0; i &lt; doc.reviews.length && num &lt; 10; ++i, ++num) {
+        printjson(doc.reviews[i]);
+    }
 }</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #2: Solution
 
-                        Deleting a review.
+                        Deleting a review
 
-                        <pre><code class="language-javascript">cursor = db.reviews.update(
-  { _id: "bob-2012-10" },
-  { $pull: {
-      reviews: { created_at: ISODate("2012-10-13T12:26:11.502Z") }
-    }
-  }
+<pre><code class="language-javascript">cursor = db.reviews.update(
+    { _id: "bob-2012-10" },
+    { $pull: { reviews: { _id: ObjectId("…") }}}
 );</code></pre>
                     </section>
                 </section>
@@ -1339,13 +1337,12 @@ while (cursor.hasNext() &amp;&amp; num &lt; 10) {
                     <section data-markdown>
                         ## Exercise #3
 
-                        Allow users to follow one another.
-
-                        * User sends a follow request
-                        * Followee approves or not
-                        * Requests time out after seven days
-
-                        Approval process is asynchronous.
+                        * Allow users to borrow library books
+                            * User sends a loan request
+                            * Library approves or not
+                            * Requests time out after seven days
+                        * Approval process is asynchronous
+                        * Requests may be prioritized
                     </section>
 
                     <section data-markdown>
@@ -1354,54 +1351,58 @@ while (cursor.hasNext() &amp;&amp; num &lt; 10) {
                         * Need to maintain order and state
                         * Ensure that updates are atomic
 
-                        <pre><code class="language-javascript">db.approvals.insert({
-  _id: { follower: "bob", followee: "mary" },
-  in_progress: false,
-  approved: false,
-  priority: 1,
+                        <pre><code class="language-javascript">// Create a new loan request
+db.loans.insert({
+    _id: { borrower: "bob", book: ObjectId("…") },
+    pending: false,
+    approved: false,
+    priority: 1,
 });
 
-// Find the highest priority approval and mark as in progress
-approval = db.approvals.findAndModify({
-  query: { in_progress: false },
-  sort: { priority: -1 },
-  update: { $set: { in_progress: true, started: new ISODate() }},
-  new: true
+// Find the highest priority request and mark as pending approval
+request = db.loans.findAndModify({
+<span class="code-highlight inline-block">    query: { pending: false },
+    sort: { priority: -1 },</span>
+    update: { $set: { pending: true, started: new ISODate() }},
+    new: true
 });</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #3: Solution
 
+                        * Updated and added fields
+                        * Modified document was returned
+
                         <pre><code class="language-javascript">{
-  _id: { follower: "bob", followee: "mary" },
-  in_progress: true, // updated
-  approved: false,
-  priority: 1,
-  started: ISODate("2012-10-11T22:09:42.542Z") // added
+    _id: { borrower: "bob", book: ObjectId("…") },
+<span class="code-highlight inline-block">    pending: true,</span>
+    approved: false,
+    priority: 1,
+<span class="code-highlight inline-block">    started: ISODate("2012-10-11T22:09:42.542Z")</span>
 }</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #3: Solution
 
-                        <pre><code class="language-javascript">// Followee approves request
-db.approvals.update(
-  { _id: { follower: "bob", followee: "mary" }},
-  { $set: { inprogress: false, approved: true }}
+                        <pre><code class="language-javascript">// Library approves the loan request
+db.loans.update(
+    { _id: { borrower: "bob", book: ObjectId("…") }},
+    { $set: { pending: false, approved: true }}
 );</code></pre>
                     </section>
 
                     <section data-markdown>
                         ### Exercise #3: Solution
 
-                        <pre><code class="language-javascript">limit = new Date();
+                        <pre><code class="language-javascript">// Request times out after seven days
+limit = new Date();
 limit.setDate(limit.getDate() - 7);
 
-// Time out requests after seven days
-db.approvals.update(
-  { inprogress: true, started: { $lt: limit }},
-  { $set: { inprogress: false, approved: false }}
+db.loans.update(
+    { pending: true, started: { $lt: limit }},
+    { $set: { pending: false, approved: false }}
 );</code></pre>
                     </section>
                 </section>
@@ -1410,36 +1411,41 @@ db.approvals.update(
                     <section data-markdown>
                         ## Exercise #4
 
-                        Allow users to upvote a review.
+                        Allow users to recommend books
 
-                        * Users can upvote a review only once
-                        * Display a review's current upvotes
+                        * Users can recommend each book only once
+                        * Display a book's current recommendations
                     </section>
 
                     <section data-markdown>
                         ## Exercise #4: Solution
 
-                        <pre><code class="language-javascript">// db.votes (one document per voter per review)
-db.votes.insert({
-  review: ObjectId("…"),
-  user: ObjectId("…")
+                        <pre><code class="language-javascript">// db.recommendations (one document per user per book)
+db.recommendations.insert({
+    book: ObjectId("…"),
+    user: ObjectId("…")
 });
 
-// Unique index ensures users can't vote twice
-db.votes.ensureIndex({ review: 1, user: 1 }, { unique: true });
+// Unique index ensures users can't recommend twice
+db.recommendations.ensureIndex(
+    { book: 1, user: 1 },
+    { unique: true }
+);
 
-// Count the number of upvotes for a review
-db.votes.count({ review: ObjectId("…") });</code></pre>
+// Count the number of recommendations for a book
+db.recommendations.count({ book: ObjectId("…") });</code></pre>
                     </section>
 
                     <section data-markdown>
                         ## Exercise #4: Solution
 
-                        Denormalize upvote totals on reviews.
+                        * Indexes in MongoDB are not counting
+                        * Counts are computed via index scans
+                        * Denormalize totals on books
 
-                        <pre><code class="language-javascript">db.reviews.update(
-  { _id: ObjectId("…") },
-  { $inc: { votes: 1 }}
+                        <pre><code class="language-javascript">db.books.update(
+    { _id: ObjectId("…") },
+    { $inc: { recommendations: 1 }}
 });</code></pre>
                     </section>
                 </section>
@@ -1448,37 +1454,89 @@ db.votes.count({ review: ObjectId("…") });</code></pre>
                     <section data-markdown>
                         ## Exercise #5
 
-                        Tracking time series data.
-
-                        * Count upvotes by: day, hour, minute
-                        * Show time series of votes cast
+                        * Tracking time series data
+                            * Graph recommendations per unit of time
+                            * Count by: day, hour, minute
                     </section>
 
                     <section data-markdown>
                         ## Exercise #5: Solution
 
-                        <pre><code class="language-javascript">// db.votes_ts (one document per review per day of votes)
-db.votes_ts.update(
-  { review: ObjectId("…"),
-    day: ISODate("2012-10-11T00:00:00.000Z") }
-  { user: ObjectId("…")
+                        <pre><code class="language-javascript">// db.rec_ts (time series buckets, hour and minute sub-docs)
+db.rec_ts.insert({
+    book: ObjectId("…"),
+    day: ISODate("2012-10-11T00:00:00.000Z")
+    total: 0,
+    hour:   { "0": 0, "1": 0, /* … */ "23": 0 },
+    minute: { "0": 0, "1": 0, /* … */ "1439": 0 }
 });
 
-// Unique index ensures users can't vote twice
-db.votes.ensureIndex({ review: 1, user: 1 }, { unique: true });
-
-// Count the number of upvotes for a review
-db.votes.count({ review: ObjectId("…") });</code></pre>
+// Record a recommendation created one minute before midnight
+db.rec_ts.update(
+    { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
+    { $inc: { total: 1, "hour.23": 1, "minute.1439": 1 }}
+});</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## Exercise #4: Solution
+                        ## BSON Storage
 
-                        Denormalize upvote totals on reviews.
+                        * Sequence of key/value pairs
+                        * Not a hash map
+                        * Optimized to scan quickly
 
-                        <pre><code class="language-javascript">db.reviews.update(
-  { _id: ObjectId("…") },
-  { $inc: { votes: 1 }}
+                        <br>
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">minute</span>
+                                <small><code>[0] [1] … [1439]</code></small>
+                            </div>
+                        </div>
+
+                        What is the cost of updating the minute before midnight?
+                    </section>
+
+                    <section data-markdown>
+                        ## BSON Storage
+
+                        We can skip sub-documents
+
+                        <br>
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">hour<sub>0</sub></span>
+                                <small><code>[0] [1] … [59]</code></small>
+                            </div>
+                            <div class="arrow">…</div>
+                            <div class="node">
+                                <span class="label">hour<sub>23</sub></span>
+                                <small><code>[1380] … [1439]</code></small>
+                            </div>
+                        </div>
+
+                        How could this change the schema?
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #5: Solution B
+
+                        <pre><code class="language-javascript">// db.rec_ts (time series buckets, each hour a sub-doc)
+db.rec_ts.insert({
+    book: ObjectId("…"),
+    day: ISODate("2012-10-11T00:00:00.000Z")
+    total: 148,
+    hour: {
+        "0": { total: 7, "0": 0, /* … */ "59": 2 },
+        "1": { total: 3, "60": 1, /* … */ "119": 0 },
+        // Other hours…
+        "23": { total: 12, "1380": 0, /* … */ "1439": 3 }
+    }
+});
+
+// Record a recommendation created one minute before midnight
+db.rec_ts.update(
+    { book: ObjectId("…"), day: ISODate("2012-10-11T00:00:00.000Z") },
+    { $inc: { total: 1, "hour.23.total": 1, "hour.23.1439": 1 }}
 });</code></pre>
                     </section>
                 </section>
