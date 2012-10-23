@@ -1545,7 +1545,7 @@ db.rec_ts.update(
                     <section data-markdown>
                         ## Exercise #6
 
-                        Users can only recommend ten books at a time
+                        Users can recommend at most 10 books
                     </section>
 
                     <section data-markdown>
@@ -1577,6 +1577,77 @@ db.user_recs.update(
 <span class="code-highlight inline-block">    remaining: 7,
     books: [3, 10, 4]</span>
 }</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #7
+
+                        * Statistic buckets
+                            * Each book has a listing page in our application
+                            * Record referring website domains for each book
+                            * Count each domain independently
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #7: Solution A
+
+<pre><code class="language-javascript">&gt; db.book_refs.findOne()
+{   book: 1,
+    referrers: [
+        { domain: "google.com", count: 4 },
+        { domain: "yahoo.com", count: 1 }
+    ]
+}</code></pre>
+
+<pre><code class="language-javascript">&gt; db.book_refs.update(
+    { book: 1, "referrers.domain": "google.com" },
+    { $inc: { "referrers.$.count": 1 }}
+);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #7: Solution A
+
+                        Update the position of the first matched element.
+
+<pre><code class="language-javascript">&gt; db.book_refs.update(
+    { book: 1, "referrers.domain": "google.com" },
+    { $inc: { <span class="code-highlight">"referrers.$.count"</span>: 1 }}
+);</code></pre>
+
+<pre><code class="language-javascript">&gt; db.book_refs.findOne()
+{   book: 1,
+    referrers: [
+<span class="code-highlight inline-block">        { domain: "google.com", count: 5 },</span>
+        { domain: "yahoo.com", count: 1 }
+    ]
+}</code></pre>
+
+                        What if a new referring website is used?
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #7: Solution B
+
+<pre><code class="language-javascript">&gt; db.book_refs.findOne()
+{   book: 1,
+    referrers: [
+        { "google_com": 5 },
+        { "yahoo_com": 1 }
+    ]
+}</code></pre>
+
+<pre><code class="language-javascript">&gt; db.book_refs.update(
+    { book: 1 },
+    { $inc: { "referrers.bing_com": 1 }},
+    true
+);</code></pre>
+
+                        * Replace dots with underscores for key names
+                        * Increment to add a new referring website
+                        * Upsert in case this is the book's first referrer
                     </section>
                 </section>
             </div>
