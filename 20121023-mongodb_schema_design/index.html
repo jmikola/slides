@@ -835,7 +835,7 @@ num = 0;
 while (cursor.hasNext() &amp;&amp; num &lt; 10) {
     doc = cursor.next();
 
-    for (var i = 0; i &lt; doc.reviews.length && num &lt; 10; ++i, ++num) {
+    for (var i = 0; i &lt; doc.reviews.length &amp;&amp; num &lt; 10; ++i, ++num) {
         printjson(doc.reviews[i]);
     }
 }</code></pre>
@@ -1478,10 +1478,10 @@ db.authors.find({ _id: { $in: book.authors }});</code></pre>
 
 <pre><code class="language-javascript">&gt; db.book_refs.findOne()
 {   book: 1,
-    referrers: [
-        { "google_com": 5 },
-        { "yahoo_com": 1 }
-    ]
+    referrers: {
+        "google_com": 5,
+        "yahoo_com": 1
+    }
 }</code></pre>
 
 <pre><code class="language-javascript">&gt; db.book_refs.update(
