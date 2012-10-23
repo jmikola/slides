@@ -1650,6 +1650,58 @@ db.user_recs.update(
                         * Upsert in case this is the book's first referrer
                     </section>
                 </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #8
+
+                        Users can upload images for books
+
+                        <br>
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">images</span>
+                                <ul>
+                                    <li><code>image_id: ???</code></li>
+                                    <li><code>data: binary</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <br>
+
+                        The collection will be sharded by `image_id`.
+
+                        What should `image_id` be?
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #8: Solutions
+
+                        What's the best shard key for our use case?
+
+                        * Auto-increment (ObjectId)
+                        * MD5 of data
+                        * Time (e.g. month) and MD5
+                    </section>
+
+                    <section data-markdown>
+                        ## Right-balanced Access
+
+                        <img src="img/shard_key-1.png" alt="shard_key-1.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Random Access
+
+                        <img src="img/shard_key-2.png" alt="shard_key-2.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Segmented Access
+
+                        <img src="img/shard_key-3.png" alt="shard_key-3.png">
+                    </section>
+                </section>
             </div>
 
             <div class="footer"></div>
