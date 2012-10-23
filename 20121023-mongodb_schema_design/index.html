@@ -1351,7 +1351,7 @@ while (cursor.hasNext() &amp;&amp; num &lt; 10) {
                         * Need to maintain order and state
                         * Ensure that updates are atomic
 
-                        <pre><code class="language-javascript">// Create a new loan request
+<pre><code class="language-javascript">// Create a new loan request
 db.loans.insert({
     _id: { borrower: "bob", book: ObjectId("…") },
     pending: false,
@@ -1374,7 +1374,7 @@ request = db.loans.findAndModify({
                         * Updated and added fields
                         * Modified document was returned
 
-                        <pre><code class="language-javascript">{
+<pre><code class="language-javascript">{
     _id: { borrower: "bob", book: ObjectId("…") },
 <span class="code-highlight inline-block">    pending: true,</span>
     approved: false,
@@ -1386,7 +1386,7 @@ request = db.loans.findAndModify({
                     <section data-markdown>
                         ### Exercise #3: Solution
 
-                        <pre><code class="language-javascript">// Library approves the loan request
+<pre><code class="language-javascript">// Library approves the loan request
 db.loans.update(
     { _id: { borrower: "bob", book: ObjectId("…") }},
     { $set: { pending: false, approved: true }}
@@ -1396,7 +1396,7 @@ db.loans.update(
                     <section data-markdown>
                         ### Exercise #3: Solution
 
-                        <pre><code class="language-javascript">// Request times out after seven days
+<pre><code class="language-javascript">// Request times out after seven days
 limit = new Date();
 limit.setDate(limit.getDate() - 7);
 
@@ -1420,7 +1420,7 @@ db.loans.update(
                     <section data-markdown>
                         ## Exercise #4: Solution
 
-                        <pre><code class="language-javascript">// db.recommendations (one document per user per book)
+<pre><code class="language-javascript">// db.recommendations (one document per user per book)
 db.recommendations.insert({
     book: ObjectId("…"),
     user: ObjectId("…")
@@ -1443,7 +1443,7 @@ db.recommendations.count({ book: ObjectId("…") });</code></pre>
                         * Counts are computed via index scans
                         * Denormalize totals on books
 
-                        <pre><code class="language-javascript">db.books.update(
+<pre><code class="language-javascript">db.books.update(
     { _id: ObjectId("…") },
     { $inc: { recommendations: 1 }}
 });</code></pre>
@@ -1462,7 +1462,7 @@ db.recommendations.count({ book: ObjectId("…") });</code></pre>
                     <section data-markdown>
                         ## Exercise #5: Solution
 
-                        <pre><code class="language-javascript">// db.rec_ts (time series buckets, hour and minute sub-docs)
+<pre><code class="language-javascript">// db.rec_ts (time series buckets, hour and minute sub-docs)
 db.rec_ts.insert({
     book: ObjectId("…"),
     day: ISODate("2012-10-11T00:00:00.000Z")
@@ -1520,7 +1520,7 @@ db.rec_ts.update(
                     <section data-markdown>
                         ## Exercise #5: Solution B
 
-                        <pre><code class="language-javascript">// db.rec_ts (time series buckets, each hour a sub-doc)
+<pre><code class="language-javascript">// db.rec_ts (time series buckets, each hour a sub-doc)
 db.rec_ts.insert({
     book: ObjectId("…"),
     day: ISODate("2012-10-11T00:00:00.000Z")
