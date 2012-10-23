@@ -78,7 +78,7 @@
                                     <li><code>last_name</code></li>
                                 </ul>
                             </div>
-                            <div class="arrow">&#8592;</div>
+                            <div class="arrow">&larr;</div>
                             <div class="node">
                                 <span class="label">books</span>
                                 <ul>
@@ -89,7 +89,7 @@
                                     <li><code>author</code></li>
                                 </ul>
                             </div>
-                            <div class="arrow">&#8594;</div>
+                            <div class="arrow">&rarr;</div>
                             <div class="node">
                                 <span class="label">authors</span>
                                 <ul>
@@ -112,7 +112,7 @@
                                     <li><code>last_name</code></li>
                                 </ul>
                             </div>
-                            <div class="arrow">&#8592;</div>
+                            <div class="arrow">&larr;</div>
                             <div class="node">
                                 <span class="label">books</span>
                                 <ul>
@@ -145,7 +145,7 @@
                     <section data-markdown class="ul-2col">
                         ## MongoDB Documents
 
-                        Storage in BSON &#8594; <a href="http://bsonspec.org/">BSONSpec.org</a>
+                        Storage in BSON &rarr; <a href="http://bsonspec.org/">BSONSpec.org</a>
 
                         * Scalars
                             * Doubles
@@ -362,8 +362,28 @@
 }</code></pre>
                     </section>
 
-                    <section>
-                        <img src="img/memory.png" alt="memory.jpg">
+                    <section data-markdown>
+                        ## Data, RAM and Disk
+
+                        <img src="img/memory-1.png" alt="memory-1.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Data, RAM and Disk
+
+                        <img src="img/memory-2.png" alt="memory-2.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Data, RAM and Disk
+
+                        <img src="img/memory-3.png" alt="memory-3.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Data, RAM and Disk
+
+                        <img src="img/memory-4.png" alt="memory-4.png">
                     </section>
                 </section>
 
@@ -940,6 +960,206 @@ db.books.find({ volume: { $gt: 0 }});</code></pre>
 <pre><code class="language-javascript">&gt; db.books.ensureIndex({ series_title: 1 }, { sparse: true })
 
 &gt; db.books.ensureIndex({ volume: 1 }, { sparse: true })</code></pre>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        # Sharding
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding
+
+                        * Ad-hoc partitioning
+                        * Consistent hashing
+                            * Amazon DynamoDB
+                        * Range based partitioning
+                            * Google BigTable
+                            * Yahoo! PNUTS
+                            * MongoDB
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding in MongoDB
+
+                        * Automated management
+                        * Range based partitioning
+                        * Convert to sharded system with no downtime
+                        * Fully consistent
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding a Collection
+
+<pre><code class="language-javascript">db.runCommand({ addshard : "shard1.example.com" });
+
+db.runCommand({
+    shardCollection: "library.books",
+    key: { _id : 1}
+});</code></pre>
+
+                        * Keys range from &minus;&infin; to +&infin;
+                        * Ranges are stored as chunks
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding Data by Chunks
+
+<pre><code class="language-javascript">db.books.save({ _id: 35, title: "Call of the Wild" });
+db.books.save({ _id: 40, title: "Tropic of Cancer" });
+db.books.save({ _id: 45, title: "The Jungle" });
+db.books.save({ _id: 50, title: "Of Mice and Men" });</code></pre>
+
+                        <div class="node-3">
+                            <div class="node">
+                                <ul>
+                                    <li><code>[ &minus;&infin;, +&infin;)</code></li>
+                                </ul>
+                            </div>
+                            <div class="arrow">&rarr;</div>
+                            <div class="node">
+                                <ul>
+                                    <li><code>[&minus;&infin;, 40)</code></li>
+                                    <li><code>[40, +&infin;)</code></li>
+                                </ul>
+                            </div>
+                            <div class="arrow">&rarr;</div>
+                            <div class="node">
+                                <ul>
+                                    <li><code>[&minus;&infin;, 40)</code></li>
+                                    <li><code>[40, 50)</code></li>
+                                    <li><code>[50, +&infin;)</code></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        Ranges are split into chunks as data is inserted
+                    </section>
+
+                    <section data-markdown>
+                        ## Adding New Shards
+
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">shard<sub>1</sub></span>
+                                <ul>
+                                    <li><code>[&minus;&infin;, 40)</code></li>
+                                    <li><code>[40, 50)</code></li>
+                                    <li><code>[50, 60)</code></li>
+                                    <li><code>[60, +&infin;)</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section data-markdown>
+                        ## Adding New Shards
+
+<pre><code class="language-javascript">db.runCommand({ addshard : "shard2.example.com" });</code></pre>
+
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">shard<sub>1</sub></span>
+                                <ul>
+                                    <li><code>[&minus;&infin;, 40)</code></li>
+                                    <li>&nbsp;</li>
+                                    <li><code>[50, 60)</code></li>
+                                    <li>&nbsp;</li>
+                                </ul>
+                            </div>
+                            <div class="node">
+                                <span class="label">shard<sub>2</sub></span>
+                                <ul>
+                                    <li>&nbsp;</li>
+                                    <li><code>[40, 50)</code></li>
+                                    <li>&nbsp;</li>
+                                    <li><code>[60, +&infin;)</code></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        Chunks are migrated to balance shards
+                    </section>
+
+                    <section data-markdown>
+                        ## Adding New Shards
+
+<pre><code class="language-javascript">db.runCommand({ addshard : "shard3.example.com" });</code></pre>
+
+                        <div class="node-3">
+                            <div class="node">
+                                <span class="label">shard<sub>1</sub></span>
+                                <ul>
+                                    <li><code>[&minus;&infin;, 40)</code></li>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                </ul>
+                            </div>
+                            <div class="node">
+                                <span class="label">shard<sub>2</sub></span>
+                                <ul>
+                                    <li>&nbsp;</li>
+                                    <li><code>[40, 50)</code></li>
+                                    <li>&nbsp;</li>
+                                    <li><code>[60, +&infin;)</code></li>
+                                </ul>
+                            </div>
+                            <div class="node">
+                                <span class="label">shard<sub>3</sub></span>
+                                <ul>
+                                    <li>&nbsp;</li>
+                                    <li>&nbsp;</li>
+                                    <li><code>[50, 60)</code></li>
+                                    <li>&nbsp;</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding and Memory
+
+                        <img src="img/sharding_cache-1.png" alt="sharding_cache-1.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding and Memory
+
+                        <img src="img/sharding_cache-2.png" alt="sharding_cache-2.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharding Components
+
+                        * `mongos`
+                        * Config servers
+                        * Shards
+                            * `mongod`
+                            * Replica sets
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharded Writes
+
+                        * Inserts
+                            * Shard key required
+                            * Routed
+                        * Updates and removes
+                            * Shard key optional
+                            * May be routed or scattered
+                    </section>
+
+                    <section data-markdown>
+                        ## Sharded Reads
+
+                        * Queries
+                            * By shard key: routed
+                            * Without shard key: scatter/gather
+                        * Sorted queries
+                            * By shard key: routed in order
+                            * Without shard key: distributed merge sort
                     </section>
                 </section>
 

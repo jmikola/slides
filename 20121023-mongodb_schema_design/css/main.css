@@ -56,19 +56,22 @@ section[data-state="title"] p.bio {
     }
 }
 
-section[data-state="normalize-denormalize"] div.node-3 {
+section div.node-3 {
     clear: both;
     width: 100%;
     margin-bottom: 20px;
 }
 
-section[data-state="normalize-denormalize"] div.node-3 > div.node {
+section div.node-3 > div.node {
+    background-color: #1d1f21;
+    box-shadow: 0px 0px 6px rgba(0,0,0,0.3);
     display: inline-block;
+    text-align: center;
     width: 25%;
     vertical-align: top;
 }
 
-section[data-state="normalize-denormalize"] div.node-3 > div.arrow {
+section div.node-3 > div.arrow {
     display: inline-block;
     font-size: 1em;
     height: 1em;
@@ -78,33 +81,29 @@ section[data-state="normalize-denormalize"] div.node-3 > div.arrow {
     width: 5%;
 }
 
-section[data-state="normalize-denormalize"] div.node {
-    display: block;
-    background-color: #1d1f21;
-    box-shadow: 0px 0px 6px rgba(0,0,0,0.3);
-    text-align: center;
-    width: 100%;
-}
-
-section[data-state="normalize-denormalize"] div.node > span.label {
+section div.node-3 > div.node > span.label {
     display: block;
 }
 
-section[data-state="normalize-denormalize"] div.node > ul {
+section div.node-3 > div.node > span.label > sub {
+    font-size: 0.75em;
+}
+
+section div.node-3 > div.node > ul {
     list-style: none;
     margin: 0 0 0.25em;
 }
 
-section[data-state="normalize-denormalize"] div.node > ul > li {
+section div.node-3 > div.node > ul > li {
     font-size: 0.66em;
     line-height: 1.2em;
 }
 
-section[data-state="normalize-denormalize"] li.embedded-object {
+section li.embedded-object {
     color:red;
 }
 
-section[data-state="normalize-denormalize"] li.embedded-object > ul {
+section li.embedded-object > ul {
     list-style: none;
     margin: 0 0 0.25em 1em;
 }
