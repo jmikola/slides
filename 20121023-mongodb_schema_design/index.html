@@ -1540,6 +1540,45 @@ db.rec_ts.update(
 });</code></pre>
                     </section>
                 </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Exercise #6
+
+                        Users can only recommend ten books at a time
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #6: Solution
+
+<pre><code class="language-javascript">// db.user_recs (track user's remaining and given recommendations)
+db.user_recs.insert({
+    _id: "bob",
+    remaining: 8,
+    books: [3, 10]
+});
+
+// Record a recommendation if possible
+db.user_recs.update(
+    { _id: "bob", remaining: { $gt: 0 }, books: { $ne: 4 }},
+    { $inc: { remaining: -1 }, $push: { books: 4 }}
+});</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Exercise #6: Solution
+
+                        * One less unassigned recommendation remaining
+                        * Newly-recommended book is now linked
+
+<pre><code class="language-javascript">&gt; db.user_recs.findOne()
+{
+    _id: "bob",
+<span class="code-highlight inline-block">    remaining: 7,
+    books: [3, 10, 4]</span>
+}</code></pre>
+                    </section>
+                </section>
             </div>
 
             <div class="footer"></div>
