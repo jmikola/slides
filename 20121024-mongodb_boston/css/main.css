@@ -23,7 +23,7 @@ section.ul-2col > ul {
 
 section.ul-2col > ul > li {
     float: left;
-    margin-top: 1em;
+    margin-top: 0.5em;
     width: 50%;
 }
 
@@ -150,6 +150,10 @@ section[data-state="pipeline"] pre {
     font-size: 1em;
     margin-top: 1em;
     text-align: center;
+}
+
+section[data-state="expressions"] ul > li > ul > li {
+    font-size: 0.75em;
 }
 
 section[data-state="sharding-diagram"] div.node-1,
