@@ -44,15 +44,16 @@
                         <ul>
                             <li>State of Aggregation</li>
                             <li>Pipeline</li>
-                            <li>Usage and Limitations</li>
+                            <li>Expressions</li>
                         </ul>
                     </div>
 
                     <div class="col-right">
                         <ul>
-                            <li>Optimization</li>
+                            <li>Usage and Limitations</li>
+                            <!-- <li>Optimization</li> -->
                             <li>Sharding</li>
-                            <li>Expressions</li>
+                            <!-- <li>Expressions</li> -->
                             <li>Looking Ahead</li>
                         </ul>
                     </div>
@@ -125,10 +126,11 @@
 
                         * <strike>State of Aggregation</strike>
                         * Pipeline
-                        * Usage and Limitations
-                        * Optimization
-                        * Sharding
                         * Expressions
+                        * Usage and Limitations
+                        <!-- * Optimization -->
+                        * Sharding
+                        <!-- * Expressions -->
                         * Looking Ahead
                     </section>
 
@@ -145,7 +147,7 @@
                         <pre><code class="no-highlight">ps ax | grep mongod | head -n 1</code></pre>
                     </section>
 
-                    <section data-markdown data-state="pipeline-operators">
+                    <section data-markdown>
                         ## Pipeline Operators
 
                         * `$match`
@@ -689,40 +691,89 @@
 
                 <section>
                     <section data-markdown>
+                        # Expressions
+
+                        * <strike>State of Aggregation</strike>
+                        * <strike>Pipeline</strike>
+                        * Expressions
+                        * Usage and Limitations
+                        <!-- * Optimization -->
+                        * Sharding
+                        <!-- * Expressions -->
+                        * Looking Ahead
+                    </section>
+
+                    <section data-markdown>
+                        ## Expressions
+
+                        * Return computed values
+                        * Used with `$project` and `$group`
+                        * Reference fields using `$` (e.g. `"$x"`)
+                        * Expressions may be nested
+                    </section>
+
+                    <section data-markdown class="ul-2col">
+                        ## Expressions
+
+                        * Logic
+                          * `$and`, `$or`, `$not`
+                        * Comparison
+                          * `$cmp`, `$eq`, `$gt`
+                        * Arithmetic
+                          * `$add`, `$divide`
+                        * String
+                          * `$strcasecmp`, `$substr`
+                        * Date
+                          * `$year`, `$dayOfMonth`
+                        * Conditional
+                          * `$cond`, `$ifNull`
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
                         # Usage
 
                         * <strike>State of Aggregation</strike>
                         * <strike>Pipeline</strike>
+                        * <strike>Expressions</strike>
                         * Usage and Limitations
-                        * Optimization
+                        <!-- * Optimization -->
                         * Sharding
-                        * Expressions
+                        <!-- * Expressions -->
                         * Looking Ahead
                     </section>
 
                     <section data-markdown>
                         ## Usage
 
+                        * `aggregate` database command
                         * `collection.aggregate()` method
                             * Mongo shell
                             * Most drivers
-                        * `aggregate` database command
                     </section>
 
                     <section data-markdown>
                         ## Collection Method
 
                         <pre><code class="language-javascript">db.books.aggregate([
-  { $project: { language: 1 }},
-  { $group: { _id: "$language", numTitles: { $sum: 1 }}}
-])</code></pre>
+  { $unwind: "$subjects" },
+  { $sort: { created: 1 }},
+  { $group: { _id: "$subjects", c: { $sum: 1 }, ap: { $avg: "$pages" },
+              firstCreated: { $first: "$created" } }}
+]);</code></pre>
 
                         &#x25BC;
 
                         <pre><code class="language-javascript">{
   result: [
-    { _id: "Russian", numTitles: 1 },
-    { _id: "English", numTitles: 2 }
+    { "_id": "Fantasy", "c": 6, "ap": 371.3333,
+      "firstCreated": ISODate("20120915T04:00:00Z")
+    },
+    { "_id": "Historical", "c": 7, "ap": 475.2857,
+      "firstCreated": ISODate("20120415T04:00:00Z")
+    }
+    // Other results follow…
   ],
   ok: 1
 }</code></pre>
@@ -734,8 +785,10 @@
                         <pre><code class="language-javascript">db.runCommand({
   aggregate: "books",
   pipeline: [
-    { $project: { language: 1 }},
-    { $group: { _id: "$language", numTitles: { $sum: 1 }}}
+    { $unwind: "$subjects" },
+    { $sort: { created: 1 }},
+    { $group: { _id: "$subjects", c: { $sum: 1 }, ap: { $avg: "$pages" },
+                firstCreated: { $first: "$created" } }}
   ]
 })</code></pre>
 
@@ -743,8 +796,10 @@
 
                         <pre><code class="language-javascript">{
   result: [
-    { _id: "Russian", numTitles: 1 },
-    { _id: "English", numTitles: 2 }
+    { "_id": "Fantasy", "c": 6, "ap": 371.3333,
+      "firstCreated": ISODate("20120915T04:00:00Z")
+    },
+    // Other results follow…
   ],
   ok: 1
 }</code></pre>
@@ -761,17 +816,18 @@
                             * Binary, Code, deprecated types
                     </section>
                 </section>
-
+<!--
                 <section>
                     <section data-markdown>
                         # Optimization
 
                         * <strike>State of Aggregation</strike>
                         * <strike>Pipeline</strike>
+                        * <strike>Expressions</strike>
                         * <strike>Usage and Limitations</strike>
                         * Optimization
                         * Sharding
-                        * Expressions
+                        <!-- * Expressions - ->
                         * Looking Ahead
                     </section>
 
@@ -813,17 +869,18 @@
 ]</code></pre>
                     </section>
                 </section>
-
+-->
                 <section>
                     <section data-markdown>
                         # Sharding
 
                         * <strike>State of Aggregation</strike>
                         * <strike>Pipeline</strike>
+                        * <strike>Expressions</strike>
                         * <strike>Usage and Limitations</strike>
-                        * <strike>Optimization</strike>
+                        <!-- * <strike>Optimization</strike> -->
                         * Sharding
-                        * Expressions
+                        <!-- * Expressions -->
                         * Looking Ahead
                     </section>
 
@@ -842,7 +899,6 @@
 
                         <pre><code class="language-javascript">[
   { $match:   { /* filter by shard key */ }},
-  { $project: { /* select fields       */ }},
   { $group:   { /* group by some field */ }},
   { $sort:    { /* sort by some field  */ }},
   { $project: { /* reshape result      */ }}
@@ -858,7 +914,6 @@
                                     <span class="label">shard<sub>1</sub></span>
                                     <ul>
                                         <li><code>$match</code></li>
-                                        <li><code>$project</code></li>
                                         <li><code>$group</code><sub>1</sub></li>
                                     </ul>
                                 </div>
@@ -869,7 +924,6 @@
                                     <span class="label">shard<sub>2</sub></span>
                                     <ul>
                                         <li><code>$match</code></li>
-                                        <li><code>$project</code></li>
                                         <li><code>$group</code><sub>1</sub></li>
                                     </ul>
                                 </div>
@@ -880,7 +934,6 @@
                                     <span class="label">shard<sub>3</sub></span>
                                     <!-- <ul>
                                         <li><code>$match</code></li>
-                                        <li><code>$project</code></li>
                                         <li><code>$group</code><sub>1</sub></li>
                                     </ul> -->
                                 </div>
@@ -904,18 +957,10 @@
                         </div>
                     </section>
                 </section>
-
+<!--
                 <section>
                     <section data-markdown>
                         # Expressions
-
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline</strike>
-                        * <strike>Usage and Limitations</strike>
-                        * <strike>Optimization</strike>
-                        * <strike>Sharding</strike>
-                        * Expressions
-                        * Looking Ahead
                     </section>
 
                     <section data-markdown>
@@ -988,7 +1033,7 @@
                             Note: highlight.js picks up "case" in "$strcasecmp"
                             as a keyword. A zero-width space is used to prevent
                             it from matching.
-                        -->
+                        - ->
                         <pre><code class="language-javascript">{ $strca&#8203;secmp: ["foo", "bar"] } &#x25BA; 1
 { $substr:     ["foo", 1, 2]  } &#x25BA; "oo"
 { $toUpper:    "foo"          } &#x25BA; "FOO"
@@ -1026,17 +1071,18 @@
 </code></pre>
                     </section>
                 </section>
-
+-->
                 <section>
                     <section data-markdown>
                         # Looking Ahead
 
                         * <strike>State of Aggregation</strike>
                         * <strike>Pipeline</strike>
-                        * <strike>Usage and Limitations</strike>
-                        * <strike>Optimization</strike>
-                        * <strike>Sharding</strike>
                         * <strike>Expressions</strike>
+                        * <strike>Usage and Limitations</strike>
+                        <!-- * <strike>Optimization</strike> -->
+                        * <strike>Sharding</strike>
+                        <!-- * <strike>Expressions</strike> -->
                         * Looking Ahead
                     </section>
 
@@ -1061,7 +1107,6 @@
                         ## Future Enhancements
 
                         * [Move `$match` earlier when possible](https://jira.mongodb.org/browse/SERVER-4506)
-                        * Two-step sorting for sharding
                         * [Pipeline explain facility](https://jira.mongodb.org/browse/SERVER-4504)
                         * Memory usage improvements
                             * [Grouping input sorted by `_id`](https://jira.mongodb.org/browse/SERVER-4507)
@@ -1077,7 +1122,7 @@
                             * Longer aggregation pipelines
                         * Quick aggregations from the shell
                     </section>
-
+<!--
                     <section data-markdown>
                         ## Shell Enhancements
 
@@ -1124,7 +1169,7 @@
 }</code></pre>
                     </section>
                 </section>
-
+-->
                 <section data-markdown data-state="final">
                     # Thanks!
 

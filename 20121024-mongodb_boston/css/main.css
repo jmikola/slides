@@ -17,6 +17,20 @@ div.col-right {
     width: 50%;
 }
 
+section.ul-2col > ul {
+    width: 100%;
+}
+
+section.ul-2col > ul > li {
+    float: left;
+    margin-top: 1em;
+    width: 50%;
+}
+
+section.ul-2col > ul > li:nth-child(odd) {
+    clear: left;
+}
+
 section[data-state="title"] h1 {
     font-size: 1.8em;
     text-align: right;
@@ -119,7 +133,7 @@ div.pipeline-op pre {
 }
 
 div.pipeline-op pre code {
-    background-color: rgba(248,248,255,0.66);
+    background-color: rgba(248,248,255,0.75);
 }
 
 div.pipeline-op pre code * {
