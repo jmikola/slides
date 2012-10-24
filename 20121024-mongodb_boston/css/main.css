@@ -220,3 +220,46 @@ section[data-state="photo-credits"] ul li {
     font-size: 0.5em;
     line-height: 1.2em;
 }
+
+div.mario-bg {
+    margin: 50px auto;
+    position: relative;
+    display: block;
+    width: 256px;
+    height: 128px;
+    background-image: url("../img/mario-bg.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid #fff;
+
+    -webkit-transform: scale(2);
+       -moz-transform: scale(2);
+        -ms-transform: scale(2);
+            transform: scale(2);
+}
+
+div.mario-pipes {
+    position: absolute;
+    bottom: 0;
+    z-index: 1;
+    width: 256px;
+    height: 64px;
+    background-image: url("../img/mario-pipes.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+div.mario-sprite {
+    position: absolute;
+    bottom: 16px;
+    left: 148px;
+    z-index: 2;
+    width: 16px;
+    height: 28px;
+    background-image: url("../img/mario-sprite.gif");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+}
