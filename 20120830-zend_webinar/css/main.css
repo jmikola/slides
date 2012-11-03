@@ -16,6 +16,10 @@
     margin-bottom: 2em;
 }
 
+.reveal code {
+    max-height: inherit;
+}
+
 /* Do not resize links within headers for print */
 @media print {
     h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -226,7 +230,7 @@ section[data-state="relational-diagram"] table {
     display: inline-block;
     float: left;
     font-size: 0.5em;
-    margin-left: 2%;
+    margin-left: 5%;
 }
 
 section[data-state="relational-diagram"] table th,

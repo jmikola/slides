@@ -5,26 +5,24 @@
         <title>Getting Acquainted with MongoDB</title>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="stylesheet" href="../common/reveal.js/css/main.css">
-        <link rel="stylesheet" href="../common/reveal.js/css/theme/default.css" id="theme">
-        <link rel="stylesheet" href="../common/reveal.js/lib/css/zenburn.css">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/tomorrow-night-eighties.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/default.css">
+        <link rel="stylesheet" href="css/main.css">
 
         <script>
             // If the query includes 'print-pdf' we'll use the PDF print sheet
-            document.write('<link rel="stylesheet" href="../common/reveal.js/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');
+            document.write('<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');
         </script>
 
-        <link rel="stylesheet" href="css/main.css">
-
         <!--[if lt IE 9]>
-        <script src="../common/reveal.js/lib/js/html5shiv.js"></script>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
         <![endif]-->
     </head>
 
     <body>
         <div class="reveal">
-            <div class="state-background"></div>
-
             <div class="slides">
                 <section data-state="title">
                     <h1>Getting Acquainted with <span class="mongodb-logo">MongoDB</span></h1>
@@ -61,14 +59,18 @@
                     <section data-markdown data-state="terminology">
                         # Terminology
 
-                        <table>
-                            <tr><th>RDBMS</th><th>:</th><th>MongoDB</th></tr>
-                            <tr><td>Database</td><td>:</td><td>Database</td></tr>
-                            <tr><td>Table</td><td>:</td><td>Collection</td></tr>
-                            <tr><td>Row</td><td>:</td><td>Document</td></tr>
-                            <tr><td>Column</td><td>:</td><td>Field</td></tr>
-                            <tr><td>Primary Key</td><td>:</td><td><code>_id</code></td></tr>
-                        </table>
+<pre><code class="language-javascript">{
+    "mongodb"    : "relational db",
+    "database"   : "database",
+    "collection" : "table",
+    "document"   : "row",
+    "index"      : "index",
+    "_id"        : "primary key",
+    "sharding" : {
+        "shard"     : "partition",
+        "shard key" : "partition key"
+    }
+}</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -625,8 +627,8 @@ $user = ['username' => 'tom'];
 
                         <blockquote>
                             You have the right to provide an <code>_id</code>.<br>
-                            Any <code>_id</code> you provide must be unique for its collection.<br>
-                            If you do not provide an <code>_id</code>, one will be generated for you.
+                            An <code>_id</code> must be unique for its collection.<br>
+                            MongoDB can generate one by default.
                         </blockquote>
                     </section>
 
@@ -673,7 +675,7 @@ $user = ['username' => 'tom'];
 
 echo (string) $id;        // 5033ea5ce84df1110f000001
 echo $id->getTimestamp(); // 1345579612
-echo $id->getHostname();  // honeydew
+echo $id->getHostname();  // honeydew (not necessarily from $id)
 echo $id->getPID();       // 3857
 echo $id->getInc();       // 1
 
@@ -693,7 +695,7 @@ $c->find(['_id' => new MongoId('5033ea5ce84df1110f000001']));</span></code></pre
 
 $user = $c->findOne(['username' => 'tom']);
 
-<span class="fragment">$c->insert($user); // No error, but this does nothing</span>
+<span class="fragment">$c->insert($user); // No error, but nothing is inserted</span>
 
 <span class="fragment">$db->users->lastError(); // Check the last error
 <span class="stdout">array(
@@ -706,14 +708,14 @@ $user = $c->findOne(['username' => 'tom']);
 
 <span class="fragment">$c->insert($user, ['safe' => true]); // Use safe mode!
 <span class="stdout">Uncaught exception: MongoCursorException:
-  E11000 duplicate key error index: test.users.$_id_ 
+  E11000 duplicate key error index: test.users.$_id_
   dup key: { : ObjectId('503b0772e84df1f87b000001') }</span></span></code></pre>
                     </section>
 
                     <section data-markdown>
                         ## Write Concern
 
-                        * `{safe: false}` (default)
+                        * `{safe: false}`
                             * Fire and forget
                             * Trade consistency for performance
                         * `{safe: true}`
@@ -721,7 +723,7 @@ $user = $c->findOne(['username' => 'tom']);
                             * Issues [getLastError](http://www.mongodb.org/display/DOCS/getLastError+Command) command
                         * `{safe: #}` checks multiple servers
                             * Waits for replication
-                            * `{safe: 3}` for primary and two slaves
+                            * `{safe: 3}` for primary and two secondaries
                     </section>
 
                     <section data-markdown>
@@ -802,7 +804,7 @@ $c->update(
                             * [$push](http://www.mongodb.org/display/DOCS/Updating#Updating-%24push), [$pushAll](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pushAll)
                             * [$pull](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pull), [$pullAll](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pullAll)
                     </section>
-
+<!--
                     <section data-markdown>
                         ## [Positional Updates](http://www.mongodb.org/display/DOCS/Updating#Updating-The%24positionaloperator)
 
@@ -822,6 +824,7 @@ $db->articles->update(
     ['$inc' => ['comments.$.votes' => 1]]
 );</span></code></pre>
                     </section>
+-->
                 </section>
 
                 <section>
@@ -833,7 +836,7 @@ $db->articles->update(
                         ## Basic Querying
 
                         <pre><code class="language-php">$c->findOne(); // Find one document as an array
-$c->find();    // Find all documents (MongoCursor)
+$c->find();    // Find all documents via MongoCursor
 
 // Query on field values
 $c->findOne(['lastName' => 'Smith']);
@@ -1146,7 +1149,6 @@ tech: jen, bob</span></span></code></pre>
                         <pre><code class="language-php">$rs = $db->command([
     'aggregate' => 'articles',
     'pipeline' => [
-        ['$project' => ['author' => 1, 'tags' => 1]],
         ['$unwind' => '$tags'],
         ['$group' => [
             '_id' => '$tags',
@@ -1187,8 +1189,7 @@ politics: jen</span></span></code></pre>
                     <section data-markdown>
                         ## MongoGridFS
 
-                        <pre><code class="language-php">
-// Default construction (fs.files and fs.chunks)
+                        <pre><code class="language-php">// Default construction (fs.files and fs.chunks)
 $grid = $db->getGridFS();
 $grid = new MongoGridFS($db);
 
@@ -1241,7 +1242,7 @@ $file->getResource(); // Stream resource (new in 1.3+)</span>
 <span class="fragment">$file->write();               // Write data to stored filename
 $file->write('/tmp/foo.jpg'); // Write data to a new file</span>
 
-<span class="fragment">$file->file; // Files document data
+<span class="fragment">$file->file; // Document from the "files" collection
 <span class="stdout">array(
   "_id" => &lt;object of type MongoId&gt;,
   "meta" => "data",
@@ -1370,21 +1371,11 @@ $db->command([
                     * [http://history.nasa.gov/ap08fj/photos/a/as08-16-2593hr.jpg](http://history.nasa.gov/ap08fj/photos/a/as08-16-2593hr.jpg)
                 </section>
             </div>
-
-            <aside class="controls">
-                <a class="left" href="#">&#x25C4;</a>
-                <a class="right" href="#">&#x25BA;</a>
-                <a class="up" href="#">&#x25B2;</a>
-                <a class="down" href="#">&#x25BC;</a>
-            </aside>
-
-            <div class="footer"></div>
-
-            <div class="progress"><span></span></div>
         </div>
 
-        <script src="../common/reveal.js/lib/js/head.min.js"></script>
-        <script src="../common/reveal.js/js/reveal.js"></script>
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.js"></script>
+        <script src="../common/js/reveal.js"></script>
         <script src="js/jquery-1.8.0.min.js"></script>
         <script src="js/jquery.jsPlumb-1.3.12-all-min.js"></script>
         <script src="js/main.js"></script>
