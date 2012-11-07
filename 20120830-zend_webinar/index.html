@@ -10,11 +10,7 @@
         <link rel="stylesheet" href="../vendor/highlight.js/src/styles/tomorrow-night-eighties.css">
         <link rel="stylesheet" href="../vendor/reveal.js/css/theme/default.css">
         <link rel="stylesheet" href="css/main.css">
-
-        <script>
-            // If the query includes 'print-pdf' we'll use the PDF print sheet
-            document.write('<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');
-        </script>
+        <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
 
         <!--[if lt IE 9]>
         <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
@@ -293,7 +289,7 @@
                     <section data-markdown>
                         ## Document Modeling
 
-                        <pre><code class="language-js">{
+<pre><code class="language-js">{
     _id: 1,
     title: "Praesent ante dui",
     body: "Lorem ipsum…",
@@ -333,12 +329,12 @@
                     <section data-markdown>
                         ## Binary Representation
 
-                        <pre><code class="no-highlight">{"hello": "world"}
+<pre><code class="no-highlight">{"hello": "world"}
 
 "\x16\x00\x00\x00\x02hello\x00
  \x06\x00\x00\x00world\x00\x00"</code></pre>
 
-                        <pre><code class="no-highlight">{"things": ["foo", 5.05, 2012]}
+<pre><code class="no-highlight">{"things": ["foo", 5.05, 2012]}
 
 "\x33\x00\x00\x00\x04things\x00
  \x26\x00\x00\x00\x02\x30\x00\x04
@@ -353,12 +349,12 @@
                     <section data-markdown>
                         ## Documents in PHP
 
-                        <pre><code class="language-php">// Arrays are most common
+<pre><code class="language-php">// Arrays are most common
 $a = ['hello' => 'world'];
 
 $b = ['things' => ['foo', 5.05, 2012]];</code></pre>
 
-                        <pre><code class="language-php">// Objects work, too!
+<pre><code class="language-php">// Objects work, too!
 $a = new stdClass();
 $a->hello = 'world';
 
@@ -390,35 +386,35 @@ $b->things = ['foo', 5.05, 2012];</code></pre>
                     <section data-markdown>
                         ## Installing
 
-                        <pre><code class="no-highlight">$ tar xvzf mongodb-linux-x86_64-2.2.0-rc1.tgz
-mongodb-linux-x86_64-2.2.0-rc1/GNU-AGPL-3.0
-mongodb-linux-x86_64-2.2.0-rc1/README
-mongodb-linux-x86_64-2.2.0-rc1/THIRD-PARTY-NOTICES
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongodump
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongorestore
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongoexport
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongoimport
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongostat
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongotop
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongooplog
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongofiles
-mongodb-linux-x86_64-2.2.0-rc1/bin/bsondump
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongoperf
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongosniff
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongod
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongos
-mongodb-linux-x86_64-2.2.0-rc1/bin/mongo</code></pre>
+<pre><code class="no-highlight">$ tar xvzf mongodb-linux-x86_64-2.2.1.tgz
+mongodb-linux-x86_64-2.2.1/GNU-AGPL-3.0
+mongodb-linux-x86_64-2.2.1/README
+mongodb-linux-x86_64-2.2.1/THIRD-PARTY-NOTICES
+mongodb-linux-x86_64-2.2.1/bin/mongodump
+mongodb-linux-x86_64-2.2.1/bin/mongorestore
+mongodb-linux-x86_64-2.2.1/bin/mongoexport
+mongodb-linux-x86_64-2.2.1/bin/mongoimport
+mongodb-linux-x86_64-2.2.1/bin/mongostat
+mongodb-linux-x86_64-2.2.1/bin/mongotop
+mongodb-linux-x86_64-2.2.1/bin/mongooplog
+mongodb-linux-x86_64-2.2.1/bin/mongofiles
+mongodb-linux-x86_64-2.2.1/bin/bsondump
+mongodb-linux-x86_64-2.2.1/bin/mongoperf
+mongodb-linux-x86_64-2.2.1/bin/mongosniff
+mongodb-linux-x86_64-2.2.1/bin/mongod
+mongodb-linux-x86_64-2.2.1/bin/mongos
+mongodb-linux-x86_64-2.2.1/bin/mongo</code></pre>
                     </section>
 
                     <section data-markdown>
                         ## Starting
 
-                        <pre><code class="no-highlight" style="overflow: hidden; word-wrap: normal;">$ mkdir /data/db
+<pre><code class="no-highlight" style="overflow: hidden; word-wrap: normal;">$ mkdir /data/db
 
-$ mongodb-linux-x86_64-2.2.0-rc1/bin/mongod
+$ mongodb-linux-x86_64-2.2.1/bin/mongod
 [initandlisten] MongoDB starting : pid=28285 port=27017 dbpath=/data/db/ 64-bit host=honeydew
-[initandlisten] db version v2.2.0-rc1, pdfile version 4.5
-[initandlisten] git version: cf117b7c7d0655282deab662ed68e11119f844c7
+[initandlisten] db version v2.2.1, pdfile version 4.5
+[initandlisten] git version: d6764bf8dfe0685521b8bc7b98fd1fab8cfeb5ae
 [initandlisten] build info: Linux ip-10-2-29-40 2.6.21.7-2.ec2.v1.2.fc8xen #1 SMP Fri Nov 20 17:48:28 EST 2009 x86_64 BOOST_LIB_VERSION=1_49
 [initandlisten] options: {}
 [initandlisten] journal dir=/data/db/journal
@@ -430,8 +426,8 @@ $ mongodb-linux-x86_64-2.2.0-rc1/bin/mongod
                     <section data-markdown>
                         ## Connecting
 
-                        <pre><code class="no-highlight">$ mongo
-MongoDB shell version: 2.2.0-rc1
+<pre><code class="no-highlight">$ mongo
+MongoDB shell version: 2.2.1
 connecting to: test
 > show dbs
 local   (empty)
@@ -463,7 +459,7 @@ true</code></pre>
                     <section data-markdown>
                         ## PHP Driver Installation
 
-                        <pre><code class="no-highlight">$ pecl install mongo
+<pre><code class="no-highlight">$ pecl install mongo
 downloading mongo-1.2.12.tgz ...
 Starting to download mongo-1.2.12.tgz (90,517 bytes)
 .....................done: 90,517 bytes
@@ -515,7 +511,7 @@ You should add "extension=mongo.so" to php.ini</code></pre>
                     <section data-markdown>
                         ## Connecting
 
-                        <pre><code class="language-php">// localhost:27017
+<pre><code class="language-php">// localhost:27017
 $m = new Mongo();
 
 <span class="fragment">// example.com:27018
@@ -534,7 +530,7 @@ $m = new Mongo(
                     <section data-markdown>
                         ## The Mongo Class
 
-                        <pre><code class="language-php">$m = new Mongo();
+<pre><code class="language-php">$m = new Mongo();
 
 // Get an array of databases and their sizes
 $m->listDBs();
@@ -554,7 +550,7 @@ $m->dropDB('test');</span></code></pre>
                     <section data-markdown>
                         ## The MongoDB Class
 
-                        <pre><code class="language-php">$db = $m->test;
+<pre><code class="language-php">$db = $m->test;
 $db = new MongoDB($m, 'test');
 
 <span class="fragment">$db->getCollectionNames(); // Array of collection names
@@ -574,7 +570,7 @@ $db->drop();                  // Drop the entire database</span></code></pre>
                     <section data-markdown>
                         ## The MongoCollection Class
 
-                        <pre><code class="language-php">$c = $db->users;
+<pre><code class="language-php">$c = $db->users;
 $c = new MongoCollection($db, 'users');
 
 <span class="fragment">// Insert a user document for Bob
@@ -590,7 +586,7 @@ $c->find(['roles' => 'admin']);</span></code></pre>
                     <section data-markdown>
                         ## The MongoCollection Class
 
-                        <pre><code class="language-php">$c->count();                     // Count all users
+<pre><code class="language-php">$c->count();                     // Count all users
 $c->count(['roles' => 'admin']); // Count only admins
 
 <span class="fragment">$c->remove(['username' => 'john']); // Delete a user
@@ -603,7 +599,7 @@ $c->drop();</span></code></pre>
                     <section data-markdown>
                         ## The MongoCollection Class
 
-                        <pre><code class="language-php">// Create a user document for Tom
+<pre><code class="language-php">// Create a user document for Tom
 $user = ['username' => 'tom'];
 
 <span class="fragment">$c->insert($user); // Insert Tom's document</span>
@@ -626,9 +622,10 @@ $user = ['username' => 'tom'];
                         ## Identifiers
 
                         <blockquote>
-                            You have the right to provide an <code>_id</code>.<br>
-                            An <code>_id</code> must be unique for its collection.<br>
-                            MongoDB can generate one by default.
+                            You have the right to an <code>_id</code>.<br>
+                            It must be unique to a collection.<br>
+                            If no <code>_id</code> is provided, MongoDB<br>
+                            will generate one by default.
                         </blockquote>
                     </section>
 
@@ -671,11 +668,11 @@ $user = ['username' => 'tom'];
                     <section data-markdown>
                         ## The MongoId Class
 
-                        <pre><code class="language-php">$id = new MongoId();
+<pre><code class="language-php">$id = new MongoId();
 
 echo (string) $id;        // 5033ea5ce84df1110f000001
 echo $id->getTimestamp(); // 1345579612
-echo $id->getHostname();  // honeydew (not necessarily from $id)
+echo $id->getHostname();  // honeydew (not derived from $id)
 echo $id->getPID();       // 3857
 echo $id->getInc();       // 1
 
@@ -691,7 +688,7 @@ $c->find(['_id' => new MongoId('5033ea5ce84df1110f000001']));</span></code></pre
                     <section data-markdown>
                         ## Inserting
 
-                        <pre><code class="language-php">$c = $db->users;
+<pre><code class="language-php">$c = $db->users;
 
 $user = $c->findOne(['username' => 'tom']);
 
@@ -729,7 +726,7 @@ $user = $c->findOne(['username' => 'tom']);
                     <section data-markdown>
                         ## Saving
 
-                        <pre><code class="language-php">// Modify Tom's user
+<pre><code class="language-php">// Modify Tom's user
 $user = $c->findOne(['username' => 'tom']);
 $user['email'] = 'tom@example.com';
 $user['roles'][] = 'moderator';
@@ -744,7 +741,7 @@ $c->save($user);</code></pre>
                     <section data-markdown>
                         ## Updating
 
-                        <pre><code class="language-php">// Change Tom's email address
+<pre><code class="language-php">// Change Tom's email address
 $c->update(
     ['username' => 'tom'],
     ['$set' => ['email' => 'thomas@example.com']]
@@ -758,7 +755,7 @@ $c->update(
                     <section data-markdown>
                         ## Updating Multiple Documents
 
-                        <pre><code class="language-php">// Make everyone an admin (probably a bad idea :)
+<pre><code class="language-php">// Make everyone an admin (probably a bad idea :)
 $c->update(
     [],
     ['$addToSet' => ['roles' => 'admin']],
@@ -772,7 +769,7 @@ $c->update(
                     <section data-markdown>
                         ## Upserting
 
-                        <pre><code class="language-php">// Ensure Sam exists as staff
+<pre><code class="language-php">// Ensure Sam exists as staff
 $c->update(
     ['username' => 'sam'],
     ['$set' => ['role' => 'staff']],
@@ -808,7 +805,7 @@ $c->update(
                     <section data-markdown>
                         ## [Positional Updates](http://www.mongodb.org/display/DOCS/Updating#Updating-The%24positionaloperator)
 
-                        <pre><code class="language-php">// An article with votable comments
+<pre><code class="language-php">// An article with votable comments
 $db->articles->insert([
     '_id' => 1,
     'title' => 'Praesent ante dui',
@@ -835,7 +832,7 @@ $db->articles->update(
                     <section data-markdown>
                         ## Basic Querying
 
-                        <pre><code class="language-php">$c->findOne(); // Find one document as an array
+<pre><code class="language-php">$c->findOne(); // Find one document as an array
 $c->find();    // Find all documents via MongoCursor
 
 // Query on field values
@@ -862,13 +859,16 @@ $c->find(['lastName' => 'Smith']);</code></pre>
                     <section data-markdown>
                         ## The MongoCursor Class
 
-                        <pre><code class="language-php">$cursor = $db->users->find();      // Find all users
-$cursor->sort(['username' => -1]); // Sort by username, descending
+<pre><code class="language-php">$cursor = $db->users->find();      // Find all users
+$cursor->sort(['username' => -1]); // Desc sort by username
 $cursor->limit(10);                // Limit to 10 results
 $cursor->skip(5);                  // Skip the first 5
 
-<span class="fragment">foreach ($cursor as $result) { }       // Iterate through results
-$results = iterator_to_array($cursor); // Get them up front</span>
+<span class="fragment">// Iterate through results
+foreach ($cursor as $result) { }
+
+// Get them up front
+$results = iterator_to_array($cursor);</span>
 
 <span class="fragment">$cursor->count();     // Count before limit/skip
 $cursor->count(true); // Count with respect to limit/skip</span></code></pre>
@@ -886,7 +886,7 @@ $cursor->count(true); // Count with respect to limit/skip</span></code></pre>
                     <section data-markdown>
                         ## Data to Query
 
-                        <pre><code class="language-php">$c = $db->users;
+<pre><code class="language-php">$c = $db->users;
 
 $c->save([
     'username' => 'bob',
@@ -904,12 +904,14 @@ $c->save([
                     <section data-markdown>
                         ## Complex Criteria
 
-                        <pre><code class="language-php">$lastYear = strtotime('last year');
+<pre><code class="language-php">$lastYear = strtotime('last year');
 
 // Arbitrary Business Requirement #42789!
 $db->users->find([
     'email' => new MongoRegex('/gmail\.com$/i');
-    'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
+    'profile.createdAt' => [
+        '$gt' => new MongoDate($lastYear)
+    ],
     'roles' => 'admin',
 ]);</code></pre>
 
@@ -922,10 +924,12 @@ $db->users->find([
                     <section data-markdown>
                         ## Field Selection
 
-                        <pre><code class="language-php">// Optimize by only selecting usernames
+<pre><code class="language-php">// Optimize by only selecting usernames
 $db->users->find([
     'email' => new MongoRegex('/gmail\.com$/i');
-    'profile.createdAt' => ['$gt' => new MongoDate($lastYear)],
+    'profile.createdAt' => [
+        '$gt' => new MongoDate($lastYear)
+    ],
     'roles' => 'admin',
 ], ['_id' => 0, 'username' => 1]);</code></pre>
 
@@ -977,13 +981,13 @@ $db->users->find([
                     <section data-markdown>
                         ## Managing Indexes
 
-                        <pre><code class="language-php">$c = $db->things;
+<pre><code class="language-php">$c = $db->things;
 
 // Ensure unique values for x
 $c->ensureIndex(['x' => 1], ['unique' => true]);
 
 <span class="fragment">// Check that index creation succeeds
-$c->ensureIndex(['x' => 1], ['unique' => true, 'safe' => true]);</span>
+$c->ensureIndex(['x' => 1], ['safe' => true]);</span>
 
 <span class="fragment">// Delegate index creation as a background task
 $c->ensureIndex(['x' => 1], ['background' => true]);</span>
@@ -991,13 +995,13 @@ $c->ensureIndex(['x' => 1], ['background' => true]);</span>
 <span class="fragment">$c->getIndexInfo(); // Array describing all indexes</span>
 
 <span class="fragment">$c->deleteIndex('x'); // Delete an index by name or field(s)
-$c->deleteIndexes();  // Delete all indexes on the collection</span></code></pre>
+$c->deleteIndexes();  // Delete all collection indexes</span></code></pre>
                     </section>
 
                     <section data-markdown>
                         ## Compound Indexes
 
-                        <pre><code class="language-php">$c->ensureIndex(['x' => 1, 'y' => 1, 'z' => -1]);
+<pre><code class="language-php">$c->ensureIndex(['x' => 1, 'y' => 1, 'z' => -1]);
 
 // These queries will use the index
 $c->find(['x' => 'foo']);
@@ -1019,7 +1023,7 @@ $c->find(['y' => 6]);
                     <section data-markdown>
                         ## Explain Your Queries
 
-                        <pre><code class="language-php">$cursor = $c->find(['x' => 'foo']);
+<pre><code class="language-php">$cursor = $c->find(['x' => 'foo']);
 $cursor->explain();
 <span class="stdout">array(
   "cursor" => "BtreeCursor x_1", // Avoid BasicCursor
@@ -1088,7 +1092,7 @@ $cursor->explain();
                     <section data-markdown>
                         ## Data to Aggregate
 
-                        <pre><code class="language-php">$c = $db->articles;
+<pre><code class="language-php">$c = $db->articles;
 
 $c->save(['author' => 'jen', 'tags' => ['politics', 'tech']]);
 $c->save(['author' => 'sue', 'tags' => ['business']]);
@@ -1102,7 +1106,7 @@ $c->save([
                     <section data-markdown>
                         ## MapReduce
 
-                        <pre><code class="language-php">$map = '
+<pre><code class="language-php">$map = '
 function() {
     for (var i = 0; i &lt; this.tags.length; i++) {
         emit(this.tags[i], { authors: [this.author] });
@@ -1126,7 +1130,7 @@ function(key, values) {
                     <section data-markdown>
                         ## MapReduce
 
-                        <pre><code class="language-php">$rs = $db->command([
+<pre><code class="language-php">$rs = $db->command([
     'mapreduce' => 'articles',
     'map' => new MongoCode($map),
     'reduce' => new MongoCode($reduce),
@@ -1146,7 +1150,7 @@ tech: jen, bob</span></span></code></pre>
                     <section data-markdown>
                         ## Aggregation Framework
 
-                        <pre><code class="language-php">$rs = $db->command([
+<pre><code class="language-php">$rs = $db->command([
     'aggregate' => 'articles',
     'pipeline' => [
         ['$unwind' => '$tags'],
@@ -1189,7 +1193,7 @@ politics: jen</span></span></code></pre>
                     <section data-markdown>
                         ## MongoGridFS
 
-                        <pre><code class="language-php">// Default construction (fs.files and fs.chunks)
+<pre><code class="language-php">// Default construction (fs.files and fs.chunks)
 $grid = $db->getGridFS();
 $grid = new MongoGridFS($db);
 
@@ -1203,7 +1207,7 @@ $grid = new MongoGridFS($db, 'images');</span>
                     <section data-markdown>
                         ## Storing Files
 
-                        <pre><code class="language-php">// Store a file and return its _id
+<pre><code class="language-php">// Store a file and return its _id
 $grid->storeFile('photo.jpg', ['extra' => 'metadata']);
 $grid->put('photo.jpg', ['extra' => 'metadata']);
 
@@ -1217,7 +1221,7 @@ $grid->storeUpload('field_name', ['extra' => 'metadata']);</span></code></pre>
                     <section data-markdown>
                         ## Retrieving Files
 
-                        <pre><code class="language-php">// Get a MongoGridFSFile by its _id
+<pre><code class="language-php">// Get a MongoGridFSFile by its _id
 $grid->get(new MongoId('503ce546e84df14d54000000'));
 
 <span class="fragment">// Query for a MongoGridFS file
@@ -1231,7 +1235,7 @@ $grid->find(['uploadDate' => ['$gt' => $yesterday]]);</span></code></pre>
                     <section data-markdown>
                         ## MongoGridFSFile
 
-                        <pre><code class="language-php">$file = $grid->findOne(['filename' => 'photo.jpg']);
+<pre><code class="language-php">$file = $grid->findOne(['filename' => 'photo.jpg']);
 
 $file->getFilename(); // Filename string
 $file->getLength();   // File size
@@ -1257,7 +1261,7 @@ $file->write('/tmp/foo.jpg'); // Write data to a new file</span>
                     <section data-markdown>
                         ## Removing Files
 
-                        <pre><code class="language-php">// Delete a file (and related chunks) by its _id
+<pre><code class="language-php">// Delete a file (and related chunks) by its _id
 $grid->delete(new MongoId('503ce546e84df14d54000000'));
 
 <span class="fragment">// Remove files and their related chunks
@@ -1287,7 +1291,7 @@ $grid->drop();</span></code></pre>
                     <section data-markdown>
                         ## Bounds Queries
 
-                        <pre><code class="language-php">$db->places->ensureIndex(['loc' => '2d']);
+<pre><code class="language-php">$db->places->ensureIndex(['loc' => '2d']);
 
 // Rectangle bounds
 $db->places->find(['loc' => ['$within' => ['$box' => [
@@ -1312,7 +1316,7 @@ $db->places->find(['loc' => ['$within' => ['$polygon' => [
                     <section data-markdown>
                         ## Sorted Proximity Queries
 
-                        <pre><code class="language-php">// Find locations near a point, ordered by proximity
+<pre><code class="language-php">// Find locations near a point, ordered by proximity
 $db->places->find(['loc' => ['$near' => [50, 50]]]);
 
 <span class="fragment">// Find at most 10 museums within 5 units of a point
