@@ -5,34 +5,26 @@
         <title>Doctrine MongoDB ODM</title>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="stylesheet" href="../common/reveal.js/css/main.css">
-        <link rel="stylesheet" href="../common/reveal.js/css/theme/default.css" id="theme">
-        <link rel="stylesheet" href="../common/css/highlight.tomorrow-night.css">
 
-        <script>
-            // If the query includes 'print-pdf' we'll use the PDF print sheet
-            document.write('<link rel="stylesheet" href="../common/reveal.js/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');
-        </script>
-
-        <link rel="stylesheet" href="css/theme.css">
-        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../common/css/theme/10gen.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
 
         <!--[if lt IE 9]>
-        <script src="../common/reveal.js/lib/js/html5shiv.js"></script>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
         <![endif]-->
     </head>
 
     <body>
         <div class="reveal">
-            <div class="state-background"></div>
-
             <div class="slides">
                 <section data-markdown>
-                    # Doctrine MongoDB ODM
+                    ## Doctrine MongoDB ODM
 
-                    ## 10gen Driver Days
+                    ### 10gen Driver Days
 
-                    ### September 18, 2012
+                    #### September 18, 2012
                 </section>
 
                 <section data-markdown>
@@ -76,7 +68,7 @@
                 <section data-markdown>
                     ## Mapping Documents
 
-                    <pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/** @ODM\Document(collection="users") */
+<pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/** @ODM\Document(collection="users") */
 class User {
     /** @ODM\Id */
     protected $id;
@@ -101,7 +93,7 @@ class User {
                 <section data-markdown>
                     ## Query Builder
 
-                    <pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">// Doctrine\ODM\MongoDB\DocumentRepository::createQueryBuilder()
+<pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">// Doctrine\ODM\MongoDB\DocumentRepository::createQueryBuilder()
 $queryBuilder
     ->update()
     ->field('id')->equals('50588d4de84df10e0c000000')
@@ -119,7 +111,7 @@ $queryBuilder
 
                     Multiple documents in one collection
 
-                    <pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/**
+<pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/**
  * @ODM\Document(collection="my_documents")
  * @ODM\DiscriminatorField(fieldName="type")
  * @ODM\DiscriminatorMap({"article"="Article", "album"="Album"})
@@ -192,21 +184,10 @@ class Album
                     * Test coverage
                 </section>
             </div>
-
-            <aside class="controls">
-                <a class="left" href="#">&#x25C4;</a>
-                <a class="right" href="#">&#x25BA;</a>
-                <a class="up" href="#">&#x25B2;</a>
-                <a class="down" href="#">&#x25BC;</a>
-            </aside>
-
-            <div class="footer"></div>
-
-            <div class="progress"><span></span></div>
         </div>
 
-        <script src="../common/reveal.js/lib/js/head.min.js"></script>
-        <script src="../common/reveal.js/js/reveal.js"></script>
-        <script src="js/main.js"></script>
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.js"></script>
+        <script src="../common/js/reveal.js"></script>
     </body>
 </html>
