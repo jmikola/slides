@@ -1,0 +1,28 @@
+// For each subject, count books, average pages, report first creation
+db.books.aggregate([
+  { $sort: { created: 1 }},
+  { $unwind: "$subjects" },
+  { $group: { _id: "$subjects", n: { $sum: 1 },
+              fc: { $first: "$created" } }},
+  { $project: { _id: 1, n: 1, fc: { $year: "$fc" }}}
+]);
+
+
+// Count books per publisher city
+db.books.aggregate([
+  { $group: { _id: "$publisher.city", count: { $sum: 1 }}}
+]);
+
+
+// Collect distinct authors and total the pages they've written (top 5)
+rs = db.books.aggregate([
+  { $group: { _id: "$author", pages: { $sum: "$pages" }}},
+  { $sort: { pages: -1 }},
+  { $limit: 5 }
+]);
+
+rs.result.forEach(function(r){
+  var author = db.authors.findOne(r._id);
+  var name = author.first_name + " " + author.last_name;
+  print(name + " wrote " + r.pages + " pages");
+});

@@ -8,26 +8,21 @@
 
         <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
         <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
-
-        <script>
-            // If the query includes 'print-pdf' we'll use the PDF print sheet
-            document.write('<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');
-        </script>
-
-        <link rel="stylesheet" href="../common/css/theme.10gen.css">
+        <link rel="stylesheet" href="../common/css/theme/10gen.css">
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
 
         <!--[if lt IE 9]>
-        <script src="../common/reveal.js/lib/js/html5shiv.js"></script>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
         <![endif]-->
     </head>
 
     <body>
         <div class="reveal">
-            <div class="state-background"></div>
-
             <div class="slides">
                 <section data-state="title">
+                    <!-- <h3 style="float: right; opacity: 0.5;">#MongoBoston</h3> -->
+
                     <h1><span class="logo-mongodb">MongoDB</span> Aggregation Framework</h1>
 
                     <span class="new"></span>
@@ -51,9 +46,7 @@
                     <div class="col-right">
                         <ul>
                             <li>Usage and Limitations</li>
-                            <!-- <li>Optimization</li> -->
                             <li>Sharding</li>
-                            <!-- <li>Expressions</li> -->
                             <li>Looking Ahead</li>
                         </ul>
                     </div>
@@ -131,9 +124,7 @@
                         * Pipeline
                         * Expressions
                         * Usage and Limitations
-                        <!- - * Optimization - ->
                         * Sharding
-                        <!- - * Expressions - ->
                         * Looking Ahead
 -->
                     </section>
@@ -713,9 +704,7 @@
                         * <strike>Pipeline</strike>
                         * Expressions
                         * Usage and Limitations
-                        <!-- * Optimization -->
                         * Sharding
-                        <!-- * Expressions -->
                         * Looking Ahead
                     </section>
 
@@ -754,9 +743,7 @@
                         * <strike>Pipeline</strike>
                         * <strike>Expressions</strike>
                         * Usage and Limitations
-                        <!-- * Optimization -->
                         * Sharding
-                        <!-- * Expressions -->
                         * Looking Ahead
                     </section>
 
@@ -890,9 +877,7 @@
                         * <strike>Pipeline</strike>
                         * <strike>Expressions</strike>
                         * <strike>Usage and Limitations</strike>
-                        <!-- * <strike>Optimization</strike> -->
                         * Sharding
-                        <!-- * Expressions -->
                         * Looking Ahead
                     </section>
 
@@ -944,12 +929,7 @@
                             <div>
                                 <div class="node">
                                     <span class="label">shard<sub>3</sub></span>
-                                    <!-- <ul>
-                                        <li><code>$match</code></li>
-                                        <li><code>$group</code><sub>1</sub></li>
-                                    </ul> -->
                                 </div>
-                                <!-- <span class="arrow">&#x2199;</span> -->
                             </div>
                         </div>
 
@@ -969,6 +949,53 @@
                         </div>
                     </section>
                 </section>
+<!--
+                <section>
+                    <section data-markdown>
+                        # Demo Time
+
+                        ### Plotting the EUR/GDP exchange rate
+                    </section>
+
+                    <section data-markdown>
+                        ## Input Data
+
+                        <pre><code class="language-javascript">{
+  bid: 1.30019,
+  ts: ISODate("2012-02-16T12:48:00Z")
+}</code></pre>
+                        <pre><code class="language-javascript">{
+  bid: 1.3002,
+  ts: ISODate("2012-02-16T12:48:01Z")
+}</code></pre>
+                        <pre><code class="language-javascript">{
+  bid: 1.30021,
+  ts: ISODate("2012-02-16T12:48:02Z")
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## Desired Output
+
+                        <img src="img/candlestick.png" alt="candlestick.png">
+                    </section>
+
+                    <section data-markdown>
+                        ## Output Format
+
+                        <pre><code class="language-javascript">{
+  _id: ISODate("2012-02-16T12:57:00Z"),
+  bid: {
+    open: 1.29994,
+    close: 1.29997,
+    high: 1.3001,
+    low: 1.29992,
+    avg: 1.2999995161290314
+  }
+}</code></pre>
+                    </section>
+                </section>
+-->
 <!--
                 <section>
                     <section data-markdown>
@@ -1092,9 +1119,7 @@
                         * <strike>Pipeline</strike>
                         * <strike>Expressions</strike>
                         * <strike>Usage and Limitations</strike>
-                        <!-- * <strike>Optimization</strike> -->
                         * <strike>Sharding</strike>
-                        <!-- * <strike>Expressions</strike> -->
                         * Looking Ahead
                     </section>
 
@@ -1186,11 +1211,14 @@
                 <section data-markdown data-state="final">
                     # Thanks!
 
+                    <br><span style="font-size:1.5em"><a href="http://goo.gl/G3cmD">http://goo.gl/G3cmD</a></span>
+
+<!--
                     * [mongodb.org/downloads](http://www.mongodb.org/downloads)
                     * [docs.mongodb.org/manual/aggregation](http://docs.mongodb.org/manual/aggregation)
                     * [github.com/TylerBrock/mongo-hacker](https://github.com/TylerBrock/mongo-hacker)
                     * [github.com/rozza/demos](https://github.com/rozza/demos)
-
+-->
                     ### Questions?
                 </section>
 
@@ -1207,8 +1235,6 @@
                     </ul>
                 </section>
             </div>
-
-            <div class="footer"></div>
         </div>
 
         <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
