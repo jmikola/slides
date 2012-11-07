@@ -8,24 +8,17 @@
 
         <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
         <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
-
-        <script>
-            // If the query includes 'print-pdf' we'll use the PDF print sheet
-            document.write('<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + (window.location.search.match(/print-pdf/gi) ? 'pdf' : 'paper') + '.css" type="text/css" media="print">');
-        </script>
-
-        <link rel="stylesheet" href="../common/css/theme.10gen.css">
+        <link rel="stylesheet" href="../common/css/theme/10gen.css">
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
 
         <!--[if lt IE 9]>
-        <script src="../common/reveal.js/lib/js/html5shiv.js"></script>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
         <![endif]-->
     </head>
 
     <body>
         <div class="reveal">
-            <div class="state-background"></div>
-
             <div class="slides">
                 <section data-state="title">
                     <h1><span class="logo-mongodb">MongoDB</span> Schema Design Workshop</h1>
@@ -383,28 +376,26 @@
                         * Accessing linked document data requires extra read
                         * What effect does this have on the system?
                     </section>
+                </section>
 
+                <section>
                     <section data-markdown>
-                        ## Data, RAM and Disk
+                        # Data, RAM and Disk
+                    </section>
 
+                    <section>
                         <img src="img/memory-1.png" alt="memory-1.png">
                     </section>
 
-                    <section data-markdown>
-                        ## Data, RAM and Disk
-
+                    <section>
                         <img src="img/memory-2.png" alt="memory-2.png">
                     </section>
 
-                    <section data-markdown>
-                        ## Data, RAM and Disk
-
+                    <section>
                         <img src="img/memory-3.png" alt="memory-3.png">
                     </section>
 
-                    <section data-markdown>
-                        ## Data, RAM and Disk
-
+                    <section>
                         <img src="img/memory-4.png" alt="memory-4.png">
                     </section>
                 </section>
@@ -629,7 +620,7 @@
                         Index all values in an array field.
 
 <pre><code class="language-javascript">
-  &gt; db.books.ensureIndex({ "subjects": 1 });
+  &gt; db.books.ensureIndex({ "subjects": 1 })
 
 </code></pre>
                      </section>
@@ -639,8 +630,8 @@
 
                          Index an embedded object's field.
 
-<pre><code class="language-javascript">  
-  &gt; db.books.ensureIndex({ "publisher.name": 1 }) 
+<pre><code class="language-javascript">
+  &gt; db.books.ensureIndex({ "publisher.name": 1 })
 
 </code></pre>
                      </section>
@@ -1657,15 +1648,11 @@ db.authors.find({ _id: { $in: book.authors }});</code></pre>
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## Sharding and Memory
-
+                    <section>
                         <img src="img/sharding_cache-1.png" alt="sharding_cache-1.png">
                     </section>
 
-                    <section data-markdown>
-                        ## Sharding and Memory
-
+                    <section>
                         <img src="img/sharding_cache-2.png" alt="sharding_cache-2.png">
                     </section>
 
@@ -1736,21 +1723,21 @@ db.authors.find({ _id: { $in: book.authors }});</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## Right-balanced Access
-
                         <img src="img/shard_key-1.png" alt="shard_key-1.png">
+
+                        Right-balanced Access
                     </section>
 
                     <section data-markdown>
-                        ## Random Access
-
                         <img src="img/shard_key-2.png" alt="shard_key-2.png">
+
+                        Random Access
                     </section>
 
                     <section data-markdown>
-                        ## Segmented Access
-
                         <img src="img/shard_key-3.png" alt="shard_key-3.png">
+
+                        Segmented Access
                     </section>
                 </section>
 
@@ -1771,10 +1758,7 @@ db.authors.find({ _id: { $in: book.authors }});</code></pre>
                         ### Questions?
                     </section>
                 </section>
-               
             </div>
-
-            <div class="footer"></div>
         </div>
 
         <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
