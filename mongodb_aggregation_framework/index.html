@@ -105,7 +105,7 @@
                     <section data-markdown data-state="framework" class="bg">
                         ## Aggregation Framework
 
-                        * Declared in BSON, executes in C++
+                        * Declared with BSON, executes in C++
                         * Flexible, functional, and *simple*
                             * Operation pipeline
                             * Computational expressions
@@ -188,6 +188,7 @@
                         * Filter documents
                         * Uses existing [query syntax](http://docs.mongodb.org/manual/reference/operators/)
                         * No [geospatial operations](http://docs.mongodb.org/manual/reference/operators/#geospatial-query-operators) or `$where`
+                          * [`$within`](https://jira.mongodb.org/browse/SERVER-6531) support coming in 2.4
                     </section>
 
                     <section data-markdown>
@@ -811,8 +812,6 @@
                             * Final command result
                             * Intermediate shard results
                         * Pipeline operator memory limits
-                        * Some BSON types unsupported
-                            * Binary, Code, deprecated types
                     </section>
                 </section>
 <!--
@@ -1136,15 +1135,18 @@
                         ## Extending the Framework
 
                         * Adding new pipeline operators, expressions
-                        * `$out` and `$tee` for output control
-                            * [https://jira.mongodb.org/browse/SERVER-3253](https://jira.mongodb.org/browse/SERVER-3253)
+                          * [`$within`](https://jira.mongodb.org/browse/SERVER-6531) expression for `$match`
+                          * [`$geoNear`](https://jira.mongodb.org/browse/SERVER-7781) pipeline operator
+                          * [`$out`](https://jira.mongodb.org/browse/SERVER-3253) operator for output control
                     </section>
 
                     <section data-markdown>
                         ## Future Enhancements
 
-                        * [Move `$match` earlier when possible](https://jira.mongodb.org/browse/SERVER-4506)
+                        * [Improved handling of `null` values](https://jira.mongodb.org/browse/SERVER-7932)
+                        * [Optimizing `$match` position](https://jira.mongodb.org/browse/SERVER-4506)
                         * [Pipeline explain facility](https://jira.mongodb.org/browse/SERVER-4504)
+                        * Support BSON [binary](https://jira.mongodb.org/browse/SERVER-4608), [code](https://jira.mongodb.org/browse/SERVER-5718), etc.
                         * Memory usage improvements
                             * [Grouping input sorted by `_id`](https://jira.mongodb.org/browse/SERVER-4507)
                             * [Sorting with limited output](https://jira.mongodb.org/browse/SERVER-4656) ([top *k*](http://en.wikipedia.org/wiki/Partial_sorting#Selecting_k_smallest_or_largest_elements))
