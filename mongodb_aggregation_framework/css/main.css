@@ -36,20 +36,6 @@ section[data-state="title"] h1 {
     text-align: right;
 }
 
-section[data-state="title"] span.new {
-    position: absolute;
-    display: block;
-    float: left;
-    margin: -140px 0 0 30px;
-    width: 200px;
-    height: 200px;
-    left: -50px;
-    background-image: url("../img/new.png");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-}
-
 section[data-state="title"] p.bio {
     display: inline-block;
     margin-top: 1.5em;
