@@ -21,7 +21,7 @@
         <div class="reveal">
             <div class="slides">
                 <section data-state="title">
-                    <h1><span class="logo-mongodb"></span> Aggregation Framework</h1>
+                    <h1><span class="logo-mongodb"></span> What's New in Aggregation</h1>
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">@jmikola</a></p>
                 </section>
@@ -337,7 +337,10 @@
                             <span class="arrow">&#x25BA;</span>
                             <pre><code class="language-javascript">{ $project: {
   avgPagesPerChapter: {
-    $divide: ["$pages", "$chapters"]
+    $divide: [
+      "$pages",
+      "$chapters"
+    ]
   },
   lang: "$language"
 }}</code></pre>
