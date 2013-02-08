@@ -1,0 +1,30 @@
+PHP-FIG Newtons
+100: PSR-0 tackled this subject back in 2010 after PHP 5.3 introduced namespaced classes. ## Autoloading ##
+200: The most recent PSR established a standard interface for this common application need. ## Logging ##
+300: The "FIG" in PHP-FIG stands for this. ## Framework Interoperability Group ##
+400: The spaces vs. tabs argument is addressed by this controversial PSR. ## PSR-2 ##
+500: This PHP-FIG member is the only community representative unaffiliated with any particular project ## Cal Evans ##
+Internal Shenanigans
+100: Changes to PHP itself require at least this many positive votes to be accepted. ## Two-thirds ##
+200: Microsoft employs this core developer, who has the onerous task of ensuring that PHP plays nice with Windows. ## Pierre Joye ##
+300: This RFC, dating back to 2009 and now in its third iteration, recently failed a vote for integration into PHP core. ## Property Accessors Syntax ##
+400: Suhosin, a hardened patchset for PHP, was created by this outspoken security buff. ## Stefan Esser ##
+500: This Brazilian PHP developer and Doctrine core member has all but given up on ever getting an RFC approved by core. ##  Guilherme Blanco ##
+Humble Beginnings
+100: This Danish programmer confessed to creating PHP during his opening keynote this morning. ## Rasmus Lerdorf ##
+200: This long-standing "feature" in PHP, responsible for countless security issues, has been disabled by default since version 4.2 and was finally removed in 5.4. ## register_globals ##
+300: Before "PHP Hypertext Preprocessor", this was the original meaning of the PHP acronym. ## Personal Home Page ##
+400: Many of PHP's global functions were named and adapted from this C library. ## stdio ##
+500: After rewriting the PHP parser for version 3, these fellows went on to create Zend Technologies. ## Andi Gutmans and Zeev Suraski ##
+Ode to Liip
+100: [img]ode-lsmith.jpg ## Lukas Smith ##
+200: [img]ode-pgodel.jpg ## Pablo Godel ##
+300: [img]ode-skoop.jpg ## Stefan Koopmanschap ##
+400: [img]ode-ryanweaver.jpg ## Ryan Weaver ##
+500: [img]ode-n1k0.png ## Nicolas Perriault ##
+A Word from Our Sponsors
+100: You'd be hard-pressed to find a PHP conference that hasn't been sponsored by this Miami-based PHP hosting company. ## ServerGrove ##
+200: This PaaS company has been turning phone calls and text messages into API endpoints since 2009. ## Twilio ##
+300: In addition to doing great things with potatoes, this company excels at API management. ## Mashery ##
+400: If you look through your conference goodie bag, you'll find a bottle of suntan lotion from this PaaS cloud hosting company. ## Engine Yard ##
+500: This Canadian conference just launched this past November, but they're already paying it forward by supporting SunshinePHP. ## True North PHP ##

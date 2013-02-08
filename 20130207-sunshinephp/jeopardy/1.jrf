@@ -1,0 +1,30 @@
+Classes and Tokens
+100: You'll want this for type-hinting methods that expect an anonymous function, or after a rough break-up with your significant other. ## Closure ##
+200: Aside from inheriting these via genes, they're also great for horizontal code re-use. ## Traits ##
+300: Your only hope of implementing this interface is via Iterator or IteratorAggregate. ## Traversable ##
+400: SplStack and SplQueue both extend this common base class. ## SplDoublyLinkedList ##
+500: This token is also known as T_DOUBLE_COLON ## T_PAAMAYIM_NEKUDOTAYIM ##
+Potpourri
+100: You are here. ## SunshinePHP, Embassy Suites, Miami, Florida, Earth, etc. ##
+200: Hopefully, you'll log on to this website later and leave feedback for sessions you attended at SunshinePHP ## joind.in ##
+300: This is your only cheese option when ordering an omelette at the Embassy Suites hotel. ## Cheddar ##
+400: PHP Jeopardy was first played at this conference in Paris, France during 2012. ## Symfony Live ##
+500: [dj]A teapot may respond with this status code if instructed to BREW coffee via the Hyper Text Coffee Pot Control Protocol. ## 418 ##
+Testing, Testing
+100: Lest you forget, this test suite will kindly remind you that Sebastian Bergmann created it on each invocation. ## PHPUnit ##
+200: Tests for PHP core and its extensions will typically have this extension. ## phpt ##
+200: A dot-prefixed YML file in the root directory of your respository may indicate that you also have a commit hook set for this testing service. ## Travis CI ##
+300: This library will read your storified *.feature files with its Gherkin DSL parser and execute acceptance tests for your application. ## Behat ##
+500: A self-described "simple, modern, and intuitive unit testing framework PHP 5.3+". ## atoum ##
+Celebrity Sightings
+100: This Canadian half of the /dev/hell podcast is absolutely fanatical about software testing. ## Chris Hartjes or @grmpyprogrammer ##
+200: This Nashville-based PHP developer and Doctrine core contributor has recently taken up iOS development, creating instant classics such as LOL Kitty™ and Bacon Sizzler™. ## Jon Wage ##
+300: [dj]This Portland-based Symfony core developer has a penchant for funny project names like Assetic, Buzz and Spork. ## Kris Wallsmith ##
+400: Male or female, we don't know, but this online persona is anything but Fabien Potencier. ## fabnot or FabPotFacts ##
+500: Ask this Switzerland-based PHP evangelist to sign a Contributor License Agreement and he'll kindly raise his open palm to his chin. ## Lukas Smith ##
+Notable Mascots
+100: [img]mascot-octocat.png
+200: [img]mascot-composer.png
+300: [img]mascot-twig.png
+400: [dj][img]mascot-silex.png
+500: [img]mascot-knp.png
