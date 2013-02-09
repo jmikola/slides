@@ -1,0 +1,723 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>MongoDB DOs and DON'Ts</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <h1><span class="logo-mongodb"></span> DO<span class="s">s</span> and DON'T<span class="s">s</span></h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+                <section data-markdown>
+                    ## Agenda
+
+                    <img src="img/dilbert-19960228.gif" alt="dilbert-19960228.gif" style="width: 90%">
+
+                    <div class="col-left">
+                        <ul>
+                            <li>PECL Driver</li>
+                            <li>Schema Design</li>
+                            <li>Writing</li>
+                        </ul>
+                    </div>
+
+                    <div class="col-right">
+                        <ul>
+                            <li>Reading</li>
+                            <li>Operations</li>
+                            <li>Doctrine ODM</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## PECL Driver
+                    </section>
+
+                    <section data-markdown data-state="driver-version">
+                        ### Keep your driver up-to-date
+
+                        <pre><code class="no-highlight">$ pecl upgrade mongo</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Don't use [Mongo](http://php.net/manual/en/class.mongo.php)
+
+                        <span class="fragment">Use [MongoClient](http://php.net/manual/en/class.mongoclient.php)</span>
+                    </section>
+
+                    <section data-markdown data-state="driver-version">
+                        ### Don't be limited to helper methods
+
+                        * [MongoCollection::findAndModify()](http://php.net/manual/en/mongocollection.findandmodify.php)
+                        * [MongoCollection::aggregate()](http://php.net/manual/en/mongocollection.aggregate.php)
+                        * [MongoCollection::group()](http://php.net/manual/en/mongocollection.group.php)
+
+                        <br>
+
+                        <span class="fragment">Where's [mapReduce](http://docs.mongodb.org/manual/reference/command/mapReduce/), [geoNear](http://docs.mongodb.org/manual/reference/command/geoNear/), etc.?</span>
+
+                        <span class="fragment">[MongoDB::command()](http://php.net/manual/en/mongodb.command.php)</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### Connection Pooling
+
+                        Re-use connections within a PHP worker process.
+                    </section>
+
+                    <section data-markdown data-state="mongopool" class="bg">
+                        ### MongoPool's Closed
+                    </section>
+
+                    <section data-markdown>
+                        ### Not that you'd actually do this, but…
+
+<pre><code class="language-php">$m1 = new MongoClient('mongodb://localhost');
+$m2 = new MongoClient('mongodb://localhost');
+$m3 = new MongoClient('mongodb://user:pw@localhost');
+$m4 = new MongoClient('mongodb://127.0.0.1');
+$m5 = new MongoClient('mongodb://sharding.local:40017');
+$m6 = new MongoClient(
+    'mongodb://primary.rs.local:30017,secondary.rs.local:30018',
+    ['replicaSet' => 'rs0']
+);
+
+$conns = $m1->getConnections();
+$hashes = array_map(function($c) { return $c['hash']; }, $conns);
+
+echo json_encode($hashes, JSON_PRETTY_PRINT);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Distinguishing Connections
+
+<pre><code class="language-javascript">[
+    "localhost:27017;-;X;15487",                    // $m1, $m2
+    "localhost:27017;-;admin/user/c56c…8bbc;15487", // $m3
+    "127.0.0.1:27017;-;X;15487",                    // $m4
+    "sharding.local:40017;-;X;15487",               // $m5
+    "primary.rs.local:30017;rs0;X;15487",           // $m6
+    "secondary.rs.local:30018;rs0;X;15487"          // $m6
+]</code></pre>
+
+                        <div class="col-left">
+                            <ul>
+                                <li>Host and port</li>
+                                <li>Replica set</li>
+                                <li>Process ID</li>
+                            </ul>
+                        </div>
+
+                        <div class="col-right">
+                            <ul>
+                                <li>
+                                    Authentication
+                                    <ul>
+                                        <li>Credentials</li>
+                                        <li>Database</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section data-markdown>
+                        ### Don't like connection pooling?
+
+                        Call [MongoClient::close()](http://php.net/manual/en/mongoclient.close.php) after each request.
+
+                        <span class="fragment">Don't actually do that.</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### Some math to keep in mind
+
+                        MongoDB limits [maxConns](http://docs.mongodb.org/manual/reference/configuration-options/#maxConns) to 20,000.
+
+                        application servers × workers
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Schema Design
+
+                        * <strike>PECL Driver</strike>
+                        * Schema Design
+                        * Writing
+                        * Reading
+                        * Operations
+                        * Doctrine ODM
+                    </section>
+
+                    <section data-markdown>
+                        ### Making do without joins
+
+                        References, embedded objects, both?
+
+                        Don't be afraid to denormalize.
+                    </section>
+
+                    <section data-markdown>
+                        ### Data Locality
+
+<pre><code class="language-javascript">{
+    _id: "jmikola",
+    name: 'Jeremy Mikola',
+    friends: [ 'bjori', 'derickr' ]
+}</code></pre>
+
+vs.
+
+<pre><code class="language-javascript">{
+    _id: "jmikola",
+    name: 'Jeremy Mikola',
+    friends: [
+        { id: 'bjori', name: 'Hannes Magnusson' },
+        { id: 'derickr', name: 'Derick Rethans' }
+    ]
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Store computed values for querying
+
+                        Counts or array lengths can be indexed and sorted.
+
+                        Easily updated with `$inc` and `$set`.
+                    </section>
+
+                    <section data-markdown>
+                        ### Don't create field paths willy-nilly
+
+<pre><code class="language-javascript">> db.messages.findOne({}, {isReadByParticipant: 1})
+{
+    "_id" : ObjectId("4fce28482516ed983884b158"),
+    "isReadByParticipant" : {
+        "4fce05e42516ed9838756f17" : false,
+        "4fce05e42516ed9838756f18" : true,
+        "4fce05e42516ed9838756f19" : true,
+        "4fce05e42516ed9838756f1a" : false,
+        "4fce05e42516ed9838756f1b" : false
+    }
+}</code></pre>
+
+                        How do we index this‽
+                    </section>
+
+                    <section data-markdown>
+                        ### Multi-key indexing to the rescue
+
+<pre><code class="language-javascript">> db.messages.findOne({}, {unreadForParticipants: 1})
+{
+    "_id" : ObjectId("4fce28482516ed983884b158"),
+    "unreadForParticipants" : [
+        "4fce05e42516ed9838756f17",
+        "4fce05e42516ed9838756f1a",
+        "4fce05e42516ed9838756f1b"
+    ]
+}</code></pre>
+
+                        <small>A tidbit from [FOSMessageBundle](https://github.com/FriendsOfSymfony/FOSMessageBundle/pull/32)</small>
+                    </section>
+
+                    <section data-markdown>
+                        ### Field paths and trees structures
+
+<pre><code class="language-javascript">&gt; db.subjects.findOne()
+{
+    _id: 1,
+    name: "American Literature",
+    sub_category: {
+         name: "1920s",
+         sub_category: { name: "Jazz Age" }
+    }
+}</code></pre>
+
+                        One document contains the entire tree.
+
+                        <span class="fragment">How do we query this‽</span>
+                    </section>
+
+                    <section data-markdown>
+                        ## A better tree schema
+
+<pre><code class="language-javascript">&gt; db.subjects.find()
+{ _id: "American Literature" }
+
+{
+    _id: "1920s",
+    parent: "American Literature"
+}
+
+{
+    _id: "Jazz Age",
+    parent: "1920s"
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ## But wait, there's more!
+
+<pre><code class="language-javascript">&gt; db.subjects.find()
+{ _id: "American Literature" }
+
+{
+    _id: "1920s",
+    ancestors: ["American Literature"],
+    parent: "American Literature"
+}
+
+{
+    _id: "Jazz Age",
+    ancestors: ["American Literature", "1920s"],
+    parent: "1920s"
+}</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Working with analytics?
+
+                        [MongoDB for Analytics](https://speakerdeck.com/jnunemaker/mongodb-for-analytics-3])<br>&mdash; 
+John Nunemaker
+                    </section>
+
+                    <section data-markdown>
+                        ### Don't abuse schema flexibility
+
+                        Create schemas that support your query patterns.
+
+                        And then create indexes for those queries.
+                    </section>
+
+                    <section data-markdown>
+                        ### Make the most of your indexes
+
+                        <ul>
+                            <li class="fragment">Kill 2+ birds with one stone</li>
+                            <li class="fragment">Compound and multi-key indexes</li>
+                            <li class="fragment">Mind your read/write ratio</li>
+                            <li class="fragment">Ensure query selectivity</li>
+                        </ul>
+                    </section>
+
+                    <section data-markdown>
+                        ### Don't shoot in the dark
+
+                        [Explain](http://docs.mongodb.org/manual/reference/explain/) your cursors.
+
+                        [Profile](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/) slow queries.
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Writing
+
+                        * <strike>PECL Driver</strike>
+                        * <strike>Schema Design</strike>
+                        * Writing
+                        * Reading
+                        * Operations
+                        * Doctrine ODM
+                    </section>
+
+                    <section data-markdown>
+                        ### Use Atomic Operators
+
+<pre><code class="language-php">$document = $db->users->find(['_id' => 'jmikola']);
+$document['friends'][] = 'pgodel';
+$db->users->save($document);</code></pre>
+
+vs.
+
+<pre><code class="language-php">$document = $db->users->update(
+    ['_id' => 'jmikola'],
+    ['$push' => ['friends' => 'pgodel']]
+);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Atomicity
+
+                        No transactions for multi-document writes.
+
+                        <span class="fragment">Single document updates *are* atomic.</span>
+
+                        <span class="fragment">Multiple writes can be [$isolated](http://docs.mongodb.org/manual/reference/operator/isolated/).</span>
+
+                        <span class="fragment">Can we query *and* update atomically?</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### findAndModify
+
+<pre><code class="language-javascript">// Request to borrow a library book
+db.loans.insert({
+    _id: { borrower: "bjori", book: ObjectId("…") },
+    pending: false,
+    approved: false,
+    priority: 1,
+});
+
+// Find the highest priority request; mark as pending approval
+request = db.loans.findAndModify({
+<span class="code-highlight inline-block">    query: { pending: false },
+    sort: { priority: -1 },</span>
+    update: { $set: { pending: true, started: new ISODate() }},
+    new: true
+});</code></pre>
+
+                        And that's a job queue.
+                    </section>
+
+                    <section data-markdown>
+                        ### Write Concerns
+
+                        `w` is the new `safe`.
+
+                        <span class="fragment">`w=1` is the new default.</span>
+
+                        <span class="fragment">`w=majority` for replication.</span>
+
+                        <span class="fragment">[Tag sets](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets) and journaling, too.</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### Dealing with document growth
+
+                        [Padding factor](http://docs.mongodb.org/manual/core/write-operations/#padding-factor) is a thing.
+
+                        <span class="fragment">Growing and relocation causes fragmentation.</span>
+
+                        <span class="fragment">If possible, update documents [in-place](http://blog.mongodb.org/post/248614779/fast-updates-with-mongodb-update-in-place).</span>
+
+                        <span class="fragment">Good schema design can help.</span>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Reading
+
+                        * <strike>PECL Driver</strike>
+                        * <strike>Schema Design</strike>
+                        * <strike>Writing</strike>
+                        * Reading
+                        * Operations
+                        * Doctrine ODM
+                    </section>
+
+                    <section data-markdown>
+                        ### If you remember only two things…
+
+                        Index your queries.
+
+                        Know your [working set](http://docs.mongodb.org/manual/faq/storage/#what-is-the-working-set).
+                    </section>
+
+                    <section data-markdown>
+                        ### [Read Preferences](http://docs.mongodb.org/manual/applications/replication/#read-preference)
+
+                        `secondaryPreferred` is the new `slaveOk`.
+
+                        <span class="fragment">`primary`, `primaryPreferred`<br>`secondary`, `nearest`</span>
+
+                        <span class="fragment">[Tag sets](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets)? You bet!</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### JavaScript Evaluation
+
+                        [MongoDB::execute()](http://php.net/manual/en/mongodb.execute.php) and [`$where`](http://docs.mongodb.org/manual/reference/operator/where/).
+
+                        <span class="fragment">Would you use [eval()](http://php.net/eval) in PHP?</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### MapReduce
+
+                        We'll make an allowance for JavaScript here.
+
+                        <span class="fragment">But try the [aggregation framework](http://docs.mongodb.org/manual/aggregation/) first.</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### Aggregation Framework
+
+                        <br><div class="mario-bg"><div class="mario-pipes"><div class="mario-sprite"></div></div></div>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Operations
+
+                        * <strike>PECL Driver</strike>
+                        * <strike>Schema Design</strike>
+                        * <strike>Writing</strike>
+                        * <strike>Reading</strike>
+                        * Operations
+                        * Doctrine ODM
+                    </section>
+
+                    <section data-markdown>
+                        ### The Players
+
+                        * Application and driver
+                        * `mongod`
+                        * `mongod --replSet`
+                        * `mongod --configsvr`
+                        * `mongos`
+                    </section>
+
+                    <section data-markdown>
+                        ### Replication vs. Sharding
+
+                        Replication is the tool for data safety, high availability, and disaster recovery.
+
+                        Sharding is the tool for scaling a system.
+                    </section>
+
+                    <section data-markdown>
+                        ### Replication
+
+                        Always have an odd number of voting members.
+
+                        <span class="fragment">Nodes can be [tagged](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets) (e.g. purpose, location).</span>
+
+                        <span class="fragment">Take advantage of [priority](http://docs.mongodb.org/manual/core/replication/#replica-set-node-priority), [hidden](http://docs.mongodb.org/manual/administration/replica-sets/#replica-set-hidden-members), and [delay](http://docs.mongodb.org/manual/administration/replica-sets/#delayed-members).</span>
+
+                        <span class="fragment">Use tags to define [custom write concerns](http://docs.mongodb.org/manual/applications/replication/#custom-write-propagation-modes).</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### Sharding
+
+                        Each shard is a replica set or single `mongod`.
+
+                        <span class="fragment">They can be [tagged](http://docs.mongodb.org/manual/administration/tag-aware-sharding/#tag-aware-sharding), too.</span>
+
+                        <span class="fragment">Not to be confused with replica set tags.</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### Select a good shard key
+
+                        This is *the* most important decision.
+                    </section>
+
+                    <section data-markdown>
+                        <img src="img/shard_key-1.png" alt="shard_key-1.png" style="width: 80%">
+
+                        Right-balanced Access
+                    </section>
+
+                    <section data-markdown>
+                        <img src="img/shard_key-2.png" alt="shard_key-2.png" style="width: 80%">
+
+                        Random Access
+                    </section>
+
+                    <section data-markdown>
+                        <img src="img/shard_key-3.png" alt="shard_key-3.png" style="width: 80%">
+
+                        Segmented Access
+                    </section>
+
+                    <section data-markdown>
+                        ### Sharding without replication?
+
+                        <img src="img/dog_no_idea.jpg" alt="dog_no_idea.jpg">
+                    </section>
+
+                    <section data-markdown>
+                        ### Replication, and maybe sharding?
+
+                        <img src="img/cool_dog.jpg" alt="cool_dog.jpg">
+                    </section>
+
+                    <section data-markdown>
+                        ### Data, RAM and disk
+                    </section>
+
+                    <section>
+                        <img src="img/memory-1.png" alt="memory-1.png" style="width: 80%;">
+                    </section>
+
+                    <section>
+                        <img src="img/memory-2.png" alt="memory-2.png" style="width: 80%;">
+                    </section>
+
+                    <section>
+                        <img src="img/memory-3.png" alt="memory-3.png" style="width: 80%;">
+                    </section>
+
+                    <section>
+                        <img src="img/memory-4.png" alt="memory-4.png" style="width: 80%;">
+                    </section>
+
+                    <section data-markdown>
+                        ### Keep an eye on RAM usage
+
+<pre><code class="no-highlight">$ free -b
+             total       used       free    buffers     cached
+Mem:    <span class="code-highlight">7307489280</span> 6942613504  364875776  229281792 5872500736
+-/+ buffers/cache:  840830976 6466658304
+Swap:            0          0          0</code></pre>
+
+<pre><code class="language-javascript">> var s = 0
+0
+> for each (var c in db.getCollectionNames()) {
+... s += db[c].totalIndexSize();
+... }
+<span class="code-highlight">9784055680</span></code></pre>
+
+                        Intermittent page faults and disk access.
+                    </section>
+
+                    <section>
+                        <img src="img/sharding_cache-1.png" alt="sharding_cache-1.png" style="width: 80%;">
+                    </section>
+
+                    <section>
+                        <img src="img/sharding_cache-2.png" alt="sharding_cache-2.png" style="width: 80%;">
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ## Doctrine ODM
+
+                        * <strike>PECL Driver</strike>
+                        * <strike>Schema Design</strike>
+                        * <strike>Writing</strike>
+                        * <strike>Reading</strike>
+                        * <strike>Operations</strike>
+                        * Doctrine ODM
+                    </section>
+
+                    <section data-markdown>
+                        ### Multiple Doctrines
+
+                        [Doctrine MongoDB](https://github.com/doctrine/mongodb) is not [ODM](https://github.com/doctrine/mongodb-odm)
+
+                        <span class="fragment">The former adds sugar atop the driver.</span>
+
+                        <span class="fragment">ODM implements object persistence.</span>
+
+                        <span class="fragment">There's also the ORM.</span>
+
+                        <span class="fragment">Don't use that. ツ</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### ODMs are a great tool
+
+                        <ul>
+                            <li class="fragment">Employ a real document model</li>
+                            <li class="fragment">Framework and library integration</li>
+                            <li class="fragment">Accelerate application development</li>
+                            <li class="fragment">Abstract the database layer</li>
+                        </ul>
+
+                        <br><span class="fragment">Watch out for that last one.</span>
+
+                        <span class="fragment">Grok your DB and driver *before* abstracting it.</span>
+                    </section>
+
+                    <section data-markdown>
+                        ### The same principles apply
+
+                        [ORMs don't kill your database, developers do!](http://www.slideshare.net/guilhermeblanco/orm-dont-kill-your-db-developers-do)<br>&mdash; Guilherme Blanco
+                    </section>
+
+                    <section data-markdown>
+                        ### Benchmarking ODM
+
+                        * Benchmark bulk document creation
+                            * Persist and flush
+                            * Query builder
+                            * Collection (Doctrine class)
+                            * MongoCollection (driver class)
+                        * Track insertion time and memory usage
+                    </section>
+
+                    <section data-markdown>
+                        ### Benchmarking ODM
+
+<pre><code class="no-highlight">$ ./benchmark-odm-flush.php 100000
+Flushing 100000 documents: <span class="code-highlight">47.423843</span> seconds, <span class="code-highlight">576978944</span> bytes
+<span class="code-highlight">150732800</span> bytes still allocated after benchmarking
+
+$ ./benchmark-odm-query.php 100000
+Inserting 100000 documents: <span class="code-highlight">15.918296</span> seconds, <span class="code-highlight">3670016</span> bytes
+<span class="code-highlight">8126464</span> bytes still allocated after benchmarking
+
+$ ./benchmark-odm-driver.php 100000
+Inserting 100000 documents: <span class="code-highlight">4.305500</span> seconds, <span class="code-highlight">524288</span> bytes
+<span class="code-highlight">6029312</span> bytes still allocated after benchmarking
+
+$ ./benchmark-driver.php 100000
+Inserting 100000 documents: <span class="code-highlight">1.120347</span> seconds, <span class="code-highlight">524288</span> bytes
+<span class="code-highlight">6029312</span> bytes still allocated after benchmarking</code></pre>
+
+                        <small>[https://gist.github.com/jmikola/2725976](https://gist.github.com/jmikola/2725976)</small>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    ## That's a wrap
+
+                    * <strike>PECL Driver</strike>
+                    * <strike>Schema Design</strike>
+                    * <strike>Writing</strike>
+                    * <strike>Reading</strike>
+                    * <strike>Operations</strike>
+                    * <strike>Doctrine ODM</strike>
+                </section>
+
+                <section data-markdown data-state="final">
+                    # Thanks!
+
+                    [https://joind.in/8021](https://joind.in/8021)
+
+                    ### Questions?
+                </section>
+
+                <section data-state="photo-credits">
+                    <h3>Photo Credits</h3>
+
+                    <ul>
+                        <li><a href="http://dilbert.com/strips/comic/1996-02-28">http://dilbert.com/strips/comic/1996-02-28</a></li>
+                        <li><a href="http://www.flickr.com/photos/brianauer/3497886512">http://www.flickr.com/photos/brianauer/3497886512</a></li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>
