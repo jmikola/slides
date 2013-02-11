@@ -106,15 +106,12 @@ span.logo-10gen {
   background-size: contain;
 }
 
-div.mario-bg {
+div.mario-container {
     margin: 50px auto;
     position: relative;
     display: block;
     width: 256px; max-width: 256px;
     height: 128px; max-height: 128px;
-    background-image: url("../img/mario-bg.png");
-    background-position: center;
-    background-repeat: no-repeat;
     border: 2px solid #fff;
     overflow: hidden;
 
@@ -122,6 +119,18 @@ div.mario-bg {
        -moz-transform: scale(2);
         -ms-transform: scale(2);
             transform: scale(2);
+}
+
+div.mario-bg {
+    position: absolute;
+    top: 0;
+    z-index: 0;
+    width: 256px; max-width: 256px;
+    height: 128px; max-height: 128px;
+    background-image: url("../img/mario-bg.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.66;
 }
 
 div.mario-pipes {
