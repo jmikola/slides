@@ -98,14 +98,6 @@ span.logo-mongodb {
   background-size: contain;
 }
 
-span.logo-10gen {
-  display: block;
-  background-image: url("../../img/10gen-white.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-
 div.mario-container {
     margin: 50px auto;
     position: relative;
