@@ -44,10 +44,9 @@
                     <ul>
                         <li>What sets MongoDB apart?</li>
                         <li class="fragment">What are documents?</li>
-                        <li class="fragment">How do I get them into Mongo?</li>
-                        <li class="fragment">How can I get them back out?</li>
-                        <li class="fragment">Can we do that faster?</li>
-                        <li class="fragment">What else can I do?</li>
+                        <li class="fragment">What can we do with them?</li>
+                        <li class="fragment">How can we do that faster?</li>
+                        <li class="fragment">What else can we do?</li>
                     </ul>
                 </section>
 
@@ -85,14 +84,13 @@
                         * Schema migrations
                         * Administration
                         * Scalability is a trade-off
-                        * Partition tolerance
                     </section>
 
                     <section data-markdown>
                         ## MongoDB: The Good Parts
 
                         * Document model
-                        * Dynamic schemas
+                        * Flexible schemas
                         * Scalability and performance
                         * Features (aggregation, geo, GridFS)
                     </section>
@@ -102,7 +100,7 @@
 
                         * Limited atomicity
                         * Consistency is a trade-off
-                        * Query language has its limits
+                        * Query language limitations
                         * Concurrency (improving)
                     </section>
 
@@ -289,7 +287,7 @@
                     <section data-markdown>
                         ## Document Modeling
 
-<pre><code class="language-js">{
+<pre><code class="language-javascript">{
     _id: 1,
     title: "Praesent ante dui",
     body: "Lorem ipsum…",
@@ -301,12 +299,8 @@
         },
         {
             body: "Dapibus quis…",
-            author: { name: "Bob", email: "bob@example.com" }
+            author: { name: "Tom", email: "tom@example.com" }
         },
-        {
-            body: "Fusce fermentum…",
-            author: { name: "John", email: "john@example.com" }
-        }
     ],
     tags: [ "luctus", "rhoncus" ]
 }</code></pre>
@@ -317,33 +311,10 @@
                     <section data-markdown>
                         ## Documents are BSON
 
-                        * Binary JSON
+                        * [Binary JSON](http://bsonspec.org/)
                         * Zero or more key/value pairs
                         * Values are scalars, arrays, and objects
-                        * Additional data types
-                            * Binary strings
-                            * JavaScript Code
-                            * Dates
-                    </section>
-
-                    <section data-markdown>
-                        ## Binary Representation
-
-<pre><code class="no-highlight">{"hello": "world"}
-
-"\x16\x00\x00\x00\x02hello\x00
- \x06\x00\x00\x00world\x00\x00"</code></pre>
-
-<pre><code class="no-highlight">{"things": ["foo", 5.05, 2012]}
-
-"\x33\x00\x00\x00\x04things\x00
- \x26\x00\x00\x00\x02\x30\x00\x04
- \x00\x00\x00foo\x00\x01\x31\x00
- \x33\x33\x33\x33\x33\x33\x14\x40
- \x12\x32\x00\xDC\x07\x00\x00\x00
- \x00\x00\x00\x00\x00"</code></pre>
-
-                        <p class="fragment">Curious? <a href="http://bsonspec.org/">BSONSpec.org</a></p>
+                        * Special types (e.g. binary strings, dates)
                     </section>
 
                     <section data-markdown>
@@ -487,7 +458,7 @@ You should add "extension=mongo.so" to php.ini</code></pre>
                     <section data-markdown>
                         ## Core Classes
 
-                        * [Mongo](http://php.net/manual/en/class.mongo.php)
+                        * [MongoClient](http://php.net/manual/en/class.mongoclient.php)
                         * [MongoDB](http://php.net/manual/en/class.mongodb.php)
                         * [MongoCollection](http://php.net/manual/en/class.mongocollection.php)
                         * [MongoCursor](http://php.net/manual/en/class.mongocursor.php)
@@ -512,28 +483,25 @@ You should add "extension=mongo.so" to php.ini</code></pre>
                         ## Connecting
 
 <pre><code class="language-php">// localhost:27017
-$m = new Mongo();
+$m = new MongoClient();
 
 <span class="fragment">// example.com:27018
-$m = new Mongo('mongodb://example.com:27018');</span>
+$m = new MongoClient('mongodb://example.com:27018');</span>
 
 <span class="fragment">// authentication
-$m = new Mongo('mongodb://user:password@localhost');</span>
+$m = new MongoClient('mongodb://user:password@localhost');</span>
 
 <span class="fragment">// replica set
-$m = new Mongo(
+$m = new MongoClient(
     'mongodb://rs1.example.com,rs2.example.com',
     ['replicaSet' => 'myReplSet']
 );</span></code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## The Mongo Class
+                        ## The MongoClient Class
 
-<pre><code class="language-php">$m = new Mongo();
-
-// Get an array of databases and their sizes
-$m->listDBs();
+<pre><code class="language-php">$m = new MongoClient();
 
 <span class="fragment">// Get a MongoDB for the "test" database
 $m->test;
@@ -552,9 +520,6 @@ $m->dropDB('test');</span></code></pre>
 
 <pre><code class="language-php">$db = $m->test;
 $db = new MongoDB($m, 'test');
-
-<span class="fragment">$db->getCollectionNames(); // Array of collection names
-$db->listCollections();    // Array of MongoCollection instances</span>
 
 <span class="fragment">// Get a MongoCollection for "test.users"
 $db->users;
@@ -576,10 +541,10 @@ $c = new MongoCollection($db, 'users');
 <span class="fragment">// Insert a user document for Bob
 $c->insert(['username' => 'bob', 'roles' => ['admin']]);</span>
 
-<span class="fragment">// Retrieve Bob's user
+<span class="fragment">// Retrieve Bob's user document
 $c->findOne(['username' => 'bob']);</span>
 
-<span class="fragment">// Find all admins
+<span class="fragment">// Find all admins (returns a MongoCursor)
 $c->find(['roles' => 'admin']);</span></code></pre>
                     </section>
 
@@ -595,14 +560,28 @@ $c->remove();                       // Delete all users</span>
 <span class="fragment">// Drop the entire collection
 $c->drop();</span></code></pre>
                     </section>
+                </section>
+
+                <section>
+                    <section data-markdown data-state="identifiers">
+                        ## Identifiers
+
+                        <blockquote>
+                            You have the right to an <code>_id</code>.<br>
+                            It must be unique to a collection.<br>
+                            If no <code>_id</code> is provided, the driver<br>
+                            will generate one for you.
+                        </blockquote>
+                    </section>
 
                     <section data-markdown>
-                        ## The MongoCollection Class
+                        ## Identifiers
 
 <pre><code class="language-php">// Create a user document for Tom
 $user = ['username' => 'tom'];
 
-<span class="fragment">$c->insert($user); // Insert Tom's document</span>
+<span class="fragment">// Insert Tom's document
+$c->insert($user);</span>
 
 <span class="fragment">var_dump($user);
 <span class="stdout">array(2) {
@@ -615,30 +594,14 @@ $user = ['username' => 'tom'];
   }
 }</span></span></code></pre>
                     </section>
-                </section>
-
-                <section>
-                    <section data-markdown data-state="identifiers">
-                        ## Identifiers
-
-                        <blockquote>
-                            You have the right to an <code>_id</code>.<br>
-                            It must be unique to a collection.<br>
-                            If no <code>_id</code> is provided, MongoDB<br>
-                            will generate one by default.
-                        </blockquote>
-                    </section>
 
                     <section data-markdown>
                         ## The `_id` Field
 
                         * Immutable
-                        * Unique value within the collection
+                        * Unique to the collection
+                        * ObjectId, scalar, or object
                         * Indexed by default
-                        * Custom values allowed
-                            * Scalars: `"V4C3D5C2"`, `5034`
-                            * Objects: `{ x: 1, y: "foo" }`
-                            * [No arrays](http://www.mongodb.org/display/DOCS/Multikeys)
 
                     </section>
 
@@ -672,7 +635,7 @@ $user = ['username' => 'tom'];
 
 echo (string) $id;        // 5033ea5ce84df1110f000001
 echo $id->getTimestamp(); // 1345579612
-echo $id->getHostname();  // honeydew (not derived from $id)
+echo $id->getHostname();  // honeydew (before hashing)
 echo $id->getPID();       // 3857
 echo $id->getInc();       // 1
 
@@ -686,41 +649,48 @@ $c->find(['_id' => new MongoId('5033ea5ce84df1110f000001']));</span></code></pre
 
                 <section>
                     <section data-markdown>
+                        ## Writing to MongoDB
+
+                        * Inserts, updates, and upserts
+                        * Consistency/performance options
+                        * Don't shoot yourself in the foot
+                    </section>
+
+                    <section data-markdown>
+                        ## Write Concern
+
+                        * `{w: 0}`
+                            * Fire and forget
+                            * Trade consistency for performance
+                        * `{w: 1}`
+                            * Ensure primary acknowledges write
+                            * Issues [getLastError](http://www.mongodb.org/display/DOCS/getLastError+Command) command
+                        * `{w: #}` or `{w: "majority"}`
+                            * Wait for multiple acknowledgements
+                    </section>
+
+                    <section data-markdown>
                         ## Inserting
 
 <pre><code class="language-php">$c = $db->users;
 
 $user = $c->findOne(['username' => 'tom']);
 
-<span class="fragment">$c->insert($user); // No error, but nothing is inserted</span>
+<span class="fragment">$c->insert($user, ['w' => 1]); // MongoClient's default behavior
+<span class="stdout">Uncaught exception: MongoCursorException:
+  E11000 duplicate key error index: test.users.$_id_
+  dup key: { : ObjectId('503b0772e84df1f87b000001') }</span></span>
 
-<span class="fragment">$db->users->lastError(); // Check the last error
+<span class="fragment">$c->insert($user, ['w' => 0]); // No error, but nothing inserted</span>
+
+<span class="fragment">$db->lastError(); // Manually call getLastError
 <span class="stdout">array(
   "err" => "E11000 duplicate key error…",
   "code" => 11000,
   "n" => 0,
   "connectionId" => 16,
   "ok" => 1,
-)</span></span>
-
-<span class="fragment">$c->insert($user, ['safe' => true]); // Use safe mode!
-<span class="stdout">Uncaught exception: MongoCursorException:
-  E11000 duplicate key error index: test.users.$_id_
-  dup key: { : ObjectId('503b0772e84df1f87b000001') }</span></span></code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ## Write Concern
-
-                        * `{safe: false}`
-                            * Fire and forget
-                            * Trade consistency for performance
-                        * `{safe: true}`
-                            * Ensure primary acknowledges write
-                            * Issues [getLastError](http://www.mongodb.org/display/DOCS/getLastError+Command) command
-                        * `{safe: #}` checks multiple servers
-                            * Waits for replication
-                            * `{safe: 3}` for primary and two secondaries
+)</span></span></code></pre>
                     </section>
 
                     <section data-markdown>
@@ -732,14 +702,14 @@ $user['email'] = 'tom@example.com';
 $user['roles'][] = 'moderator';
 $c->save($user);</code></pre>
 
-                        * Combines update/upsert semantics
                         * Is there an `_id`?
-                            * Yes, update the document
+                            * Yes, upsert the document
                             * No, insert the document
+                        * Update race condition
                     </section>
 
                     <section data-markdown>
-                        ## Updating
+                        ## Updating a Document
 
 <pre><code class="language-php">// Change Tom's email address
 $c->update(
@@ -747,9 +717,10 @@ $c->update(
     ['$set' => ['email' => 'thomas@example.com']]
 );</code></pre>
 
-                        * Criteria and new object
-                        * Overwrite entire documents
-                        * Atomic operations
+                        * Criteria
+                        * New object
+                            * Overwrite entire document
+                            * Apply atomic operations
                     </section>
 
                     <section data-markdown>
@@ -762,8 +733,7 @@ $c->update(
     ['multiple' => true]
 );</code></pre>
 
-                        * Modifies one document by default
-                        * `{multiple: true}`
+                        * `update()` with `{multiple: true}`
                     </section>
 
                     <section data-markdown>
@@ -781,7 +751,7 @@ $c->update(
                         * Does the criteria match a document?
                             * Yes, update the document
                             * No, insert the document
-                        * [Insert applies new object to criteria](http://www.mongodb.org/display/DOCS/Updating#Updating-UpsertswithModifiers)
+                        * [Insert applies modifiers to criteria](http://www.mongodb.org/display/DOCS/Updating#Updating-UpsertswithModifiers)
                     </section>
 
                     <section data-markdown data-state="atomic-operators">
@@ -832,12 +802,12 @@ $db->articles->update(
                     <section data-markdown>
                         ## Basic Querying
 
-<pre><code class="language-php">$c->findOne(); // Find one document as an array
+<pre><code class="language-php">$c->findOne(); // Retrieve one document as an array
 $c->find();    // Find all documents via MongoCursor
 
 // Query on field values
 $c->findOne(['lastName' => 'Smith']);
-$c->find(['lastName' => 'Smith']);</code></pre>
+$c->find(['roles' => 'admin']);</code></pre>
 
                         * Query criteria is BSON
                         * No grammar to parse
@@ -852,7 +822,7 @@ $c->find(['lastName' => 'Smith']);</code></pre>
                             * `limit()`, `skip()`, `sort()`
                             * Set [special flags](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-Metaqueryoperators)
                         * Post-query state
-                            * Iteration in-progress or completed
+                            * Iteration has begun
                             * Cannot be modified
                     </section>
 
@@ -867,10 +837,10 @@ $cursor->skip(5);                  // Skip the first 5
 <span class="fragment">// Iterate through results
 foreach ($cursor as $result) { }
 
-// Get them up front
+// Get them all at once
 $results = iterator_to_array($cursor);</span>
 
-<span class="fragment">$cursor->count();     // Count before limit/skip
+<span class="fragment">$cursor->count();     // Count irrespective of limit/skip
 $cursor->count(true); // Count with respect to limit/skip</span></code></pre>
                     </section>
 
@@ -878,7 +848,7 @@ $cursor->count(true); // Count with respect to limit/skip</span></code></pre>
                         ## Ad-hoc Querying
 
                         <blockquote>
-                            Arbitrary Business Requirement #42789!<br>
+                            <small>Arbitrary Business Requirement #42789!</small><br>
                             We need the usernames for all admins that use Gmail and whose accounts were created within the last year.
                         </blockquote>
                     </section>
@@ -964,6 +934,54 @@ $db->users->find([
                 </section>
 
                 <section>
+                    <section data-markdown data-state="findandmodify">
+                        # A Pickle
+
+                        * We can query for things
+                        * We can update documents atomically
+                        * Can we combine queries and updates?
+                    </section>
+
+                    <section data-markdown>
+                        ## Data to Process
+
+<pre><code class="language-php">$c = $db->jobs;
+
+$c->save([
+    'task' => '…',
+    'inprogress' => 'false',
+    'priority' => 1
+]);
+
+$c->save([
+    'task' => '…',
+    'inprogress' => 'false',
+    'priority' => 4
+]);</code></pre>
+                    </section>
+
+                    <section data-markdown>
+                        ### Atomically find and modify a document
+
+<pre><code class="language-php">$db->jobs->findAndModify(
+    ['inprogress' => false],
+    ['$set' => [
+        'inprogress' => true,
+        'startedAt' => new MongoDate(),
+    ]],
+    null,
+    [
+        'sort' => ['priority' -1],
+        'new' => true,
+    ]
+);</code></pre>
+
+                        * Return document in pre- or post-modified state
+                        * Update, upsert, or remove operation
+                    </section>
+                </section>
+
+                <section>
                     <section data-markdown data-state="indexing">
                         # Indexing
                     </section>
@@ -983,11 +1001,11 @@ $db->users->find([
 
 <pre><code class="language-php">$c = $db->things;
 
-// Ensure unique values for x
+// Ensure unique values for x (just like the _id index)
 $c->ensureIndex(['x' => 1], ['unique' => true]);
 
-<span class="fragment">// Check that index creation succeeds
-$c->ensureIndex(['x' => 1], ['safe' => true]);</span>
+<span class="fragment">// Don't wait for index creation to succeed
+$c->ensureIndex(['x' => 1], ['w' => 0]);</span>
 
 <span class="fragment">// Delegate index creation as a background task
 $c->ensureIndex(['x' => 1], ['background' => true]);</span>
@@ -1039,9 +1057,9 @@ $cursor->explain();
                     </section>
 
                     <section data-markdown>
-                        ## Indexing Tips
+                        ## Performance Tips
 
-                        * Contain indexes in RAM
+                        * Keep your working set in RAM
                         * Mind your read/write ratio
                         * Support multiple queries per index
                         * Avoid non-indexed queries and table scans
@@ -1056,7 +1074,7 @@ $cursor->explain();
                 <section data-markdown data-state="commands">
                     ## Database Commands
 
-                    * Queries to `$cmd` collection
+                    * Queries to special `$cmd` collection
                     * Shell and driver helpers for some
                     * [MongoDB::command()](http://php.net/manual/en/mongodb.command.php) for the rest
                     * [Reference list](http://docs.mongodb.org/manual/reference/commands/)
@@ -1084,7 +1102,7 @@ $cursor->explain();
                         ## Reporting
 
                         <blockquote>
-                            Arbitrary Business Requirement #27533!<br>
+                            <small>Arbitrary Business Requirement #27533!</small><br>
                             We need a report listing all authors that have written an article for each tag.
                         </blockquote>
                     </section>
@@ -1150,15 +1168,12 @@ tech: jen, bob</span></span></code></pre>
                     <section data-markdown>
                         ## Aggregation Framework
 
-<pre><code class="language-php">$rs = $db->command([
-    'aggregate' => 'articles',
-    'pipeline' => [
-        ['$unwind' => '$tags'],
-        ['$group' => [
-            '_id' => '$tags',
-            'authors' => ['$addToSet' => '$author']
-        ]],
-    ],
+<pre><code class="language-php">$rs = $db->articles->aggregate([
+    ['$unwind' => '$tags'],
+    ['$group' => [
+        '_id' => '$tags',
+        'authors' => ['$addToSet' => '$author']
+    ]],
 ]);
 
 <span class="fragment">foreach ($rs['result'] as $r) {
@@ -1180,7 +1195,7 @@ politics: jen</span></span></code></pre>
                     <section data-markdown>
                         ## [GridFS](http://www.mongodb.org/display/DOCS/GridFS)
 
-                        * Large file storage in MongoDB
+                        * File storage within MongoDB
                         * BSON collections
                             * `fs.files`: metadata, custom fields
                             * `fs.chunks`: binary data (1+ per file)
@@ -1241,7 +1256,7 @@ $file->getFilename(); // Filename string
 $file->getLength();   // File size
 
 <span class="fragment">$file->getBytes();    // Get all chunks as a byte string
-$file->getResource(); // Stream resource (new in 1.3+)</span>
+$file->getResource(); // Stream resource</span>
 
 <span class="fragment">$file->write();               // Write data to stored filename
 $file->write('/tmp/foo.jpg'); // Write data to a new file</span>
@@ -1289,11 +1304,29 @@ $grid->drop();</span></code></pre>
                     </section>
 
                     <section data-markdown>
+                        ## Data to Index
+
+<pre><code class="language-php">$c = $db->places;
+
+$c->save([
+    'name' => 'Home',
+    'type' => 'residence',
+    'loc'  => [0, 0],
+]);
+
+$c->save([
+    'name' => 'Work',
+    'type' => 'office',
+    'loc'  => [12, 15],
+]);</code></pre>
+                    </section>
+
+                    <section data-markdown>
                         ## Bounds Queries
 
 <pre><code class="language-php">$db->places->ensureIndex(['loc' => '2d']);
 
-// Rectangle bounds
+// Rectangular bounds
 $db->places->find(['loc' => ['$within' => ['$box' => [
     [10, 10], // Lower-left
     [20, 20], // Upper-right
@@ -1301,8 +1334,8 @@ $db->places->find(['loc' => ['$within' => ['$box' => [
 
 <span class="fragment">// Circular bounds
 $db->places->find(['loc' => ['$within' => ['$center' => [
-    [50, 50], // Center coordinate
-    15,       // Radius
+    [5, 5], // Center coordinate
+    15,     // Radius
 ]]]]);</span>
 
 <span class="fragment">// Arbitrary polygonal bounds (e.g. triangle)
