@@ -357,24 +357,24 @@ $b->things = ['foo', 5.05, 2012];</code></pre>
                     <section data-markdown>
                         ## Installing
 
-<pre><code class="no-highlight">$ tar xvzf mongodb-linux-x86_64-2.2.1.tgz
-mongodb-linux-x86_64-2.2.1/GNU-AGPL-3.0
-mongodb-linux-x86_64-2.2.1/README
-mongodb-linux-x86_64-2.2.1/THIRD-PARTY-NOTICES
-mongodb-linux-x86_64-2.2.1/bin/mongodump
-mongodb-linux-x86_64-2.2.1/bin/mongorestore
-mongodb-linux-x86_64-2.2.1/bin/mongoexport
-mongodb-linux-x86_64-2.2.1/bin/mongoimport
-mongodb-linux-x86_64-2.2.1/bin/mongostat
-mongodb-linux-x86_64-2.2.1/bin/mongotop
-mongodb-linux-x86_64-2.2.1/bin/mongooplog
-mongodb-linux-x86_64-2.2.1/bin/mongofiles
-mongodb-linux-x86_64-2.2.1/bin/bsondump
-mongodb-linux-x86_64-2.2.1/bin/mongoperf
-mongodb-linux-x86_64-2.2.1/bin/mongosniff
-mongodb-linux-x86_64-2.2.1/bin/mongod
-mongodb-linux-x86_64-2.2.1/bin/mongos
-mongodb-linux-x86_64-2.2.1/bin/mongo</code></pre>
+<pre><code class="no-highlight">$ tar xvzf mongodb-linux-x86_64-2.2.3.tgz
+mongodb-linux-x86_64-2.2.3/GNU-AGPL-3.0
+mongodb-linux-x86_64-2.2.3/README
+mongodb-linux-x86_64-2.2.3/THIRD-PARTY-NOTICES
+mongodb-linux-x86_64-2.2.3/bin/mongodump
+mongodb-linux-x86_64-2.2.3/bin/mongorestore
+mongodb-linux-x86_64-2.2.3/bin/mongoexport
+mongodb-linux-x86_64-2.2.3/bin/mongoimport
+mongodb-linux-x86_64-2.2.3/bin/mongostat
+mongodb-linux-x86_64-2.2.3/bin/mongotop
+mongodb-linux-x86_64-2.2.3/bin/mongooplog
+mongodb-linux-x86_64-2.2.3/bin/mongofiles
+mongodb-linux-x86_64-2.2.3/bin/bsondump
+mongodb-linux-x86_64-2.2.3/bin/mongoperf
+mongodb-linux-x86_64-2.2.3/bin/mongosniff
+mongodb-linux-x86_64-2.2.3/bin/mongod
+mongodb-linux-x86_64-2.2.3/bin/mongos
+mongodb-linux-x86_64-2.2.3/bin/mongo</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -382,10 +382,10 @@ mongodb-linux-x86_64-2.2.1/bin/mongo</code></pre>
 
 <pre><code class="no-highlight" style="overflow: hidden; word-wrap: normal;">$ mkdir /data/db
 
-$ mongodb-linux-x86_64-2.2.1/bin/mongod
-[initandlisten] MongoDB starting : pid=28285 port=27017 dbpath=/data/db/ 64-bit host=honeydew
-[initandlisten] db version v2.2.1, pdfile version 4.5
-[initandlisten] git version: d6764bf8dfe0685521b8bc7b98fd1fab8cfeb5ae
+$ mongodb-linux-x86_64-2.2.3/bin/mongod
+[initandlisten] MongoDB starting : pid=13917 port=27017 dbpath=/data/db/ 64-bit host=honeydew
+[initandlisten] db version v2.2.3, pdfile version 4.5
+[initandlisten] git version: f570771a5d8a3846eb7586eaffcf4c2f4a96bf08
 [initandlisten] build info: Linux ip-10-2-29-40 2.6.21.7-2.ec2.v1.2.fc8xen #1 SMP Fri Nov 20 17:48:28 EST 2009 x86_64 BOOST_LIB_VERSION=1_49
 [initandlisten] options: {}
 [initandlisten] journal dir=/data/db/journal
@@ -398,18 +398,16 @@ $ mongodb-linux-x86_64-2.2.1/bin/mongod
                         ## Connecting
 
 <pre><code class="no-highlight">$ mongo
-MongoDB shell version: 2.2.1
+MongoDB shell version: 2.2.3
 connecting to: test
+
 > show dbs
 local   (empty)
 
 > db.foo.insert({x: 1})
 
 > db.foo.find()
-{ "_id" : ObjectId("50368f0cdea8fae83cf3d097"), "x" : 1 }
-
-> !!"Does this shell use JavaScript?"
-true</code></pre>
+{ "_id" : ObjectId("50368f0cdea8fae83cf3d097"), "x" : 1 }</code></pre>
                     </section>
 
                     <section data-markdown data-state="php-driver">
@@ -423,7 +421,7 @@ true</code></pre>
                         * Track development on [GitHub](https://github.com/mongodb/mongo-php-driver) and [JIRA](https://jira.mongodb.org/browse/PHP)
 
                         <blockquote class="fragment">
-                            The single, best interface of any PHP extension &mdash; <a href="http://twitter.com/weierophinney">Matthew Weier O'Phinney</a>
+                            The single, best interface of any PHP extension &mdash; <a href="http://twitter.com/mwop">Matthew Weier O'Phinney</a>
                         </blockquote>
                     </section>
 
@@ -431,17 +429,16 @@ true</code></pre>
                         ## PHP Driver Installation
 
 <pre><code class="no-highlight">$ pecl install mongo
-downloading mongo-1.2.12.tgz ...
-Starting to download mongo-1.2.12.tgz (90,517 bytes)
-.....................done: 90,517 bytes
-36 source files, building
+downloading mongo-1.3.4.tgz ...
+Starting to download mongo-1.3.4.tgz (124,844 bytes)
+............................done: 124,844 bytes
+49 source files, building
 
 ...
 
 Build process completed successfully
 Installing '/usr/lib/php5/20100525/mongo.so'
-install ok: channel://pecl.php.net/mongo-1.2.12
-You should add "extension=mongo.so" to php.ini</code></pre>
+install ok: channel://pecl.php.net/mongo-1.3.4</code></pre>
 
                         <ul class="fragment">
                             <li><a href="http://php.net/manual/en/mongo.installation.php">Compiled binaries</a> for Windows</li>
@@ -664,7 +661,7 @@ $c->find(['_id' => new MongoId('5033ea5ce84df1110f000001']));</span></code></pre
                             * Trade consistency for performance
                         * `{w: 1}`
                             * Ensure primary acknowledges write
-                            * Issues [getLastError](http://www.mongodb.org/display/DOCS/getLastError+Command) command
+                            * Issues [getLastError](http://docs.mongodb.org/manual/reference/command/getLastError/) command
                         * `{w: #}` or `{w: "majority"}`
                             * Wait for multiple acknowledgements
                     </section>
@@ -705,7 +702,7 @@ $c->save($user);</code></pre>
                         * Is there an `_id`?
                             * Yes, upsert the document
                             * No, insert the document
-                        * Update race condition
+                        * Race conditions when updating
                     </section>
 
                     <section data-markdown>
@@ -732,8 +729,6 @@ $c->update(
     ['$addToSet' => ['roles' => 'admin']],
     ['multiple' => true]
 );</code></pre>
-
-                        * `update()` with `{multiple: true}`
                     </section>
 
                     <section data-markdown>
@@ -746,34 +741,33 @@ $c->update(
     ['upsert' => true]
 );</code></pre>
 
-                        * `update()` with `{upsert: true}`
                         * No multi-document operation
                         * Does the criteria match a document?
                             * Yes, update the document
                             * No, insert the document
-                        * [Insert applies modifiers to criteria](http://www.mongodb.org/display/DOCS/Updating#Updating-UpsertswithModifiers)
+                        * [Insert applies modifiers to criteria](http://docs.mongodb.org/manual/applications/update/#update-operations-with-the-upsert-flag)
                     </section>
 
                     <section data-markdown data-state="atomic-operators">
                         ## Atomic Operators
 
                         * Numbers
-                            * [$inc](http://www.mongodb.org/display/DOCS/Updating#Updating-%24inc)
+                            * [$inc](http://docs.mongodb.org/manual/reference/operator/inc/)
                         * Integers
-                            * [$bit](http://www.mongodb.org/display/DOCS/Updating#Updating-%24bit)
+                            * [$bit](http://docs.mongodb.org/manual/reference/operator/bit/)
                         * Anything
-                            * [$set](http://www.mongodb.org/display/DOCS/Updating#Updating-%24set)
-                            * [$unset](http://www.mongodb.org/display/DOCS/Updating#Updating-%24unset)
-                            * [$rename](http://www.mongodb.org/display/DOCS/Updating#Updating-%24rename)
+                            * [$set](http://docs.mongodb.org/manual/reference/operator/set/)
+                            * [$unset](http://docs.mongodb.org/manual/reference/operator/unset/)
+                            * [$rename](http://docs.mongodb.org/manual/reference/operator/rename/)
                         * Arrays
-                            * [$addToSet](http://www.mongodb.org/display/DOCS/Updating#Updating-%24addToSetand%24each)
-                            * [$pop](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pop)
-                            * [$push](http://www.mongodb.org/display/DOCS/Updating#Updating-%24push), [$pushAll](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pushAll)
-                            * [$pull](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pull), [$pullAll](http://www.mongodb.org/display/DOCS/Updating#Updating-%24pullAll)
+                            * [$addToSet](http://docs.mongodb.org/manual/reference/operator/addToSet/)
+                            * [$pop](http://docs.mongodb.org/manual/reference/operator/pop/)
+                            * [$push](http://docs.mongodb.org/manual/reference/operator/push/), [$pushAll](http://docs.mongodb.org/manual/reference/operator/pushAll/)
+                            * [$pull](http://docs.mongodb.org/manual/reference/operator/pull/), [$pullAll](http://docs.mongodb.org/manual/reference/operator/pullAll/)
                     </section>
-<!--
+
                     <section data-markdown>
-                        ## [Positional Updates](http://www.mongodb.org/display/DOCS/Updating#Updating-The%24positionaloperator)
+                        ## [Positional Updates](http://docs.mongodb.org/manual/reference/operator/positional/)
 
 <pre><code class="language-php">// An article with votable comments
 $db->articles->insert([
@@ -791,7 +785,6 @@ $db->articles->update(
     ['$inc' => ['comments.$.votes' => 1]]
 );</span></code></pre>
                     </section>
--->
                 </section>
 
                 <section>
@@ -820,7 +813,7 @@ $c->find(['roles' => 'admin']);</code></pre>
                         * Pre-query state
                             * No database contact yet
                             * `limit()`, `skip()`, `sort()`
-                            * Set [special flags](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-Metaqueryoperators)
+                            * Set [special flags](http://docs.mongodb.org/manual/reference/meta-query-operators/)
                         * Post-query state
                             * Iteration has begun
                             * Cannot be modified
@@ -885,14 +878,14 @@ $db->users->find([
     'roles' => 'admin',
 ]);</code></pre>
 
-                        * [Regular expressions](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-RegularExpressions)
-                        * [Matching values in embedded objects](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanEmbeddedObject)
-                        * [Conditional operators](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators)
-                        * [Matching a value in an array](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ValueinanArray)
+                        * [Regular expressions](http://docs.mongodb.org/manual/reference/operator/regex/)
+                        * [Matching values in embedded objects](http://docs.mongodb.org/manual/reference/glossary/#term-dot-notation)
+                        * [Conditional operators](http://docs.mongodb.org/manual/reference/operators/#logical)
+                        * [Matching a value in an array](http://docs.mongodb.org/manual/core/read-operations/#arrays)
                     </section>
 
                     <section data-markdown>
-                        ## Field Selection
+                        ## Field Projection
 
 <pre><code class="language-php">// Optimize by only selecting usernames
 $db->users->find([
@@ -903,33 +896,33 @@ $db->users->find([
     'roles' => 'admin',
 ], ['_id' => 0, 'username' => 1]);</code></pre>
 
-                        * [Retrieving a subset of fields](http://www.mongodb.org/display/DOCS/Retrieving+a+Subset+of+Fields)
-                        * [Retrieving a slice of an array](http://www.mongodb.org/display/DOCS/Retrieving+a+Subset+of+Fields#RetrievingaSubsetofFields-RetrievingaSubrangeofArrayElements)
+                        * [Retrieving a subset of fields](http://docs.mongodb.org/manual/core/read-operations/#projection)
+                        * [Retrieving a slice of an array](http://docs.mongodb.org/manual/reference/projection/slice/)
                     </section>
 
                     <section data-markdown data-state="query-operators">
                         ## Conditional Operators
 
                         * Comparison
-                            * [$gt](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D), [$gte](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D)
-                            * [$lt](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D), [$lte](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%3C%2C%3C%3D%2C%3E%2C%3E%3D)
-                            * [$ne](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24ne)
+                            * [$gt](http://docs.mongodb.org/manual/reference/operator/gt/), [$gte](http://docs.mongodb.org/manual/reference/operator/gte/)
+                            * [$lt](http://docs.mongodb.org/manual/reference/operator/lt/), [$lte](http://docs.mongodb.org/manual/reference/operator/lte/)
+                            * [$ne](http://docs.mongodb.org/manual/reference/operator/ne/)
                         * Logical
-                            * [$and](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24and)
-                            * [$or](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24or), [$nor](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24nor)
+                            * [$and](http://docs.mongodb.org/manual/reference/operator/and/)
+                            * [$or](http://docs.mongodb.org/manual/reference/operator/or/), [$nor](http://docs.mongodb.org/manual/reference/operator/nor/)
                         * Arrays
-                            * [$all](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24all)
-                            * [$in](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24in), [$nin](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24nin)
-                            * [$size](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24size)
-                            * [$elemMatch](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24elemMatch)
+                            * [$all](http://docs.mongodb.org/manual/reference/operator/all/)
+                            * [$in](http://docs.mongodb.org/manual/reference/operator/in/), [$nin](http://docs.mongodb.org/manual/reference/operator/nin/)
+                            * [$size](http://docs.mongodb.org/manual/reference/operator/size/)
+                            * [$elemMatch](http://docs.mongodb.org/manual/reference/operator/elemMatch/)
                         * Misc
-                            * [$exists](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24exists)
-                            * [$type](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24type)
+                            * [$exists](http://docs.mongodb.org/manual/reference/operator/exists/)
+                            * [$type](http://docs.mongodb.org/manual/reference/operator/type/)
                         * Numbers
-                            * [$mod](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-%24mod)
+                            * [$mod](http://docs.mongodb.org/manual/reference/operator/mod/)
                         * Meta
-                            * [$not](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-Metaoperator%3A{{%24not}})
-                            * [$where](http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-JavascriptExpressionsand{{%24where}})
+                            * [$not](http://docs.mongodb.org/manual/reference/operator/not/)
+                            * [$where](http://docs.mongodb.org/manual/reference/operator/where/)
                     </section>
                 </section>
 
@@ -961,7 +954,7 @@ $c->save([
                     </section>
 
                     <section data-markdown>
-                        ### Atomically find and modify a document
+                        ### Atomically [find and modify](http://docs.mongodb.org/manual/reference/command/findAndModify/) a document
 
 <pre><code class="language-php">$db->jobs->findAndModify(
     ['inprogress' => false],
@@ -977,7 +970,7 @@ $c->save([
 );</code></pre>
 
                         * Return document in pre- or post-modified state
-                        * Update, upsert, or remove operation
+                        * Update, upsert, or remove the document
                     </section>
                 </section>
 
@@ -992,8 +985,8 @@ $c->save([
                         * B-trees
                         * Multiple indexes per collection
                         * Any field(s), top-level or embedded
-                        * [Multikey indexing of array values](http://www.mongodb.org/display/DOCS/Multikeys)
-                        * [Sparse](http://www.mongodb.org/display/DOCS/Indexes#Indexes-sparse%3Atrue), [unique](http://www.mongodb.org/display/DOCS/Indexes#Indexes-unique%3Atrue), [geospatial](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
+                        * [Multikey indexing of array values](http://docs.mongodb.org/manual/core/indexes/#index-type-multikey)
+                        * [Sparse](http://docs.mongodb.org/manual/core/indexes/#sparse-indexes), [unique](http://docs.mongodb.org/manual/core/indexes/#unique-indexes), [geospatial](http://docs.mongodb.org/manual/core/indexes/#geospatial-indexes)
                     </section>
 
                     <section data-markdown>
@@ -1034,8 +1027,6 @@ $c->find(['y' => 6]);
                         * Index multiple fields
                         * Direction per field (range queries, sorting)
                         * Usable for constituent field queries
-                            * Optimal ordering
-                            * Query hinting
                     </section>
 
                     <section data-markdown>
@@ -1059,15 +1050,12 @@ $cursor->explain();
                     <section data-markdown>
                         ## Performance Tips
 
-                        * Keep your working set in RAM
-                        * Mind your read/write ratio
-                        * Support multiple queries per index
+                        * [Keep your indexes and working set in RAM](http://docs.mongodb.org/manual/applications/indexes/#ensure-indexes-fit-ram)
+                        * [Mind your read/write ratio](http://docs.mongodb.org/manual/applications/indexes/#consider-performance-when-creating-indexes-for-write-heavy-applications)
+                        * [Support multiple queries per index](http://docs.mongodb.org/manual/applications/indexes/#create-indexes-to-support-your-queries)
                         * Avoid non-indexed queries and table scans
-                        * Caveats
-                            * Single-key, low-selectivity indexes
-                            * `$exists`, `$ne`, and `$nin`
-                            * `$all` and `$in`
-                        * [Indexing advice and FAQ](http://www.mongodb.org/display/DOCS/Indexing+Advice+and+FAQ)
+                        * [Create indexes that ensure selectivity](http://docs.mongodb.org/manual/applications/indexes/#index-selectivity)
+                        * [Indexing advice and FAQ](http://docs.mongodb.org/manual/faq/indexes/)
                     </section>
                 </section>
 
@@ -1093,9 +1081,9 @@ $cursor->explain();
                         ## Aggregation
 
                         * [Aggregation framework](http://docs.mongodb.org/manual/aggregation/)
-                        * [count()](http://www.mongodb.org/display/DOCS/Aggregation#Aggregation-Count), [distinct()](http://www.mongodb.org/display/DOCS/Aggregation#Aggregation-Distinct), and [group()](http://www.mongodb.org/display/DOCS/Aggregation#Aggregation-Group)
-                        * [MapReduce](http://www.mongodb.org/display/DOCS/MapReduce)
-                        * [Hadoop adapter](http://www.mongodb.org/display/DOCS/Hadoop)
+                        * [count()](http://docs.mongodb.org/manual/reference/simple-aggregation/#count), [distinct()](http://docs.mongodb.org/manual/reference/simple-aggregation/#distinct), and [group()](http://docs.mongodb.org/manual/reference/simple-aggregation/#group)
+                        * [MapReduce](http://docs.mongodb.org/manual/applications/map-reduce/)
+                        * [Hadoop adapter](http://docs.mongodb.org/ecosystem/tools/hadoop/)
                     </section>
 
                     <section data-markdown data-state="business-requirements">
@@ -1193,7 +1181,7 @@ politics: jen</span></span></code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## [GridFS](http://www.mongodb.org/display/DOCS/GridFS)
+                        ## [GridFS](http://docs.mongodb.org/manual/applications/gridfs/)
 
                         * File storage within MongoDB
                         * BSON collections
@@ -1293,14 +1281,14 @@ $grid->drop();</span></code></pre>
                     </section>
 
                     <section data-markdown>
-                        ## [Geospatial Indexing](http://www.mongodb.org/display/DOCS/Geospatial+Indexing)
+                        ## [Geospatial Indexing](http://docs.mongodb.org/manual/core/geospatial-indexes/)
 
                         * Geo-hashed, 2D coordinates
                         * Configurable bounds and bit precision
                         * Suggested point format: `[x, y]`
                         * One geospatial index per collection
-                        * [Multi-location documents](http://www.mongodb.org/display/DOCS/Geospatial+Indexing#GeospatialIndexing-MultilocationDocuments)
-                        * [Spherical model support](http://www.mongodb.org/display/DOCS/Geospatial+Indexing#GeospatialIndexing-NewSphericalModel)
+                        * [Multi-location documents](http://docs.mongodb.org/manual/core/geospatial-indexes/#multi-location-documents)
+                        * [Spherical model support](http://docs.mongodb.org/manual/applications/geospatial-indexes/#geospatial-indexes-spherical)
                     </section>
 
                     <section data-markdown>
@@ -1401,6 +1389,7 @@ $db->command([
                     * [http://www.sxc.hu/photo/487816](http://www.sxc.hu/photo/487816)
                     * [http://www.flickr.com/photos/sharynmorrow/2224102244/](http://www.flickr.com/photos/sharynmorrow/2224102244/)
                     * [http://www.flickr.com/photos/kwl/6458495675/](http://www.flickr.com/photos/kwl/6458495675/)
+                    * [http://www.flickr.com/photos/dierken/7998425310/](http://www.flickr.com/photos/dierken/7998425310/in/)
                     * [http://www.flickr.com/photos/spacebarpark/6712082295/](http://www.flickr.com/photos/spacebarpark/6712082295/)
                     * [http://www.flickr.com/photos/69125796@N00/7415476606/](http://www.flickr.com/photos/69125796@N00/7415476606/)
                     * [http://www.sxc.hu/photo/443042](http://www.sxc.hu/photo/443042)

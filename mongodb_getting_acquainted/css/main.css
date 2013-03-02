@@ -372,6 +372,22 @@ section[data-state="query-operators"] > ul > li:nth-child(3n+1) {
     clear: left;
 }
 
+.findandmodify .state-background {
+    background-image: url("../img/pickles.jpg");
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+section[data-state="findandmodify"] ul {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.5em;
+}
+
+section[data-state="findandmodify"] li {
+    list-style-position: inside;
+}
+
 .indexing .state-background {
     background-image: url("../img/rolodex.jpg");
     background-position: center;
