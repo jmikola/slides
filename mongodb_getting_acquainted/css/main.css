@@ -1,3 +1,11 @@
+/* TODO: Remove after reveal.js update */
+@media print {
+    @page {
+        size: letter landscape;
+        margin: 0;
+    }
+}
+
 @font-face {
     font-family: "Lato";
     font-style: normal;
