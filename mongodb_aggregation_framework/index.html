@@ -85,11 +85,10 @@
                         ## MapReduce in MongoDB
 
                         * Implemented with JavaScript
-                            * Single-threaded
-                            * Difficult to debug
-                        * Concurrency
-                            * Appearance of parallelism
-                            * Write locks (without `inline` or `jsMode`)
+                        * Convenient, but difficult to debug
+                        * Better concurrency with V8
+                        * Avoiding write locks
+                            * `inline`, `jsMode`, `nonAtomic`
                     </section>
 
                     <section data-markdown>
@@ -153,6 +152,7 @@
                         * `$sort`
                         * `$limit`
                         * `$skip`
+                        * `$geoNear`
                     </section>
                 </section>
 
@@ -188,8 +188,8 @@
 
                         * Filter documents
                         * Uses existing [query syntax](http://docs.mongodb.org/manual/reference/operators/)
-                        * No [geospatial operations](http://docs.mongodb.org/manual/reference/operators/#geospatial-query-operators) or `$where`
-                          * [`$within`](https://jira.mongodb.org/browse/SERVER-6531) support coming in 2.4
+                        * Geospatial operators supported since 2.4
+                        * No JavaScript execution via `$where`
                     </section>
 
                     <section data-markdown>
@@ -703,6 +703,18 @@
 
                 <section>
                     <section data-markdown>
+                        ## $geoNear
+
+                        * Only used to start the pipeline
+                        * Returns documents near a point, in order
+                        * Proxies the [geoNear](http://docs.mongodb.org/manual/reference/command/geoNear/) command
+                            * Supports the same options
+                            * Adds a `distanceField` option
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
                         # Expressions
 
                         * <strike>State of Aggregation</strike>
@@ -1136,24 +1148,12 @@
                     </section>
 
                     <section data-markdown>
-                        ## Extending the Framework
-
-                        * Adding new pipeline operators, expressions
-                          * [`$within`](https://jira.mongodb.org/browse/SERVER-6531) expression for `$match`
-                          * [`$geoNear`](https://jira.mongodb.org/browse/SERVER-7781) pipeline operator
-                          * [`$out`](https://jira.mongodb.org/browse/SERVER-3253) operator for output control
-                    </section>
-
-                    <section data-markdown>
                         ## Future Enhancements
 
-                        * [Improved handling of `null` values](https://jira.mongodb.org/browse/SERVER-7932)
+                        * [`$out`](https://jira.mongodb.org/browse/SERVER-3253) operator for output control
                         * [Optimizing `$match` position](https://jira.mongodb.org/browse/SERVER-4506)
                         * [Pipeline explain facility](https://jira.mongodb.org/browse/SERVER-4504)
-                        * Support BSON [binary](https://jira.mongodb.org/browse/SERVER-4608), [code](https://jira.mongodb.org/browse/SERVER-5718), etc.
-                        * Memory usage improvements
-                            * [Grouping input sorted by `_id`](https://jira.mongodb.org/browse/SERVER-4507)
-                            * [Sorting with limited output](https://jira.mongodb.org/browse/SERVER-4656) ([top *k*](http://en.wikipedia.org/wiki/Partial_sorting#Selecting_k_smallest_or_largest_elements))
+                        * Memory improvements [grouping sorted input](https://jira.mongodb.org/browse/SERVER-4507)
                     </section>
 
                     <section data-markdown>
