@@ -717,7 +717,7 @@ db.books.find({author: { $in: authorIds }});</code></pre>
 
                         Queries are now one step
 
-<pre><code class="language-javascript">&gt; db.books.find({ author.first_name: /^f.*/i })</code></pre>
+<pre><code class="language-javascript">&gt; db.books.find({ "author.first_name": /^f.*/i })</code></pre>
                     </section>
                 </section>
 
@@ -798,8 +798,8 @@ db.books.find({author: { $in: authorIds }});</code></pre>
 
 <pre><code class="language-javascript">cursor = db.reviews.find(
     { _id: /^bob-/ },
-    { reviews: { $slice: 10 }}
-).sort({ _id: -1 });
+    { reviews: { $slice: -10 }}
+).sort({ _id: -1 }).batchSize(5);
 
 num = 0;
 
