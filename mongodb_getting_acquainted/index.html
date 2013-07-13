@@ -416,7 +416,7 @@ local   (empty)
                         * Classes for Mongo resources, types
                         * BSON encode/decode functions
                         * Persistent connections, logging
-                        * [INI configuration](http://us3.php.net/manual/en/mongo.configuration.php)
+                        * [INI configuration](http://php.net/manual/en/mongo.configuration.php)
                         * Track development on [GitHub](https://github.com/mongodb/mongo-php-driver) and [JIRA](https://jira.mongodb.org/browse/PHP)
 
                         <blockquote class="fragment">
@@ -458,21 +458,6 @@ install ok: channel://pecl.php.net/mongo-1.4.1</code></pre>
                         * [MongoDB](http://php.net/manual/en/class.mongodb.php)
                         * [MongoCollection](http://php.net/manual/en/class.mongocollection.php)
                         * [MongoCursor](http://php.net/manual/en/class.mongocursor.php)
-                    </section>
-
-                    <section data-markdown data-state="driver-type-classes">
-                        ## Type Classes
-
-                        * [MongoId](http://php.net/manual/en/class.mongoid.php)
-                        * [MongoCode](http://php.net/manual/en/class.mongocode.php)
-                        * [MongoDate](http://php.net/manual/en/class.mongodate.php)
-                        * [MongoRegex](http://php.net/manual/en/class.mongoregex.php)
-                        * [MongoBinData](http://php.net/manual/en/class.mongobindata.php)
-                        * [MongoInt32](http://php.net/manual/en/class.mongoint32.php)
-                        * [MongoInt64](http://php.net/manual/en/class.mongoint64.php)
-                        * [MongoMinKey](http://php.net/manual/en/class.mongominkey.php)
-                        * [MongoMaxKey](http://php.net/manual/en/class.mongomaxkey.php)
-                        * [MongoTimestamp](http://php.net/manual/en/class.mongotimestamp.php)
                     </section>
 
                     <section data-markdown>
@@ -540,7 +525,7 @@ $c->insert(['username' => 'bob', 'roles' => ['admin']]);</span>
 <span class="fragment">// Retrieve Bob's user document
 $c->findOne(['username' => 'bob']);</span>
 
-<span class="fragment">// Find all admins (returns a MongoCursor)
+<span class="fragment">// Find all admins (returns an iterable MongoCursor)
 $c->find(['roles' => 'admin']);</span></code></pre>
                     </section>
 
@@ -640,6 +625,21 @@ $c->find(['_id' => '5033ea5ce84df1110f000001']);
 
 // Use MongoId in query criteria
 $c->find(['_id' => new MongoId('5033ea5ce84df1110f000001']));</span></code></pre>
+                    </section>
+
+                    <section data-markdown data-state="driver-type-classes">
+                        ## Other Type Classes
+
+                        * [MongoId](http://php.net/manual/en/class.mongoid.php)
+                        * [MongoCode](http://php.net/manual/en/class.mongocode.php)
+                        * [MongoDate](http://php.net/manual/en/class.mongodate.php)
+                        * [MongoRegex](http://php.net/manual/en/class.mongoregex.php)
+                        * [MongoBinData](http://php.net/manual/en/class.mongobindata.php)
+                        * [MongoInt32](http://php.net/manual/en/class.mongoint32.php)
+                        * [MongoInt64](http://php.net/manual/en/class.mongoint64.php)
+                        * [MongoMinKey](http://php.net/manual/en/class.mongominkey.php)
+                        * [MongoMaxKey](http://php.net/manual/en/class.mongomaxkey.php)
+                        * [MongoTimestamp](http://php.net/manual/en/class.mongotimestamp.php)
                     </section>
                 </section>
 
@@ -929,9 +929,11 @@ $db->users->find([
                     <section data-markdown data-state="findandmodify">
                         # A Pickle
 
-                        * We can query for things
-                        * We can update documents atomically
-                        * Can we combine queries and updates?
+                        <ul>
+                            <li>We can query for things</li>
+                            <li class="fragment">We can update documents atomically</li>
+                            <li class="fragment">Can we combine queries and updates?</li>
+                        </ul>
                     </section>
 
                     <section data-markdown>
@@ -961,9 +963,9 @@ $c->save([
         'inprogress' => true,
         'startedAt' => new MongoDate(),
     ]],
-    null,
+    null, // Optional field projection
     [
-        'sort' => ['priority' -1],
+        'sort' => ['priority' => -1],
         'new' => true,
     ]
 );</code></pre>
@@ -1039,7 +1041,7 @@ $cursor->explain();
   "n" => 0,
   "nscannedObjects" => 3,
   "nscanned" => 3,
-  "indexOnly" => false,          // Fastest, if possible
+  "indexOnly" => false,
   "nYields" => 0,
   "millis" => 0,
   "indexBounds" => array(…),
@@ -1283,8 +1285,8 @@ $grid->drop();</span></code></pre>
                         ## [Geospatial Indexing](http://docs.mongodb.org/manual/core/geospatial-indexes/)
 
                         * Geo-hashed, 2D coordinates
-                        * Configurable bounds and bit precision
-                        * Suggested point format: `[x, y]`
+                        * Simple point format: `[x,y]`
+                        * [GeoJSON](http://geojson.org/geojson-spec.html) for points/geometries
                         * One geospatial index per collection
                         * [Multi-location documents](http://docs.mongodb.org/manual/core/geospatial-indexes/#multi-location-documents)
                         * [Spherical model support](http://docs.mongodb.org/manual/applications/geospatial-indexes/#geospatial-indexes-spherical)

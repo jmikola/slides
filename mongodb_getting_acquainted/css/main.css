@@ -144,8 +144,9 @@ section[data-state="about-10gen"] h2 {
 
 section[data-state="starting-off"] ul {
     background-color: rgba(0, 0, 0, 0.5);
-    padding-left: 0.5em;
-    padding-right: 0.25em;
+    margin-left: 0;
+    padding: 0.5em;
+    width: 100%;
 }
 
 section[data-state="starting-off"] li {
@@ -389,7 +390,9 @@ section[data-state="query-operators"] > ul > li:nth-child(3n+1) {
 
 section[data-state="findandmodify"] ul {
     background-color: rgba(0, 0, 0, 0.5);
+    margin-left: 0;
     padding: 0.5em;
+    width: 100%;
 }
 
 section[data-state="findandmodify"] li {
