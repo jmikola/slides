@@ -357,24 +357,24 @@ $b->things = ['foo', 5.05, 2012];</code></pre>
                     <section data-markdown>
                         ## Installing
 
-<pre><code class="no-highlight">$ tar xvzf mongodb-linux-x86_64-2.2.3.tgz
-mongodb-linux-x86_64-2.2.3/GNU-AGPL-3.0
-mongodb-linux-x86_64-2.2.3/README
-mongodb-linux-x86_64-2.2.3/THIRD-PARTY-NOTICES
-mongodb-linux-x86_64-2.2.3/bin/mongodump
-mongodb-linux-x86_64-2.2.3/bin/mongorestore
-mongodb-linux-x86_64-2.2.3/bin/mongoexport
-mongodb-linux-x86_64-2.2.3/bin/mongoimport
-mongodb-linux-x86_64-2.2.3/bin/mongostat
-mongodb-linux-x86_64-2.2.3/bin/mongotop
-mongodb-linux-x86_64-2.2.3/bin/mongooplog
-mongodb-linux-x86_64-2.2.3/bin/mongofiles
-mongodb-linux-x86_64-2.2.3/bin/bsondump
-mongodb-linux-x86_64-2.2.3/bin/mongoperf
-mongodb-linux-x86_64-2.2.3/bin/mongosniff
-mongodb-linux-x86_64-2.2.3/bin/mongod
-mongodb-linux-x86_64-2.2.3/bin/mongos
-mongodb-linux-x86_64-2.2.3/bin/mongo</code></pre>
+<pre><code class="no-highlight">$ tar xvzf mongodb-linux-x86_64-2.4.4.tgz
+mongodb-linux-x86_64-2.4.4/GNU-AGPL-3.0
+mongodb-linux-x86_64-2.4.4/README
+mongodb-linux-x86_64-2.4.4/THIRD-PARTY-NOTICES
+mongodb-linux-x86_64-2.4.4/bin/mongodump
+mongodb-linux-x86_64-2.4.4/bin/mongorestore
+mongodb-linux-x86_64-2.4.4/bin/mongoexport
+mongodb-linux-x86_64-2.4.4/bin/mongoimport
+mongodb-linux-x86_64-2.4.4/bin/mongostat
+mongodb-linux-x86_64-2.4.4/bin/mongotop
+mongodb-linux-x86_64-2.4.4/bin/mongooplog
+mongodb-linux-x86_64-2.4.4/bin/mongofiles
+mongodb-linux-x86_64-2.4.4/bin/bsondump
+mongodb-linux-x86_64-2.4.4/bin/mongoperf
+mongodb-linux-x86_64-2.4.4/bin/mongosniff
+mongodb-linux-x86_64-2.4.4/bin/mongod
+mongodb-linux-x86_64-2.4.4/bin/mongos
+mongodb-linux-x86_64-2.4.4/bin/mongo</code></pre>
                     </section>
 
                     <section data-markdown>
@@ -382,23 +382,22 @@ mongodb-linux-x86_64-2.2.3/bin/mongo</code></pre>
 
 <pre><code class="no-highlight" style="overflow: hidden; word-wrap: normal;">$ mkdir /data/db
 
-$ mongodb-linux-x86_64-2.2.3/bin/mongod
-[initandlisten] MongoDB starting : pid=13917 port=27017 dbpath=/data/db/ 64-bit host=honeydew
-[initandlisten] db version v2.2.3, pdfile version 4.5
-[initandlisten] git version: f570771a5d8a3846eb7586eaffcf4c2f4a96bf08
+$ mongodb-linux-x86_64-2.4.4/bin/mongod
+[initandlisten] MongoDB starting : pid=6214 port=27017 dbpath=/data/db 64-bit host=honeydew
+[initandlisten] db version v2.4.4
+[initandlisten] git version: 4ec1fb96702c9d4c57b1e06dd34eb73a16e407d2
 [initandlisten] build info: Linux ip-10-2-29-40 2.6.21.7-2.ec2.v1.2.fc8xen #1 SMP Fri Nov 20 17:48:28 EST 2009 x86_64 BOOST_LIB_VERSION=1_49
-[initandlisten] options: {}
+[initandlisten] allocator: tcmalloc
 [initandlisten] journal dir=/data/db/journal
-[initandlisten] recover : no journal files present, no recovery needed
-[initandlisten] waiting for connections on port 27017
-[websvr] admin web console waiting for connections on port 28017</code></pre>
+[websvr] admin web console waiting for connections on port 28017
+[initandlisten] waiting for connections on port 27017</code></pre>
                     </section>
 
                     <section data-markdown>
                         ## Connecting
 
 <pre><code class="no-highlight">$ mongo
-MongoDB shell version: 2.2.3
+MongoDB shell version: 2.4.4
 connecting to: test
 
 > show dbs
@@ -429,16 +428,16 @@ local   (empty)
                         ## PHP Driver Installation
 
 <pre><code class="no-highlight">$ pecl install mongo
-downloading mongo-1.3.4.tgz ...
-Starting to download mongo-1.3.4.tgz (124,844 bytes)
-............................done: 124,844 bytes
-49 source files, building
+downloading mongo-1.4.1.tgz ...
+Starting to download mongo-1.4.1.tgz (138,957 bytes)
+......................done: 138,957 bytes
+84 source files, building
 
 ...
 
 Build process completed successfully
 Installing '/usr/lib/php5/20100525/mongo.so'
-install ok: channel://pecl.php.net/mongo-1.3.4</code></pre>
+install ok: channel://pecl.php.net/mongo-1.4.1</code></pre>
 
                         <ul class="fragment">
                             <li><a href="http://php.net/manual/en/mongo.installation.php">Compiled binaries</a> for Windows</li>
