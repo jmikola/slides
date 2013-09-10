@@ -5,8 +5,9 @@
         <title>Doctrine MongoDB ODM</title>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
         <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
         <link rel="stylesheet" href="../common/css/theme/10gen.css">
         <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
@@ -20,174 +21,196 @@
         <div class="reveal">
             <div class="slides">
                 <section data-markdown>
-                    ## Doctrine MongoDB ODM
+                    <script type="text/template">
+                        ## Doctrine MongoDB ODM
 
-                    ### 10gen Driver Days
+                        ### 10gen Driver Days
 
-                    #### September 18, 2012
+                        #### September 18, 2012
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Doctrine Ecosystem
+                    <script type="text/template">
+                        ## Doctrine Ecosystem
 
-                    * Common
-                    * Data Fixtures
-                    * DBAL, MongoDB
-                    * ORM (Doctrine2)
-                    * ODM
-                        * MongoDB
-                        * CouchDB
-                        * PHPCR
+                        * Common
+                        * Data Fixtures
+                        * DBAL, MongoDB
+                        * ORM (Doctrine2)
+                        * ODM
+                            * MongoDB
+                            * CouchDB
+                            * PHPCR
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Doctrine Common
+                    <script type="text/template">
+                        ## Doctrine Common
 
-                    * Annotation parsing
-                        * Lexer
-                    * Cache
-                    * Collections
-                        * Matching
-                    * Event manager
-                    * Persistence
-                        * Interfaces
-                        * Mapping drivers
+                        * Annotation parsing
+                            * Lexer
+                        * Cache
+                        * Collections
+                            * Matching
+                        * Event manager
+                        * Persistence
+                            * Interfaces
+                            * Mapping drivers
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Doctrine MongoDB ODM
+                    <script type="text/template">
+                        ## Doctrine MongoDB ODM
 
-                    * Persistence manangement
-                        * Document manager and Unit of Work (UoW)
-                        * States: new, managed, detached, removed
-                        * Transactional write-behind
-                    * Repositories
-                    * Proxy documents
+                        * Persistence manangement
+                            * Document manager and Unit of Work (UoW)
+                            * States: new, managed, detached, removed
+                            * Transactional write-behind
+                        * Repositories
+                        * Proxy documents
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Mapping Documents
+                    <script type="text/template">
+                        ## Mapping Documents
 
-<pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/** @ODM\Document(collection="users") */
-class User {
-    /** @ODM\Id */
-    protected $id;
+                        ```php
+                        /** @ODM\Document(collection="users") */
+                        class User {
+                            /** @ODM\Id */
+                            protected $id;
 
-    /** @ODM\String */
-    protected $name;
+                            /** @ODM\String */
+                            protected $name;
 
-    /** @ODM\Date */
-    protected $createdAt;
+                            /** @ODM\Date */
+                            protected $createdAt;
 
-    /** @ODM\EmbedOne(targetDocument="Address") */
-    protected $address;
+                            /** @ODM\EmbedOne(targetDocument="Address") */
+                            protected $address;
 
-    /** @ODM\ReferenceMany(targetDocument="Post", mappedBy="user") */
-    protected $posts;
+                            /** @ODM\ReferenceMany(targetDocument="Post", mappedBy="user") */
+                            protected $posts;
 
-    /** @ODM\Collection */
-    private $logs = array();
-}</code></pre>
+                            /** @ODM\Collection */
+                            private $logs = array();
+                        }
+                        ```
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Query Builder
+                    <script type="text/template">
+                        ## Query Builder
 
-<pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">// Doctrine\ODM\MongoDB\DocumentRepository::createQueryBuilder()
-$queryBuilder
-    ->update()
-    ->field('id')->equals('50588d4de84df10e0c000000')
-    ->field('version')->inc(1)
-    ->getQuery()
-    ->execute();</code></pre>
+                        ```php
+                        // Doctrine\ODM\MongoDB\DocumentRepository::createQueryBuilder()
+                        $queryBuilder
+                            ->update()
+                            ->field('id')->equals('50588d4de84df10e0c000000')
+                            ->field('version')->inc(1)
+                            ->getQuery()
+                            ->execute();
+                        ```
 
-                    * Find, update, MR, geo
-                    * Fluent interface
-                    * Eager cursors
+                        * Find, update, MR, geo
+                        * Fluent interface
+                        * Eager cursors
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Discriminators
+                    <script type="text/template">
+                        ## Discriminators
 
-                    Multiple documents in one collection
+                        Multiple documents in one collection
 
-<pre><code class="language-php" style="overflow: hidden; word-wrap: normal;">/**
- * @ODM\Document(collection="my_documents")
- * @ODM\DiscriminatorField(fieldName="type")
- * @ODM\DiscriminatorMap({"article"="Article", "album"="Album"})
- */
-class Article
-{
-    // ...
-}
+                        ```php
+                        /**
+                         * @ODM\Document(collection="my_documents")
+                         * @ODM\DiscriminatorField(fieldName="type")
+                         * @ODM\DiscriminatorMap({"article"="Article", "album"="Album"})
+                         */
+                        class Article { /* ... */ }
 
-/**
- * @ODM\Document(collection="my_documents")
- * @ODM\DiscriminatorField(fieldName="type")
- * @ODM\DiscriminatorMap({"article"="Article", "album"="Album"})
- */
-class Album
-{
-    // ...
-}</code></pre>
+                        /**
+                         * @ODM\Document(collection="my_documents")
+                         * @ODM\DiscriminatorField(fieldName="type")
+                         * @ODM\DiscriminatorMap({"article"="Article", "album"="Album"})
+                         */
+                        class Album { /* ... */ }
+                        ```
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## References
+                    <script type="text/template">
+                        ## References
 
-                    * Reference objects
-                        * Discriminators
-                    * Simple references
-                    * Bi-directional references
-                        * `inversedBy` and `mappedBy`
-                    * Complex references
-                        * Criteria or repository method
-                        * Sort, limit, skip
-                    * Cascading persistence operations
-                        * Detach, merge, refresh, remove, persist
-                    * Priming (via query builder)
+                        * Reference objects
+                            * Discriminators
+                        * Simple references
+                        * Bi-directional references
+                            * `inversedBy` and `mappedBy`
+                        * Complex references
+                            * Criteria or repository method
+                            * Sort, limit, skip
+                        * Cascading persistence operations
+                            * Detach, merge, refresh, remove, persist
+                        * Priming (via query builder)
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Events
+                    <script type="text/template">
+                        ## Events
 
-                    * Document manager or UoW scope
-                        * Document manager is cleared
-                        * Pre-, post- and on-flush
-                    * Document scope
-                        * Remove, persist, update (pre, post)
-                        * Fields loaded (after initial query or refresh)
-                        * Class metadata (mapping) loaded
-                    * Event listeners
-                        * Document method callbacks (no args)
-                        * Listener classes with callbacks (event args)
+                        * Document manager or UoW scope
+                            * Document manager is cleared
+                            * Pre-, post- and on-flush
+                        * Document scope
+                            * Remove, persist, update (pre, post)
+                            * Fields loaded (after initial query or refresh)
+                            * Class metadata (mapping) loaded
+                        * Event listeners
+                            * Document method callbacks (no args)
+                            * Listener classes with callbacks (event args)
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Data Migrations
+                    <script type="text/template">
+                        ## Data Migrations
 
-                    * Renaming fields
-                        * `@AlsoLoad` on a property
-                    * Transforming Data
-                        * `@AlsoLoad` on a method
-                    * Moving Fields
-                        * `@AlsoLoad`, `@NotSaved`
-                        * `@PostLoad`, `@PrePersist`
+                        * Renaming fields
+                            * `@AlsoLoad` on a property
+                        * Transforming Data
+                            * `@AlsoLoad` on a method
+                        * Moving Fields
+                            * `@AlsoLoad`, `@NotSaved`
+                            * `@PostLoad`, `@PrePersist`
+                    </script>
                 </section>
 
                 <section data-markdown>
-                    ## Future Development
+                    <script type="text/template">
+                        ## Future Development
 
-                    * Sharding support
-                    * Refine GridFS integration
-                    * Field mapping bugs
-                    * Test coverage
+                        * Sharding support
+                        * Refine GridFS integration
+                        * Field mapping bugs
+                        * Test coverage
+                    </script>
                 </section>
             </div>
         </div>
 
         <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
-        <script src="../vendor/reveal.js/js/reveal.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
         <script src="../common/js/reveal.js"></script>
     </body>
 </html>

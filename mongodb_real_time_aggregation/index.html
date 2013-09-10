@@ -5,8 +5,9 @@
         <title>Real-time Aggregation with MongoDB</title>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
         <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
         <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
         <link rel="stylesheet" href="css/main.css">
@@ -26,8 +27,8 @@
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">@jmikola</a></p>
                 </section>
 
-                <section data-markdown>
-                    ## Agenda
+                <section>
+                    <h2>Agenda</h2>
 
                     <img src="img/dilbert-20120905.gif" alt="dilbert-20120905.gif" style="width: 80%">
 
@@ -48,137 +49,154 @@
                     </div>
                 </section>
 
-                <section data-markdown data-state="intro">
-                    ## State of Aggregation
+                <section data-state="intro">
+                    <h2>State of Aggregation</h2>
 
-                    We're storing our data in MongoDB.
+                    <p>We're storing our data in MongoDB.</p>
 
-                    We need to do ad-hoc reporting, <br>grouping, common aggregations, etc.
+                    <p>We need to do ad-hoc reporting,<br>grouping, common aggregations, etc.</p>
 
-                    What are we using for this?
+                    <p>What are we using for this?</p>
                 </section>
 
                 <section data-markdown>
-                    ## Data Warehousing
+                    <script type="text/template">
+                        ## Data Warehousing
 
-                    * SQL for reporting and analytics
-                    * Infrastructure complications
-                        * Additional maintenance
-                        * Data duplication
-                        * ETL processes
-                        * Real time?
+                        * SQL for reporting and analytics
+                        * Infrastructure complications
+                            * Additional maintenance
+                            * Data duplication
+                            * ETL processes
+                            * Real time?
+                    </script>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Schema-based
+                        <script type="text/template">
+                            ## Schema-based
 
-                        * Documents hold pre-aggregated data
-                        * Processing at time of insert/update
-                        * Optimized for real-time queries
-                        * In-place updates avoid fragmentation
-                        * [MongoDB for Analytics](https://speakerdeck.com/jnunemaker/mongodb-for-analytics-3) by [John Nunemaker](http://twitter.com/jnunemaker)
+                            * Documents hold pre-aggregated data
+                            * Processing at time of insert/update
+                            * Optimized for real-time queries
+                            * In-place updates avoid fragmentation
+                            * [MongoDB for Analytics](https://speakerdeck.com/jnunemaker/mongodb-for-analytics-3) by [John Nunemaker](http://twitter.com/jnunemaker)
+                        </script>
                     </section>
 
                     <section>
-                        <iframe class="speakerdeck-iframe" style="border: 0px; background-color: transparent; margin: 0px; padding: 0px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; width: 80%; height: 80%; background-position: initial initial; background-repeat: initial initial;" frameborder="0" src="https://speakerdeck.com/player/981aa470220c01305d2612313933acc8?slide=37" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                        <iframe class="speakerdeck-iframe" style="border: 0px; background-color: transparent; margin: 0px; padding: 0px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; width: 20em; height: 17em; background-position: initial initial; background-repeat: initial initial;" frameborder="0" src="https://speakerdeck.com/player/981aa470220c01305d2612313933acc8?slide=37" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## MapReduce
+                        <script type="text/template">
+                            ## MapReduce
 
-                        * Extremely versatile, powerful
-                        * Intended for complex data analysis
-                        * Overkill for simple aggregation tasks
-                            * Averages
-                            * Summation
-                            * Grouping
+                            * Extremely versatile, powerful
+                            * Intended for complex data analysis
+                            * Overkill for simple aggregation tasks
+                                * Averages
+                                * Summation
+                                * Grouping
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## MapReduce in MongoDB
+                        <script type="text/template">
+                            ## MapReduce in MongoDB
 
-                        * Implemented with JavaScript
-                        * Convenient, but difficult to debug
-                        * [Incremental map-reduce](http://docs.mongodb.org/manual/tutorial/perform-incremental-map-reduce/) for batches
-                        * Better concurrency with V8
-                        * Avoiding write locks
-                            * `inline`, `jsMode`, `nonAtomic`
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        ## [MongoQP](https://github.com/jmikola/mongoqp)
-
-                        * MongoDB includes a [database profiler](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/)
-                        * Use map-reduce for query log analysis
-                        * Parse BSON query objects with JavaScript
-                        * Group and aggregate similar queries
-                    </section>
-
-                    <section data-markdown>
-                        ## Profile Data
-
-                        <pre><code class="language-javascript">{
-  "op" : "query",
-  "ns" : "demo.github",
-  "query" : { … },
-  "ntoreturn" : 0,
-  "ntoskip" : 0,
-  "nscanned" : 11426,
-  "lockStats" : { … },
-  "nreturned" : 0,
-  "responseLength" : 20,
-  "millis" : 12,
-  "ts" : ISODate("2013-05-23T21:24:39.327Z"),
-}
-</code></pre>
-
-                    </section>
-
-                    <section data-markdown>
-                        ## Queries
-
-                        <pre><code class="language-javascript">c = db.github;
-types = c.distinct('type');
-
-types.forEach(function(t) {
-  c.find({ type: t });
-});
-
-c.find({ payload: { $exists: false }});
-
-c.find({ "repository.language": "PHP", type: "PushEvent" });
-
-c.find({ "repository.forks": { $gt: 5 }});
-</code></pre>
+                            * Implemented with JavaScript
+                            * Convenient, but difficult to debug
+                            * [Incremental map-reduce](http://docs.mongodb.org/manual/tutorial/perform-incremental-map-reduce/) for batches
+                            * Better concurrency with V8
+                            * Avoiding write locks
+                                * `inline`, `jsMode`, `nonAtomic`
+                        </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        And now for something completely different…
+                        <script type="text/template">
+                            ## [MongoQP](https://github.com/jmikola/mongoqp)
+
+                            * MongoDB includes a [database profiler](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/)
+                            * Use map-reduce for query log analysis
+                            * Parse BSON query objects with JavaScript
+                            * Group and aggregate similar queries
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Profile Data
+
+                            ```js
+                            {
+                              "op" : "query",
+                              "ns" : "demo.github",
+                              "query" : { … },
+                              "ntoreturn" : 0,
+                              "ntoskip" : 0,
+                              "nscanned" : 11426,
+                              "lockStats" : { … },
+                              "nreturned" : 0,
+                              "responseLength" : 20,
+                              "millis" : 12,
+                              "ts" : ISODate("2013-05-23T21:24:39.327Z"),
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Queries
+
+                            ```js
+                            c = db.github;
+                            types = c.distinct('type');
+
+                            types.forEach(function(t) {
+                              c.find({ type: t });
+                            });
+
+                            c.find({ payload: { $exists: false }});
+
+                            c.find({ "repository.language": "PHP", type: "PushEvent" });
+
+                            c.find({ "repository.forks": { $gt: 5 }});
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <p>And now for something completely different…</p>
 
                         <img src="img/monty_python.jpg" alt="monty_python.jpg">
                     </section>
 
                     <section data-markdown>
-                        ## Aggregation Framework
+                        <script type="text/template">
+                            ## Aggregation Framework
 
-                        * Declared with BSON, executes in C++
-                        * Flexible, functional, and *simple*
-                            * Operation pipeline
-                            * Computational expressions
-                        * Plays nice with sharding
+                            * Declared with BSON, executes in C++
+                            * Flexible, functional, and *simple*
+                                * Operation pipeline
+                                * Computational expressions
+                            * Plays nice with sharding
+                        </script>
                     </section>
                 </section>
 
                 <section>
-                    <section data-markdown>
-                        # Pipeline
+                    <section>
+                        <h1>Pipeline</h1>
 
                         <br>
                         <div class="mario-container">
@@ -189,20 +207,24 @@ c.find({ "repository.forks": { $gt: 5 }});
                     </section>
 
                     <section data-markdown data-state="pipeline">
-                        ## Pipeline
+                        <script type="text/template">
+                            ## Pipeline
 
-                        * Process a stream of documents
-                            * Original input is a collection
-                            * Final output is a result document
-                        * Series of operators
-                            * Filter or transform data
-                            * Input/output chain
+                            * Process a stream of documents
+                                * Original input is a collection
+                                * Final output is a result document
+                            * Series of operators
+                                * Filter or transform data
+                                * Input/output chain
 
-                        <pre><code class="no-highlight">ps ax | grep mongod | head -n 1</code></pre>
+                            ```
+                            ps ax | grep mongod | head -n 1
+                            ```
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ## Pipeline Operators
+                    <section>
+                        <h2>Pipeline Operators</h2>
 
                         <div class="col-left">
                             <ul>
@@ -226,44 +248,50 @@ c.find({ "repository.forks": { $gt: 5 }});
 
                 <section>
                     <section data-markdown>
-                        ## Our Example Data
+                        <script type="text/template">
+                            ## Our Example Data
 
-                        Library Books
+                            Library Books
 
-                        <pre><code class="language-javascript">{ _id: 375,
-  title: "The Great Gatsby",
-  ISBN: "9781857150193",
-  available: true,
-  pages: 218,
-  chapters: 9,
-  subjects: [
-    "Long Island",
-    "New York",
-    "1920s"
-  ],
-  language: "English",
-  publisher: {
-    city: "London",
-    name: "Random House"
-  }
-}</code></pre>
+                            ```js
+                            { _id: 375,
+                              title: "The Great Gatsby",
+                              ISBN: "9781857150193",
+                              available: true,
+                              pages: 218,
+                              chapters: 9,
+                              subjects: [
+                                "Long Island",
+                                "New York",
+                                "1920s"
+                              ],
+                              language: "English",
+                              publisher: {
+                                city: "London",
+                                name: "Random House"
+                              }
+                            }
+                            ```
+                        </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## $match
+                        <script type="text/template">
+                            ## $match
 
-                        * Filter documents
-                        * Uses existing [query syntax](http://docs.mongodb.org/manual/reference/operators/)
-                        * Geospatial operators supported since 2.4
-                        * No JavaScript execution via `$where`
+                            * Filter documents
+                            * Uses existing [query syntax](http://docs.mongodb.org/manual/reference/operators/)
+                            * Geospatial operators supported since 2.4
+                            * No JavaScript execution via `$where`
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ## $match
+                    <section>
+                        <h2>$match</h2>
 
-                        Matching field values
+                        <p>Matching field values</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "The Great Gatsby",
@@ -296,10 +324,10 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## $match
+                    <section>
+                        <h2>$match</h2>
 
-                        Matching with query operators
+                        <p>Matching with query operators</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "The Great Gatsby",
@@ -339,18 +367,20 @@ c.find({ "repository.forks": { $gt: 5 }});
 
                 <section>
                     <section data-markdown>
-                        ## $project
+                        <script type="text/template">
+                            ## $project
 
-                        * Reshape documents
-                        * Include, exclude or rename fields
-                        * Inject computed fields
-                        * Manipulate sub-document fields
+                            * Reshape documents
+                            * Include, exclude or rename fields
+                            * Inject computed fields
+                            * Manipulate sub-document fields
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ## $project
+                    <section>
+                        <h2>$project</h2>
 
-                        Including and excluding fields
+                        <p>Including and excluding fields</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ _id: 375,
@@ -385,10 +415,10 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## $project
+                    <section>
+                        <h2>$project</h2>
 
-                        Renaming and computing fields
+                        <p>Renaming and computing fields</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ _id: 375,
@@ -428,10 +458,10 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## $project
+                    <section>
+                        <h2>$project</h2>
 
-                        Creating and extracting sub-document fields
+                        <p>Creating and extracting sub-document fields</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ _id: 375,
@@ -480,21 +510,23 @@ c.find({ "repository.forks": { $gt: 5 }});
 
                 <section>
                     <section data-markdown>
-                        ## $group
+                        <script type="text/template">
+                            ## $group
 
-                        * Group documents by an ID
-                            * Field reference, object, constant
-                        * Other output fields are computed
-                            * `$max`, `$min`, `$avg`, `$sum`
-                            * `$addToSet`, `$push`
-                            * `$first`, `$last`
-                        * Processes all data in memory
+                            * Group documents by an ID
+                                * Field reference, object, constant
+                            * Other output fields are computed
+                                * `$max`, `$min`, `$avg`, `$sum`
+                                * `$addToSet`, `$push`
+                                * `$first`, `$last`
+                            * Processes all data in memory
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ## $group
+                    <section>
+                        <h2>$group</h2>
 
-                        Calculating an average
+                        <p>Calculating an average</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "The Great Gatsby",
@@ -530,10 +562,10 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## $group
+                    <section>
+                        <h2>$group</h2>
 
-                        Summating fields and counting
+                        <p>Summating fields and counting</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "The Great Gatsby",
@@ -572,10 +604,10 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## $group
+                    <section>
+                        <h2>$group</h2>
 
-                        Collecting distinct values
+                        <p>Collecting distinct values</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "The Great Gatsby",
@@ -614,23 +646,24 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
                 </section>
-
                 <section>
                     <section data-markdown>
-                        ## $unwind
+                        <script type="text/template">
+                            ## $unwind
 
-                        * Operate on an array field
-                        * Yield new documents for each array element
-                            * Array replaced by element value
-                            * Missing/empty fields &rarr; no output
-                            * Non-array fields &rarr; error
-                        * Pipe to `$group` to aggregate array values
+                            * Operate on an array field
+                            * Yield new documents for each array element
+                                * Array replaced by element value
+                                * Missing/empty fields &rarr; no output
+                                * Non-array fields &rarr; error
+                            * Pipe to `$group` to aggregate array values
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ## $unwind
+                    <section>
+                        <h2>$unwind</h2>
 
-                        Yielding multiple documents from one
+                        <p>Yielding multiple documents from one</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ _id: 375,
@@ -668,19 +701,21 @@ c.find({ "repository.forks": { $gt: 5 }});
 
                 <section>
                     <section data-markdown>
-                        ## $sort, $limit, $skip
+                        <script type="text/template">
+                            ## $sort, $limit, $skip
 
-                        * Sort documents by one or more fields
-                            * Same order syntax as [cursors](http://docs.mongodb.org/manual/reference/method/cursor.sort/)
-                            * Waits for earlier pipeline operator to return
-                            * In-memory unless early and indexed
-                        * Limit and skip follow cursor behavior
+                            * Sort documents by one or more fields
+                                * Same order syntax as [cursors](http://docs.mongodb.org/manual/reference/method/cursor.sort/)
+                                * Waits for earlier pipeline operator to return
+                                * In-memory unless early and indexed
+                            * Limit and skip follow cursor behavior
+                        </script>
                     </section>
 
-                    <section data-markdown style="font-size: 0.9em">
-                        ## $sort
+                    <section>
+                        <h2>$sort</h2>
 
-                        Sort all documents in the pipeline
+                        <p>Sort all documents in the pipeline</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "The Great Gatsby" }</code></pre>
@@ -711,10 +746,10 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## $limit
+                    <section>
+                        <h2>$limit</h2>
 
-                        Limit documents through the pipeline
+                        <p>Limit documents through the pipeline</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "Animal Farm" }</code></pre>
@@ -742,10 +777,10 @@ c.find({ "repository.forks": { $gt: 5 }});
                         </div>
                     </section>
 
-                    <section data-markdown>
-                        ## $skip
+                    <section>
+                        <h2>$skip</h2>
 
-                        Skip over documents in the pipeline
+                        <p>Skip over documents in the pipeline</p>
 
                         <div class="pipeline-step pipeline-in">
                             <pre><code class="language-javascript">{ title: "Animal Farm" }</code></pre>
@@ -771,77 +806,89 @@ c.find({ "repository.forks": { $gt: 5 }});
 
                 <section>
                     <section data-markdown>
-                        ## $geoNear
+                        <script type="text/template">
+                            ## $geoNear
 
-                        * Only used to start the pipeline
-                        * Returns documents near a point, in order
-                        * Proxies the [geoNear](http://docs.mongodb.org/manual/reference/command/geoNear/) command
-                            * Supports the same options
-                            * Adds a `distanceField` option
+                            * Only used to start the pipeline
+                            * Returns documents near a point, in order
+                            * Proxies the [geoNear](http://docs.mongodb.org/manual/reference/command/geoNear/) command
+                                * Supports the same options
+                                * Adds a `distanceField` option
+                        </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Expressions
+                        <script type="text/template">
+                            # Expressions
 
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline</strike>
-                        * Expressions
-                        * Usage and Limitations
-                        * Sharding
-                        * Looking Ahead
+                            * <strike>State of Aggregation</strike>
+                            * <strike>Pipeline</strike>
+                            * Expressions
+                            * Usage and Limitations
+                            * Sharding
+                            * Looking Ahead
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Expressions
+                        <script type="text/template">
+                            ## Expressions
 
-                        * Return computed values
-                        * Used with `$project` and `$group`
-                        * Reference fields using `$` (e.g. `"$x"`)
-                        * Expressions may be nested
+                            * Return computed values
+                            * Used with `$project` and `$group`
+                            * Reference fields using `$` (e.g. `"$x"`)
+                            * Expressions may be nested
+                        </script>
                     </section>
 
                     <section data-markdown data-state="expressions" class="ul-2col">
-                        ## Expressions
+                        <script type="text/template">
+                            ## Expressions
 
-                        * Logic
-                          * `$and`, `$or`, `$not`…
-                        * Comparison
-                          * `$cmp`, `$eq`, `$gt`…
-                        * Arithmetic
-                          * `$add`, `$divide`…
-                        * String
-                          * `$strcasecmp`, `$substr`…
-                        * Date
-                          * `$year`, `$dayOfMonth`…
-                        * Conditional
-                          * `$cond`, `$ifNull`…
+                            * Logic
+                              * `$and`, `$or`, `$not`…
+                            * Comparison
+                              * `$cmp`, `$eq`, `$gt`…
+                            * Arithmetic
+                              * `$add`, `$divide`…
+                            * String
+                              * `$strcasecmp`, `$substr`…
+                            * Date
+                              * `$year`, `$dayOfMonth`…
+                            * Conditional
+                              * `$cond`, `$ifNull`…
+                          </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # Usage
+                        <script type="text/template">
+                            # Usage
 
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline</strike>
-                        * <strike>Expressions</strike>
-                        * Usage and Limitations
-                        * Sharding
-                        * Looking Ahead
+                            * <strike>State of Aggregation</strike>
+                            * <strike>Pipeline</strike>
+                            * <strike>Expressions</strike>
+                            * Usage and Limitations
+                            * Sharding
+                            * Looking Ahead
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Usage
+                        <script type="text/template">
+                            ## Usage
 
-                        * `aggregate` database command
-                        * `collection.aggregate()` shell helper
-                        * [MongoCollection::aggregate()](http://php.net/manual/en/mongocollection.aggregate.php) in PHP
+                            * `aggregate` database command
+                            * `collection.aggregate()` shell helper
+                            * [MongoCollection::aggregate()](http://php.net/manual/en/mongocollection.aggregate.php) in PHP
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ## Collection Method
+                    <section>
+                        <h2>Collection Method</h2>
 
                         <pre><code class="language-javascript">db.books.aggregate([
   { $sort: { created: 1 }},
@@ -864,8 +911,8 @@ c.find({ "repository.forks": { $gt: 5 }});
 }</code></pre>
                     </section>
 
-                    <section data-markdown>
-                        ## Database Command
+                    <section>
+                        <h2>Database Command</h2>
 
                         <pre><code class="language-javascript">db.runCommand({ aggregate: "books", pipeline: [
   { $sort: { created: 1 }},
@@ -889,72 +936,88 @@ c.find({ "repository.forks": { $gt: 5 }});
                     </section>
 
                     <section data-markdown>
-                        ## Limitations
+                        <script type="text/template">
+                            ## Limitations
 
-                        * Result limited by BSON document size
-                            * Final command result
-                            * Intermediate shard results
-                        * Pipeline operator memory limits
+                            * Result limited by BSON document size
+                                * Final command result
+                                * Intermediate shard results
+                            * Pipeline operator memory limits
+                          </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## [Time-series Visualization](https://github.com/jmikola/silex-mongodb-aggregation-demo)
+                        <script type="text/template">
+                            ## [Time-series Visualization](https://github.com/jmikola/silex-mongodb-aggregation-demo)
 
-                        * Currency exchange rate data
-                        * Real-time candlestick charts
-                            * Open/close rates per minute
-                            * Plot peak points and averages
+                            * Currency exchange rate data
+                            * Real-time candlestick charts
+                                * Open/close rates per minute
+                                * Plot peak points and averages
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Example Data
+                        <script type="text/template">
+                            ## Example Data
 
-                        <pre><code class="language-javascript">{
-  "_id" : ObjectId("4f4b8916fb1c80e141ea6201"),
-  "ask" : 1.30028,
-  "bid" : 1.3002,
-  "ts" : ISODate("2012-02-16T12:48:00Z")
-}</code></pre>
+                            ```js
+                            {
+                              "_id" : ObjectId("4f4b8916fb1c80e141ea6201"),
+                              "ask" : 1.30028,
+                              "bid" : 1.3002,
+                              "ts" : ISODate("2012-02-16T12:48:00Z")
+                            }
+                            ```
+                        </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        # Sharding
+                        <script type="text/template">
+                            # Sharding
 
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline</strike>
-                        * <strike>Expressions</strike>
-                        * <strike>Usage and Limitations</strike>
-                        * Sharding
-                        * Looking Ahead
+                            * <strike>State of Aggregation</strike>
+                            * <strike>Pipeline</strike>
+                            * <strike>Expressions</strike>
+                            * <strike>Usage and Limitations</strike>
+                            * Sharding
+                            * Looking Ahead
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Sharding
+                        <script type="text/template">
+                            ## Sharding
 
-                        * Split the pipeline at first `$group` or `$sort`
-                            * Shards execute pipeline up to that point
-                            * **mongos** merges results and continues
-                        * Early `$match` may excuse shards
-                        * CPU and memory implications for **mongos**
+                            * Split the pipeline at first `$group` or `$sort`
+                                * Shards execute pipeline up to that point
+                                * **mongos** merges results and continues
+                            * Early `$match` may excuse shards
+                            * CPU and memory implications for **mongos**
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Sharding
+                        <script type="text/template">
+                            ## Sharding
 
-                        <pre><code class="language-javascript">[
-  { $match:   { /* filter by shard key */ }},
-  { $group:   { /* group by some field */ }},
-  { $sort:    { /* sort by some field  */ }},
-  { $project: { /* reshape result      */ }}
-]</code></pre>
+                            ```js
+                            [
+                              { $match:   { /* filter by shard key */ }},
+                              { $group:   { /* group by some field */ }},
+                              { $sort:    { /* sort by some field  */ }},
+                              { $project: { /* reshape result      */ }}
+                            ]
+                            ```
+                        </script>
                     </section>
 
-                    <section data-markdown data-state="sharding-diagram" style="font-size: 0.8em">
-                        ## Sharding
+                    <section data-state="sharding-diagram" style="font-size: 0.8em">
+                        <h2>Sharding</h2>
 
                         <div class="node-3">
                             <div>
@@ -1003,56 +1066,66 @@ c.find({ "repository.forks": { $gt: 5 }});
 
                 <section>
                     <section data-markdown>
-                        # Looking Ahead
+                        <script type="text/template">
+                            # Looking Ahead
 
-                        * <strike>State of Aggregation</strike>
-                        * <strike>Pipeline</strike>
-                        * <strike>Expressions</strike>
-                        * <strike>Usage and Limitations</strike>
-                        * <strike>Sharding</strike>
-                        * Looking Ahead
+                            * <strike>State of Aggregation</strike>
+                            * <strike>Pipeline</strike>
+                            * <strike>Expressions</strike>
+                            * <strike>Usage and Limitations</strike>
+                            * <strike>Sharding</strike>
+                            * Looking Ahead
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Framework Use Cases
+                        <script type="text/template">
+                            ## Framework Use Cases
 
-                        * Basic aggregation queries
-                        * Ad-hoc reporting
-                        * Real-time analytics
-                        * Visualizing time series data
+                            * Basic aggregation queries
+                            * Ad-hoc reporting
+                            * Real-time analytics
+                            * Visualizing time series data
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Future Enhancements
+                        <script type="text/template">
+                            ## Future Enhancements
 
-                        * [`$out`](https://jira.mongodb.org/browse/SERVER-3253) operator for output control
-                        * [Optimizing `$match` position](https://jira.mongodb.org/browse/SERVER-4506)
-                        * [Pipeline explain facility](https://jira.mongodb.org/browse/SERVER-4504)
-                        * Memory improvements [grouping sorted input](https://jira.mongodb.org/browse/SERVER-4507)
+                            * [`$out`](https://jira.mongodb.org/browse/SERVER-3253) operator for output control
+                            * [Optimizing `$match` position](https://jira.mongodb.org/browse/SERVER-4506)
+                            * [Pipeline explain facility](https://jira.mongodb.org/browse/SERVER-4504)
+                            * Memory improvements [grouping sorted input](https://jira.mongodb.org/browse/SERVER-4507)
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ## Enabling Developers
+                        <script type="text/template">
+                            ## Enabling Developers
 
-                        * Doing more within MongoDB, faster
-                        * Refactoring MapReduce and groupings
-                            * Replace pages of JavaScript
-                            * Longer aggregation pipelines
-                        * Quick aggregations from the shell
+                            * Doing more within MongoDB, faster
+                            * Refactoring MapReduce and groupings
+                                * Replace pages of JavaScript
+                                * Longer aggregation pipelines
+                            * Quick aggregations from the shell
+                        </script>
                     </section>
 
                 </section>
 
                 <section data-markdown data-state="final">
-                    # Thanks!
+                    <script type="text/template">
+                        # Thanks!
 
-                    * [Server and drivers](http://www.mongodb.org/downloads)
-                    * [Aggregation documentation](http://docs.mongodb.org/manual/aggregation)
-                    * [MapReduce query profiler demo app](https://github.com/jmikola/mongoqp)
-                    * [Time-series visualization demo app](https://github.com/jmikola/silex-mongodb-aggregation-demo)
-                    * [MongoDB shell enhancements for hackers](https://github.com/TylerBrock/mongo-hacker)
+                        * [Server and drivers](http://www.mongodb.org/downloads)
+                        * [Aggregation documentation](http://docs.mongodb.org/manual/aggregation)
+                        * [MapReduce query profiler demo app](https://github.com/jmikola/mongoqp)
+                        * [Time-series visualization demo app](https://github.com/jmikola/silex-mongodb-aggregation-demo)
+                        * [MongoDB shell enhancements for hackers](https://github.com/TylerBrock/mongo-hacker)
 
-                    ### Questions?
+                        ### Questions?
+                    </script>
                 </section>
 
                 <section data-state="photo-credits">
@@ -1067,7 +1140,7 @@ c.find({ "repository.forks": { $gt: 5 }});
         </div>
 
         <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
-        <script src="../vendor/reveal.js/js/reveal.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
         <script src="../common/js/reveal.js"></script>
     </body>
 </html>

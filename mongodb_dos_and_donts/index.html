@@ -5,8 +5,9 @@
         <title>MongoDB DOs and DON'Ts</title>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
         <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
         <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
         <link rel="stylesheet" href="css/main.css">
@@ -26,8 +27,8 @@
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
                 </section>
 
-                <section data-markdown>
-                    ## Agenda
+                <section>
+                    <h2>Agenda</h2>
 
                     <img src="img/dilbert-19960228.gif" alt="dilbert-19960228.gif" style="width: 90%">
 
@@ -49,67 +50,77 @@
                 </section>
 
                 <section>
-                    <section data-markdown>
-                        ## PECL Driver
+                    <section>
+                        <h2>PECL Driver</h2>
                     </section>
 
                     <section data-markdown data-state="driver-version">
-                        ### Keep your driver up-to-date
+                        <script type="text/template">
+                            ### Keep your driver up-to-date
 
-                        <pre><code class="no-highlight">$ pecl upgrade mongo</code></pre>
+                            ```
+                            $ pecl upgrade mongo
+                            ```
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ### Don't use [Mongo](http://php.net/manual/en/class.mongo.php)
+                    <section>
+                        <h3>Don't use <a href="http://php.net/manual/en/class.mongo.php">Mongo</a></h3>
 
-                        <span class="fragment">Use [MongoClient](http://php.net/manual/en/class.mongoclient.php)</span>
+                        <span class="fragment">Use <a href="http://php.net/manual/en/class.mongoclient.php">MongoClient</a></span>
                     </section>
 
                     <section data-markdown data-state="driver-version">
-                        ### Don't be limited to helper methods
+                        <script type="text/template">
+                            ### Don't be limited to helper methods
 
-                        * [MongoCollection::findAndModify()](http://php.net/manual/en/mongocollection.findandmodify.php)
-                        * [MongoCollection::aggregate()](http://php.net/manual/en/mongocollection.aggregate.php)
-                        * [MongoCollection::group()](http://php.net/manual/en/mongocollection.group.php)
+                            * [MongoCollection::findAndModify()](http://php.net/manual/en/mongocollection.findandmodify.php)
+                            * [MongoCollection::aggregate()](http://php.net/manual/en/mongocollection.aggregate.php)
+                            * [MongoCollection::group()](http://php.net/manual/en/mongocollection.group.php)
 
-                        <br>
+                            <br>
 
-                        <span class="fragment">Where's [mapReduce](http://docs.mongodb.org/manual/reference/command/mapReduce/), [geoNear](http://docs.mongodb.org/manual/reference/command/geoNear/), etc.?</span>
+                            <span class="fragment">Where's [mapReduce](http://docs.mongodb.org/manual/reference/command/mapReduce/), [geoNear](http://docs.mongodb.org/manual/reference/command/geoNear/), etc.?</span>
 
-                        <span class="fragment">[MongoDB::command()](http://php.net/manual/en/mongodb.command.php)</span>
+                            <span class="fragment">[MongoDB::command()](http://php.net/manual/en/mongodb.command.php)</span>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Connection Pooling</h3>
+
+                        <p>Re-use connections within a PHP worker process.</p>
+                    </section>
+
+                    <section data-state="mongopool" class="bg">
+                        <h3>MongoPool's Closed</h3>
                     </section>
 
                     <section data-markdown>
-                        ### Connection Pooling
+                        <script type="text/template">
+                            ### Not that you'd actually do this, but…
 
-                        Re-use connections within a PHP worker process.
+                            ```php
+                            $m1 = new MongoClient('mongodb://localhost');
+                            $m2 = new MongoClient('mongodb://localhost');
+                            $m3 = new MongoClient('mongodb://user:pw@localhost');
+                            $m4 = new MongoClient('mongodb://127.0.0.1');
+                            $m5 = new MongoClient('mongodb://sharding.local:40017');
+                            $m6 = new MongoClient(
+                                'mongodb://primary.rs.local:30017,secondary.rs.local:30018',
+                                ['replicaSet' => 'rs0']
+                            );
+
+                            $conns = $m1->getConnections();
+                            $hashes = array_map(function($c) { return $c['hash']; }, $conns);
+
+                            echo json_encode($hashes, JSON_PRETTY_PRINT);
+                            ```
+                        </script>
                     </section>
 
-                    <section data-markdown data-state="mongopool" class="bg">
-                        ### MongoPool's Closed
-                    </section>
-
-                    <section data-markdown>
-                        ### Not that you'd actually do this, but…
-
-<pre><code class="language-php">$m1 = new MongoClient('mongodb://localhost');
-$m2 = new MongoClient('mongodb://localhost');
-$m3 = new MongoClient('mongodb://user:pw@localhost');
-$m4 = new MongoClient('mongodb://127.0.0.1');
-$m5 = new MongoClient('mongodb://sharding.local:40017');
-$m6 = new MongoClient(
-    'mongodb://primary.rs.local:30017,secondary.rs.local:30018',
-    ['replicaSet' => 'rs0']
-);
-
-$conns = $m1->getConnections();
-$hashes = array_map(function($c) { return $c['hash']; }, $conns);
-
-echo json_encode($hashes, JSON_PRETTY_PRINT);</code></pre>
-                    </section>
-
-                    <section data-markdown>
-                        ### Distinguishing Connections
+                    <section>
+                        <h3>Distinguishing Connections</h3>
 
 <pre><code class="language-javascript">[
     "localhost:27017;-;X;15487",                    // $m1, $m2
@@ -142,176 +153,213 @@ echo json_encode($hashes, JSON_PRETTY_PRINT);</code></pre>
                     </section>
 
                     <section data-markdown>
-                        ### Don't like connection pooling?
+                        <script type="text/template">
+                            ### Don't like connection pooling?
 
-                        Call [MongoClient::close()](http://php.net/manual/en/mongoclient.close.php) after each request.
+                            Call [MongoClient::close()](http://php.net/manual/en/mongoclient.close.php) after each request.
 
-                        <span class="fragment">Don't actually do that.</span>
+                            <span class="fragment">Don't actually do that.</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Some math to keep in mind
+                        <script type="text/template">
+                            ### Some math to keep in mind
 
-                        MongoDB limits [maxConns](http://docs.mongodb.org/manual/reference/configuration-options/#maxConns) to 20,000.
+                            MongoDB limits [maxConns](http://docs.mongodb.org/manual/reference/configuration-options/#maxConns) to 20,000.
 
-                        application servers × workers
+                            application servers × workers
+                        </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Schema Design
+                        <script type="text/template">
+                            ## Schema Design
 
-                        * <strike>PECL Driver</strike>
-                        * Schema Design
-                        * Writing
-                        * Reading
-                        * Operations
-                        * Doctrine ODM
+                            * <strike>PECL Driver</strike>
+                            * Schema Design
+                            * Writing
+                            * Reading
+                            * Operations
+                            * Doctrine ODM
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Making do without joins
+                        <script type="text/template">
+                            ### Making do without joins
 
-                        References, embedded objects, both?
+                            References, embedded objects, both?
 
-                        Don't be afraid to denormalize.
+                            Don't be afraid to denormalize.
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Data Locality
+                        <script type="text/template">
+                            ### Data Locality
 
-<pre><code class="language-javascript">{
-    _id: "jmikola",
-    name: 'Jeremy Mikola',
-    friends: [ 'bjori', 'derickr' ]
-}</code></pre>
+                            ```js
+                            {
+                                _id: "jmikola",
+                                name: 'Jeremy Mikola',
+                                friends: [ 'bjori', 'derickr' ]
+                            }
+                            ```
 
-vs.
+                            vs.
 
-<pre><code class="language-javascript">{
-    _id: "jmikola",
-    name: 'Jeremy Mikola',
-    friends: [
-        { id: 'bjori', name: 'Hannes Magnusson' },
-        { id: 'derickr', name: 'Derick Rethans' }
-    ]
-}</code></pre>
+                            ```js
+                            {
+                                _id: "jmikola",
+                                name: 'Jeremy Mikola',
+                                friends: [
+                                    { id: 'bjori', name: 'Hannes Magnusson' },
+                                    { id: 'derickr', name: 'Derick Rethans' }
+                                ]
+                            }
+                            ```
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Store computed values for querying
+                        <script type="text/template">
+                            ### Store computed values for querying
 
-                        Counts or array lengths can be indexed and sorted.
+                            Counts or array lengths can be indexed and sorted.
 
-                        Easily updated with `$inc` and `$set`.
+                            Easily updated with `$inc` and `$set`.
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Don't create field paths willy-nilly
+                        <script type="text/template">
+                            ### Don't create field paths willy-nilly
 
-<pre><code class="language-javascript">> db.messages.findOne({}, {isReadByParticipant: 1})
-{
-    "_id" : ObjectId("4fce28482516ed983884b158"),
-    "isReadByParticipant" : {
-        "4fce05e42516ed9838756f17" : false,
-        "4fce05e42516ed9838756f18" : true,
-        "4fce05e42516ed9838756f19" : true,
-        "4fce05e42516ed9838756f1a" : false,
-        "4fce05e42516ed9838756f1b" : false
-    }
-}</code></pre>
+                            ```js
+                            > db.messages.findOne({}, {isReadByParticipant: 1})
+                            {
+                                "_id" : ObjectId("4fce28482516ed983884b158"),
+                                "isReadByParticipant" : {
+                                    "4fce05e42516ed9838756f17" : false,
+                                    "4fce05e42516ed9838756f18" : true,
+                                    "4fce05e42516ed9838756f19" : true,
+                                    "4fce05e42516ed9838756f1a" : false,
+                                    "4fce05e42516ed9838756f1b" : false
+                                }
+                            }
+                            ```
 
-                        How do we index this‽
+                            How do we index this‽
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Multi-key indexing to the rescue
+                        <script type="text/template">
+                            ### Multi-key indexing to the rescue
 
-<pre><code class="language-javascript">> db.messages.findOne({}, {unreadForParticipants: 1})
-{
-    "_id" : ObjectId("4fce28482516ed983884b158"),
-    "unreadForParticipants" : [
-        "4fce05e42516ed9838756f17",
-        "4fce05e42516ed9838756f1a",
-        "4fce05e42516ed9838756f1b"
-    ]
-}</code></pre>
+                            ```js
+                            > db.messages.findOne({}, {unreadForParticipants: 1})
+                            {
+                                "_id" : ObjectId("4fce28482516ed983884b158"),
+                                "unreadForParticipants" : [
+                                    "4fce05e42516ed9838756f17",
+                                    "4fce05e42516ed9838756f1a",
+                                    "4fce05e42516ed9838756f1b"
+                                ]
+                            }
+                            ```
 
-                        <small>A tidbit from [FOSMessageBundle](https://github.com/FriendsOfSymfony/FOSMessageBundle/pull/32)</small>
+                            <small>A tidbit from [FOSMessageBundle](https://github.com/FriendsOfSymfony/FOSMessageBundle/pull/32)</small>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Field paths and trees structures
+                        <script type="text/template">
+                            ### Field paths and trees structures
 
-<pre><code class="language-javascript">&gt; db.subjects.findOne()
-{
-    _id: 1,
-    name: "American Literature",
-    sub_category: {
-         name: "1920s",
-         sub_category: { name: "Jazz Age" }
-    }
-}</code></pre>
+                            ```js
+                            > db.subjects.findOne()
+                            {
+                                _id: 1,
+                                name: "American Literature",
+                                sub_category: {
+                                     name: "1920s",
+                                     sub_category: { name: "Jazz Age" }
+                                }
+                            }
+                            ```
 
-                        One document contains the entire tree.
+                            One document contains the entire tree.
 
-                        <span class="fragment">How do we query this‽</span>
+                            <span class="fragment">How do we query this‽</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### A better tree schema
+                        <script type="text/template">
+                            ### A better tree schema
 
-<pre><code class="language-javascript">&gt; db.subjects.find()
-{ _id: "American Literature" }
+                            ```js
+                            > db.subjects.find()
+                            { _id: "American Literature" }
 
-{
-    _id: "1920s",
-    parent: "American Literature"
-}
+                            {
+                                _id: "1920s",
+                                parent: "American Literature"
+                            }
 
-{
-    _id: "Jazz Age",
-    parent: "1920s"
-}</code></pre>
+                            {
+                                _id: "Jazz Age",
+                                parent: "1920s"
+                            }
+                            ```
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### But wait, there's more!
+                        <script type="text/template">
+                            ### But wait, there's more!
 
-<pre><code class="language-javascript">&gt; db.subjects.find()
-{ _id: "American Literature" }
+                            ```js
+                            > db.subjects.find()
+                            { _id: "American Literature" }
 
-{
-    _id: "1920s",
-    ancestors: ["American Literature"],
-    parent: "American Literature"
-}
+                            {
+                                _id: "1920s",
+                                ancestors: ["American Literature"],
+                                parent: "American Literature"
+                            }
 
-{
-    _id: "Jazz Age",
-    ancestors: ["American Literature", "1920s"],
-    parent: "1920s"
-}</code></pre>
+                            {
+                                _id: "Jazz Age",
+                                ancestors: ["American Literature", "1920s"],
+                                parent: "1920s"
+                            }
+                            ```
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Working with analytics?
+                        <h3>Working with analytics?</h3>
 
-                        [MongoDB for Analytics](https://speakerdeck.com/jnunemaker/mongodb-for-analytics-3])<br>&mdash; 
-John Nunemaker
+                        <p><a href="https://speakerdeck.com/jnunemaker/mongodb-for-analytics-3">MongoDB for Analytics</a><br>&mdash; John Nunemaker</p>
                     </section>
 
                     <section data-markdown>
-                        ### Don't abuse schema flexibility
+                        <script type="text/template">
+                            ### Don't abuse schema flexibility
 
-                        Create schemas that support your query patterns.
+                            Create schemas that support your query patterns.
 
-                        And then create indexes for those queries.
+                            And then create indexes for those queries.
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ### Make the most of your indexes
+                    <section>
+                        <h3>Make the most of your indexes</h3>
 
                         <ul>
                             <li class="fragment">Kill 2+ birds with one stone</li>
@@ -322,148 +370,178 @@ John Nunemaker
                     </section>
 
                     <section data-markdown>
-                        ### Don't shoot in the dark
+                        <script type="text/template">
+                            ### Don't shoot in the dark
 
-                        [Explain](http://docs.mongodb.org/manual/reference/explain/) your cursors.
+                            [Explain](http://docs.mongodb.org/manual/reference/explain/) your cursors.
 
-                        [Profile](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/) slow queries.
+                            [Profile](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/) slow queries.
+                        </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Writing
+                        <script type="text/template">
+                            ## Writing
 
-                        * <strike>PECL Driver</strike>
-                        * <strike>Schema Design</strike>
-                        * Writing
-                        * Reading
-                        * Operations
-                        * Doctrine ODM
+                            * <strike>PECL Driver</strike>
+                            * <strike>Schema Design</strike>
+                            * Writing
+                            * Reading
+                            * Operations
+                            * Doctrine ODM
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Use Atomic Operators
+                        <script type="text/template">
+                            ### Use Atomic Operators
 
-<pre><code class="language-php">$document = $db->users->find(['_id' => 'jmikola']);
-$document['friends'][] = 'pgodel';
-$db->users->save($document);</code></pre>
+                            ```php
+                            $document = $db->users->find(['_id' => 'jmikola']);
+                            $document['friends'][] = 'pgodel';
+                            $db->users->save($document);
+                            ```
 
-vs.
+                            vs.
 
-<pre><code class="language-php">$document = $db->users->update(
-    ['_id' => 'jmikola'],
-    ['$push' => ['friends' => 'pgodel']]
-);</code></pre>
+                            ```php
+                            $document = $db->users->update(
+                                ['_id' => 'jmikola'],
+                                ['$push' => ['friends' => 'pgodel']]
+                            );
+                            ```
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Atomicity
+                        <script type="text/template">
+                            ### Atomicity
 
-                        No transactions for multi-document writes.
+                            No transactions for multi-document writes.
 
-                        <span class="fragment">Single document updates *are* atomic.</span>
+                            <span class="fragment">Single document updates *are* atomic.</span>
 
-                        <span class="fragment">Multiple writes can be [$isolated](http://docs.mongodb.org/manual/reference/operator/isolated/).</span>
+                            <span class="fragment">Multiple writes can be [$isolated](http://docs.mongodb.org/manual/reference/operator/isolated/).</span>
 
-                        <span class="fragment">Can we query *and* update atomically?</span>
+                            <span class="fragment">Can we query *and* update atomically?</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### findAndModify
+                        <script type="text/template">
+                            ### findAndModify
 
-<pre><code class="language-javascript">// Request to borrow a library book
-db.loans.insert({
-    _id: { borrower: "bjori", book: ObjectId("…") },
-    pending: false,
-    approved: false,
-    priority: 1,
-});
+                            ```js
+                            // Request to borrow a library book
+                            db.loans.insert({
+                                _id: { borrower: "bjori", book: ObjectId("…") },
+                                pending: false,
+                                approved: false,
+                                priority: 1,
+                            });
 
-// Find the highest priority request; mark as pending approval
-request = db.loans.findAndModify({
-<span class="code-highlight inline-block">    query: { pending: false },
-    sort: { priority: -1 },</span>
-    update: { $set: { pending: true, started: new ISODate() }},
-    new: true
-});</code></pre>
+                            // Find the highest priority request; mark as pending approval
+                            request = db.loans.findAndModify({
+                                query: { pending: false },
+                                sort: { priority: -1 },
+                                update: { $set: { pending: true, started: new ISODate() }},
+                                new: true
+                            });
+                            ```
 
-                        And that's a job queue.
+                            And that's a job queue.
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Write Concerns
+                        <script type="text/template">
+                            ### Write Concerns
 
-                        `w` is the new `safe`.
+                            `w` is the new `safe`.
 
-                        <span class="fragment">`w=1` is the new default.</span>
+                            <span class="fragment">`w=1` is the new default.</span>
 
-                        <span class="fragment">`w=majority` for replication.</span>
+                            <span class="fragment">`w=majority` for replication.</span>
 
-                        <span class="fragment">[Tag sets](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets) and journaling, too.</span>
+                            <span class="fragment">[Tag sets](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets) and journaling, too.</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Dealing with document growth
+                        <script type="text/template">
+                            ### Dealing with document growth
 
-                        [Padding factor](http://docs.mongodb.org/manual/core/write-operations/#padding-factor) is a thing.
+                            [Padding factor](http://docs.mongodb.org/manual/core/write-operations/#padding-factor) is a thing.
 
-                        <span class="fragment">Growing and relocation causes fragmentation.</span>
+                            <span class="fragment">Growing and relocation causes fragmentation.</span>
 
-                        <span class="fragment">If possible, update documents [in-place](http://blog.mongodb.org/post/248614779/fast-updates-with-mongodb-update-in-place).</span>
+                            <span class="fragment">If possible, update documents [in-place](http://blog.mongodb.org/post/248614779/fast-updates-with-mongodb-update-in-place).</span>
 
-                        <span class="fragment">Good schema design can help.</span>
+                            <span class="fragment">Good schema design can help.</span>
+                        </script>
                     </section>
                 </section>
 
                 <section>
                     <section data-markdown>
-                        ## Reading
+                        <script type="text/template">
+                            ## Reading
 
-                        * <strike>PECL Driver</strike>
-                        * <strike>Schema Design</strike>
-                        * <strike>Writing</strike>
-                        * Reading
-                        * Operations
-                        * Doctrine ODM
+                            * <strike>PECL Driver</strike>
+                            * <strike>Schema Design</strike>
+                            * <strike>Writing</strike>
+                            * Reading
+                            * Operations
+                            * Doctrine ODM
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### If you remember only two things…
+                        <script type="text/template">
+                            ### If you remember only two things…
 
-                        Index your queries.
+                            Index your queries.
 
-                        Know your [working set](http://docs.mongodb.org/manual/faq/storage/#what-is-the-working-set).
+                            Know your [working set](http://docs.mongodb.org/manual/faq/storage/#what-is-the-working-set).
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### [Read Preferences](http://docs.mongodb.org/manual/applications/replication/#read-preference)
+                        <script type="text/template">
+                            ### [Read Preferences](http://docs.mongodb.org/manual/applications/replication/#read-preference)
 
-                        `secondaryPreferred` is the new `slaveOk`.
+                            `secondaryPreferred` is the new `slaveOk`.
 
-                        <span class="fragment">`primary`, `primaryPreferred`<br>`secondary`, `nearest`</span>
+                            <span class="fragment">`primary`, `primaryPreferred`<br>`secondary`, `nearest`</span>
 
-                        <span class="fragment">[Tag sets](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets)? You bet!</span>
+                            <span class="fragment">[Tag sets](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets)? You bet!</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### JavaScript Evaluation
+                        <script type="text/template">
+                            ### JavaScript Evaluation
 
-                        [MongoDB::execute()](http://php.net/manual/en/mongodb.execute.php) and [`$where`](http://docs.mongodb.org/manual/reference/operator/where/).
+                            [MongoDB::execute()](http://php.net/manual/en/mongodb.execute.php) and [`$where`](http://docs.mongodb.org/manual/reference/operator/where/).
 
-                        <span class="fragment">Would you use [eval()](http://php.net/eval) in PHP?</span>
+                            <span class="fragment">Would you use [eval()](http://php.net/eval) in PHP?</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### MapReduce
+                        <script type="text/template">
+                            ### MapReduce
 
-                        We'll make an allowance for JavaScript here.
+                            We'll make an allowance for JavaScript here.
 
-                        <span class="fragment">But try the [aggregation framework](http://docs.mongodb.org/manual/aggregation/) first.</span>
+                            <span class="fragment">But try the [aggregation framework](http://docs.mongodb.org/manual/aggregation/) first.</span>
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ### Aggregation Framework
+                    <section>
+                        <h3>Aggregation Framework</h3>
 
                         <br>
                         <div class="mario-container">
@@ -476,94 +554,106 @@ request = db.loans.findAndModify({
 
                 <section>
                     <section data-markdown>
-                        ## Operations
+                        <script type="text/template">
+                            ## Operations
 
-                        * <strike>PECL Driver</strike>
-                        * <strike>Schema Design</strike>
-                        * <strike>Writing</strike>
-                        * <strike>Reading</strike>
-                        * Operations
-                        * Doctrine ODM
+                            * <strike>PECL Driver</strike>
+                            * <strike>Schema Design</strike>
+                            * <strike>Writing</strike>
+                            * <strike>Reading</strike>
+                            * Operations
+                            * Doctrine ODM
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### The Players
+                        <script type="text/template">
+                            ### The Players
 
-                        * Application and driver
-                        * `mongod`
-                        * `mongod --replSet`
-                        * `mongod --configsvr`
-                        * `mongos`
+                            * Application and driver
+                            * `mongod`
+                            * `mongod --replSet`
+                            * `mongod --configsvr`
+                            * `mongos`
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Replication vs. Sharding
+                        <script type="text/template">
+                            ### Replication vs. Sharding
 
-                        Replication is the tool for data safety, high availability, and disaster recovery.
+                            Replication is the tool for data safety, high availability, and disaster recovery.
 
-                        Sharding is the tool for scaling a system.
+                            Sharding is the tool for scaling a system.
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Replication
+                        <script type="text/template">
+                            ### Replication
 
-                        Always have an odd number of voting members.
+                            Always have an odd number of voting members.
 
-                        <span class="fragment">Nodes can be [tagged](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets) (e.g. purpose, location).</span>
+                            <span class="fragment">Nodes can be [tagged](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets) (e.g. purpose, location).</span>
 
-                        <span class="fragment">Take advantage of [priority](http://docs.mongodb.org/manual/core/replication/#replica-set-node-priority), [hidden](http://docs.mongodb.org/manual/administration/replica-sets/#replica-set-hidden-members), and [delay](http://docs.mongodb.org/manual/administration/replica-sets/#delayed-members).</span>
+                            <span class="fragment">Take advantage of [priority](http://docs.mongodb.org/manual/core/replication/#replica-set-node-priority), [hidden](http://docs.mongodb.org/manual/administration/replica-sets/#replica-set-hidden-members), and [delay](http://docs.mongodb.org/manual/administration/replica-sets/#delayed-members).</span>
 
-                        <span class="fragment">Use tags to define [custom write concerns](http://docs.mongodb.org/manual/applications/replication/#custom-write-propagation-modes).</span>
+                            <span class="fragment">Use tags to define [custom write concerns](http://docs.mongodb.org/manual/applications/replication/#custom-write-propagation-modes).</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Sharding
+                        <script type="text/template">
+                            ### Sharding
 
-                        Each shard is a replica set or single `mongod`.
+                            Each shard is a replica set or single `mongod`.
 
-                        <span class="fragment">They can be [tagged](http://docs.mongodb.org/manual/administration/tag-aware-sharding/#tag-aware-sharding), too.</span>
+                            <span class="fragment">They can be [tagged](http://docs.mongodb.org/manual/administration/tag-aware-sharding/#tag-aware-sharding), too.</span>
 
-                        <span class="fragment">Not to be confused with replica set tags.</span>
+                            <span class="fragment">Not to be confused with replica set tags.</span>
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Select a good shard key
+                        <script type="text/template">
+                            ### Select a good shard key
 
-                        This is *the* most important decision.
+                            This is *the* most important decision.
+                        </script>
                     </section>
 
-                    <section data-markdown>
+                    <section>
                         <img src="img/shard_key-1.png" alt="shard_key-1.png" style="width: 80%">
 
-                        Right-balanced Access
+                        <p>Right-balanced Access</p>
                     </section>
 
-                    <section data-markdown>
+                    <section>
                         <img src="img/shard_key-2.png" alt="shard_key-2.png" style="width: 80%">
 
-                        Random Access
+                        <p>Random Access</p>
                     </section>
 
-                    <section data-markdown>
+                    <section>
                         <img src="img/shard_key-3.png" alt="shard_key-3.png" style="width: 80%">
 
-                        Segmented Access
+                        <p>Segmented Access</p>
                     </section>
 
-                    <section data-markdown>
-                        ### Sharding without replication?
+                    <section>
+                        <h3>Sharding without replication?</h3>
 
                         <img src="img/dog_no_idea.jpg" alt="dog_no_idea.jpg">
                     </section>
 
-                    <section data-markdown>
-                        ### Replication, and maybe sharding?
+                    <section>
+                        <h3>Replication, and maybe sharding?</h3>
 
                         <img src="img/cool_dog.jpg" alt="cool_dog.jpg">
                     </section>
 
-                    <section data-markdown>
-                        ### Data, RAM and disk
+                    <section>
+                        <h3>Data, RAM and disk</h3>
                     </section>
 
                     <section>
@@ -583,22 +673,28 @@ request = db.loans.findAndModify({
                     </section>
 
                     <section data-markdown>
-                        ### Keep an eye on RAM usage
+                        <script type="text/template">
+                            ### Keep an eye on RAM usage
 
-<pre><code class="no-highlight">$ free -b
-             total       used       free    buffers     cached
-Mem:    <span class="code-highlight">7307489280</span> 6942613504  364875776  229281792 5872500736
--/+ buffers/cache:  840830976 6466658304
-Swap:            0          0          0</code></pre>
+                            ```no-highlight
+                            $ free -b
+                                         total       used       free    buffers     cached
+                            Mem:    7307489280 6942613504  364875776  229281792 5872500736
+                            -/+ buffers/cache:  840830976 6466658304
+                            Swap:            0          0          0
+                            ```
 
-<pre><code class="language-javascript">> var s = 0
-0
-> for each (var c in db.getCollectionNames()) {
-... s += db[c].totalIndexSize();
-... }
-<span class="code-highlight">9784055680</span></code></pre>
+                            ```js
+                            > var s = 0
+                            0
+                            > for each (var c in db.getCollectionNames()) {
+                            ... s += db[c].totalIndexSize();
+                            ... }
+                            9784055680
+                            ```
 
-                        Intermittent page faults and disk access.
+                            Intermittent page faults and disk access.
+                        </script>
                     </section>
 
                     <section>
@@ -612,32 +708,36 @@ Swap:            0          0          0</code></pre>
 
                 <section>
                     <section data-markdown>
-                        ## Doctrine ODM
+                        <script type="text/template">
+                            ## Doctrine ODM
 
-                        * <strike>PECL Driver</strike>
-                        * <strike>Schema Design</strike>
-                        * <strike>Writing</strike>
-                        * <strike>Reading</strike>
-                        * <strike>Operations</strike>
-                        * Doctrine ODM
+                            * <strike>PECL Driver</strike>
+                            * <strike>Schema Design</strike>
+                            * <strike>Writing</strike>
+                            * <strike>Reading</strike>
+                            * <strike>Operations</strike>
+                            * Doctrine ODM
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Multiple Doctrines
+                        <script type="text/template">
+                            ### Multiple Doctrines
 
-                        [Doctrine MongoDB](https://github.com/doctrine/mongodb) is not [ODM](https://github.com/doctrine/mongodb-odm)
+                            [Doctrine MongoDB](https://github.com/doctrine/mongodb) is not [ODM](https://github.com/doctrine/mongodb-odm)
 
-                        <span class="fragment">The former adds sugar atop the driver.</span>
+                            <span class="fragment">The former adds sugar atop the driver.</span>
 
-                        <span class="fragment">ODM implements object persistence.</span>
+                            <span class="fragment">ODM implements object persistence.</span>
 
-                        <span class="fragment">There's also the ORM.</span>
+                            <span class="fragment">There's also the ORM.</span>
 
-                        <span class="fragment">Don't use that. ツ</span>
+                            <span class="fragment">Don't use that. ツ</span>
+                        </script>
                     </section>
 
-                    <section data-markdown>
-                        ### ODMs are a great tool
+                    <section>
+                        <h3>ODMs are a great tool</h3>
 
                         <ul>
                             <li class="fragment">Employ a real document model</li>
@@ -646,68 +746,78 @@ Swap:            0          0          0</code></pre>
                             <li class="fragment">Abstract the database layer</li>
                         </ul>
 
-                        <br><span class="fragment">Watch out for that last one.</span>
+                        <p class="fragment" style="margin-top: 1em;">Watch out for that last one.</p>
 
-                        <span class="fragment">Grok your DB and driver *before* abstracting it.</span>
+                        <p class="fragment">Grok your DB and driver <em>before</em> abstracting it.</p>
+                    </section>
+
+                    <section>
+                        <h3>The same principles apply</h3>
+
+                        <p><a href="http://www.slideshare.net/guilhermeblanco/orm-dont-kill-your-db-developers-do">ORMs don't kill your database, developers do!</a><br>&mdash; Guilherme Blanco</p>
                     </section>
 
                     <section data-markdown>
-                        ### The same principles apply
+                        <script type="text/template">
+                            ### Benchmarking ODM
 
-                        [ORMs don't kill your database, developers do!](http://www.slideshare.net/guilhermeblanco/orm-dont-kill-your-db-developers-do)<br>&mdash; Guilherme Blanco
+                            * Benchmark bulk document creation
+                                * Persist and flush
+                                * Query builder
+                                * Collection (Doctrine class)
+                                * MongoCollection (driver class)
+                            * Track insertion time and memory usage
+                        </script>
                     </section>
 
                     <section data-markdown>
-                        ### Benchmarking ODM
+                        <script type="text/template">
+                            ### Benchmarking ODM
 
-                        * Benchmark bulk document creation
-                            * Persist and flush
-                            * Query builder
-                            * Collection (Doctrine class)
-                            * MongoCollection (driver class)
-                        * Track insertion time and memory usage
-                    </section>
+                            ```no-highlight
+                            $ ./benchmark-odm-flush.php 100000
+                            Flushing 100000 documents: 47.423843 seconds, 576978944 bytes
+                            150732800 bytes still allocated after benchmarking
 
-                    <section data-markdown>
-                        ### Benchmarking ODM
+                            $ ./benchmark-odm-query.php 100000
+                            Inserting 100000 documents: 15.918296 seconds, 3670016 bytes
+                            8126464 bytes still allocated after benchmarking
 
-<pre><code class="no-highlight">$ ./benchmark-odm-flush.php 100000
-Flushing 100000 documents: <span class="code-highlight">47.423843</span> seconds, <span class="code-highlight">576978944</span> bytes
-<span class="code-highlight">150732800</span> bytes still allocated after benchmarking
+                            $ ./benchmark-odm-driver.php 100000
+                            Inserting 100000 documents: 4.305500 seconds, 524288 bytes
+                            6029312 bytes still allocated after benchmarking
 
-$ ./benchmark-odm-query.php 100000
-Inserting 100000 documents: <span class="code-highlight">15.918296</span> seconds, <span class="code-highlight">3670016</span> bytes
-<span class="code-highlight">8126464</span> bytes still allocated after benchmarking
+                            $ ./benchmark-driver.php 100000
+                            Inserting 100000 documents: 1.120347 seconds, 524288 bytes
+                            6029312 bytes still allocated after benchmarking
+                            ```
 
-$ ./benchmark-odm-driver.php 100000
-Inserting 100000 documents: <span class="code-highlight">4.305500</span> seconds, <span class="code-highlight">524288</span> bytes
-<span class="code-highlight">6029312</span> bytes still allocated after benchmarking
-
-$ ./benchmark-driver.php 100000
-Inserting 100000 documents: <span class="code-highlight">1.120347</span> seconds, <span class="code-highlight">524288</span> bytes
-<span class="code-highlight">6029312</span> bytes still allocated after benchmarking</code></pre>
-
-                        <small>[https://gist.github.com/jmikola/2725976](https://gist.github.com/jmikola/2725976)</small>
+                            <small>[https://gist.github.com/jmikola/2725976](https://gist.github.com/jmikola/2725976)</small>
+                        </script>
                     </section>
                 </section>
 
                 <section data-markdown>
-                    ## That's a wrap
+                    <script type="text/template">
+                        ## That's a wrap
 
-                    * <strike>PECL Driver</strike>
-                    * <strike>Schema Design</strike>
-                    * <strike>Writing</strike>
-                    * <strike>Reading</strike>
-                    * <strike>Operations</strike>
-                    * <strike>Doctrine ODM</strike>
+                        * <strike>PECL Driver</strike>
+                        * <strike>Schema Design</strike>
+                        * <strike>Writing</strike>
+                        * <strike>Reading</strike>
+                        * <strike>Operations</strike>
+                        * <strike>Doctrine ODM</strike>
+                    </script>
                 </section>
 
                 <section data-markdown data-state="final">
-                    # Thanks!
+                    <script type="text/template">
+                        # Thanks!
 
-                    [https://joind.in/8021](https://joind.in/8021)
+                        [https://joind.in/8021](https://joind.in/8021)
 
-                    ### Questions?
+                        ### Questions?
+                    </script>
                 </section>
 
                 <section data-state="photo-credits">
@@ -722,7 +832,7 @@ Inserting 100000 documents: <span class="code-highlight">1.120347</span> seconds
         </div>
 
         <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
-        <script src="../vendor/reveal.js/js/reveal.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
         <script src="../common/js/reveal.js"></script>
     </body>
 </html>
