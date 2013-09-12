@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Inside the Sausage Factory: A Journey from PHP to C</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <img src="img/pbf-153.jpg" width="90%">
+
+                    <h1>Inside the Sausage Factory<br><small>A Journey from PHP to C</small></h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+<!--
+
+A little over a year ago, I left the world of PHP application development and joined 10gen to work on their PHP driver for MongoDB (http://pecl.php.net/package/mongo). The experience of being thrust from PHP userland into the dark depths of Zend's C API was unsettling and eye-opening, to say the least. For all the thoroughness of PHP.net's documentation, an aspiring extension developer has little more than a handful of blog posts to guide them through PHP's internals. I somehow managed to pick up a few things by grepping PHP's source code and picking the brains of my colleagues. Admittedly, my C contributions to our driver have been modest, but the whole experience has certainly changed the way I work with PHP for the better.
+
+-->
+
+                <section>
+                    <section>
+                        <h3>I work with these guys</h3>
+
+                        <img src="img/mongodb_team.png" width="100%">
+                    </section>
+
+                    <section>
+                        <h3>At this place</h3>
+
+                        <img src="../common/img/mongodb_onlight.png" width="100%" class="transparent">
+                    </section>
+
+                    <section>
+                        <h3>I've done a bit of this</h3>
+
+                        <div class="col-inline">
+                            <ul>
+                                <li>TI-83 Basic</li>
+                                <li>Perl</li>
+                                <li>PHP</li>
+                                <li>JavaScript</li>
+                                <li>C++</li>
+                                <li>Delphi</li>
+                            </ul>
+                        </div>
+
+                        <div class="col-inline">
+                            <ul>
+                                <li>Java</li>
+                                <li>Scheme</li>
+                                <li>C</li>
+                                <li>Assembly</li>
+                                <li>Ada95</li>
+                                <li>Python</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3>But let's talk about</h3>
+
+                        <div class="col-inline">
+                            <ul>
+                                <li class="de-em">TI-83 Basic</li>
+                                <li class="de-em">Perl</li>
+                                <li>PHP</li>
+                                <li class="de-em">JavaScript</li>
+                                <li class="de-em">C++</li>
+                                <li class="de-em">Delphi</li>
+                            </ul>
+                        </div>
+
+                        <div class="col-inline">
+                            <ul>
+                                <li class="de-em">Java</li>
+                                <li class="de-em">Scheme</li>
+                                <li>C</li>
+                                <li class="de-em">Assembly</li>
+                                <li class="de-em">Ada95</li>
+                                <li class="de-em">Python</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3>More specifically…</h3>
+
+                        <div class="col-left">
+                            <ul>
+                                <li>Finding C in PHP</li>
+                                <li>A crash course in C</li>
+                                <li>PHP internals</li>
+                            </ul>
+                        </div>
+
+                        <div class="col-right">
+                            <ul>
+                                <li>Creating PHP Extensions</li>
+                                <li>Implications for PHP development</li>
+                                <li>Where to go from here?</li>
+                            </ul>
+                        </div>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-background="img/php_elephant.jpg" data-background-size="cover" data-background-position="bottom"></section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Finding C in PHP
+
+                            * Standard IO: `fopen()`, `fwrite()`
+                            * Strings functions: `sprintf()`, `strchr()`
+                            * Date/Time functions: `strftime()`, `time()`
+                            * Extensions modeled on C APIs
+                                * `curl`, `gd`, `gmp`, `mysql`, `pcntl`
+                        </script>
+
+                        <aside class="notes">
+                            Much of PHP's syntax was modeled after C and Java.
+
+                            Many of its components bear striking similarities to C APIs.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Simple file IO in PHP
+
+                            ```php
+                            $fp = fopen("example.txt", "w");
+
+                            if ($fp) {
+                                fputs($fp, "hello");
+                                fclose($fp);
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Simple file IO in C
+
+                            ```cpp
+                            #include <stdio.h>
+
+                            int main() {
+                              FILE *fp = fopen("example.txt", "w");
+
+                              if (fp) {
+                                fputs("hello", fp);
+                                fclose(fp);
+                              }
+
+                              return 0;
+                            }
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            Obvious differences: typed variables; including the IO library; the main() function.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Language differences
+
+                            |         | PHP            | C           |
+                            | ------- | -------------- | ----------- |
+                            | Source  | Interpreted    | Compiled    |
+                            | Typing  | Dynamic        | Static      |
+                            | Scoping | Function-level | Block-level |
+                            | Memory  | Automatic      | Manual      |
+                        </script>
+
+                        <aside class="notes">
+                            C source must be compiled before executing.
+
+                            Types are known/checked at compile time (static).
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-background="img/minecraft_library.png" data-background-size="cover">
+                        <img src="img/c_book.png">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### A crash course in C
+
+                            * Header files and compiling
+                            * Static and dynamic linking
+                            * Declarations and data types
+                            * Stack and heap memory
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Header files
+
+                            * Included at compile time
+                            * Type declarations
+                            * Function prototypes
+                            * Defined constants, macros
+                        </script>
+
+                        <aside class="notes">
+                            Constants and macros are evaluated during pre-processing and before compilation.
+
+                            Macros allow concise syntax (often function-like) to expand into complex code snippets.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Compiling</h3>
+
+                        <p>C → Preprocessor → Translation Unit</p>
+
+                        <p class="fragment">Translation Unit → Compiler → Object File</p>
+
+                        <p class="fragment">Object Files → Linker → Executable</p>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Static and dynamic linking
+
+                            * Static linking
+                                * Monolithic binaries
+                                * No external dependencies
+                            * Dynamic linking (`.so`, `.dll`)
+                                * Modules loaded at run-time
+                                * More flexibility, slight overhead
+                        </script>
+
+                        <aside class="notes">
+                            Illustrated with PHP extensions: compiled in vs. loaded dynamically (e.g. PECL).
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Declarations
+
+                            * Declare it before you use it
+                                * Functions, types, variables
+                            * Block-level scoping
+                            * Source and header files
+                            * `extern` and `static`
+                        </script>
+
+                        <aside class="notes">
+                            Extern may be used to declare a global variable that will be known after linking.
+
+                            Static may be used to restrict visibility to the same file.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Data types
+
+                            * Signed and unsigned integers
+                                * `char`, `short`, `int`, `long`
+                            * Floating point numbers
+                                * `float`, `double`
+                            * Array and `struct` aggregates
+                        </script>
+
+                        <aside class="notes">
+                            Typically, integer types are 8, 16, 32 and 64-bit, respectively. This varies by platform.
+
+                            Floats and doubles are typically 32 and 64-bit, respectively.
+
+                            Structures aggregate multiple data fields into a single variable.
+
+                            Arrays are a collection of values, all of the same type, stored continguously in memory. Length must be tracked separately.
+
+                            Strings aren't a type; they are null-terminated character arrays.
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Pointers</h2>
+
+                        <img src="img/xkcd_pointers.png">
+                    </section>
+
+                    <section>
+                        <h3>Pointers <span class="dingbats">☞</span> Memory</h3>
+
+                        <img src="img/pointers.png">
+
+                        <aside class="notes">
+                            Pointers are memory addresses to some typed value (ints, structs, other pointers, functions, etc.).
+                        </aside>
+                    </section>
+
+                    <section data-markdown class="small-table">
+                        <script type="text/template">
+                            ### Pointers are a type
+
+                            ```cpp
+                            int a = 3;
+                            int *ptr = NULL;
+                            ```
+
+                            | Variable | Address  | Value        |
+                            | -------- | -------- | ------------ |
+                            | `a`      | `0x8130` | `0x00000003` |
+                            | `ptr`    | `0x8134` | `0x00000000` |
+                        </script>
+
+                        <aside class="notes">
+                            A NULL pointer refers to memory address zero.
+                        </aside>
+                    </section>
+
+                    <section data-markdown class="small-table">
+                        <script type="text/template">
+                            ### Pointer assignments
+
+                            ```cpp
+                            ptr = &a;
+                            ```
+
+                            | Variable | Address  | Value        |
+                            | -------- | -------- | ------------ |
+                            | `a`      | `0x8130` | `0x00000003` |
+                            | `ptr`    | `0x8134` | `0x00008130` |
+                        </script>
+
+                        <aside class="notes">
+                            While PHP uses the ampersand unary operator to reference a variable, in C it returns a variable's memory address (often for assignment to a pointer).
+                        </aside>
+                    </section>
+
+                    <section data-markdown class="small-table">
+                        <script type="text/template">
+                            ### Dereferencing pointers
+
+                            ```cpp
+                            *ptr = 6;
+                            ```
+
+                            | Variable | Address  | Value        |
+                            | -------- | -------- | ------------ |
+                            | `a`      | `0x8130` | `0x00000006` |
+                            | `ptr`    | `0x8134` | `0x00008130` |
+                        </script>
+
+                        <aside class="notes">
+                            Dereferencing a pointer allows us to read/write to its memory address.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Pointers and arrays
+
+                            ```cpp
+                            int a[4] = { 0, 0, 0, 0 };
+                            int *ptr = a;
+
+                            a[0] = 1;
+                            ptr[1] = 2;
+                            *(a + 2) = 3;
+                            *(ptr + 3) = 4;
+
+                            sizeof(a);   /* 4 × sizeof(int) */
+                            sizeof(ptr); /* sizeof(int*) */
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            Arrays can be thought of as pointers to their first element.
+
+                            Array access syntax is a form of pointer arithmetic and dereferencing.
+
+                            Pointer arithmetic uses the size of the type it points to.
+
+                            Note that the sizeof operator will report different results for each.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Stack and heap memory
+
+                            ```cpp
+                            /* Stack allocation */
+                            int zend_atoi(const char *str, int str_len);
+                            ```
+
+                            ```cpp
+                            /* Stack allocation */
+                            int foo[10];
+                            ```
+
+                            ```cpp
+                            /* Heap allocation */
+                            int *foo = malloc(10 * sizeof(int));
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            Stack memory is simple and typically faster than dynamically allocated memory.
+
+                            Each function allocates a portion of limited stack memory, which is then freed upon return. Deep recursion can lead to stack overflows.
+
+                            Dynamic allocation pulls from a large pool of memory called the heap.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Heap memory needs to be freed
+
+                            ```cpp
+                            int *foo = malloc(10 * sizeof(int));
+
+                            if (foo == NULL) {
+                                /* Requisite error handling */
+                            }
+
+                            free(foo);  /* Return allocated memory to the heap */
+                            foo = NULL; /* Avoid accessing freed memory later */
+                            ```
+                        </script>
+                    </section>
+                </section>
+<!--
+                <section>
+                    <section>
+                        <blockquote class="twitter-tweet" data-conversation="none" data-dnt="true" align="center"><p>Timeless, inimitable <a href="http://t.co/7jCmxgif">http://t.co/7jCmxgif</a></p>&mdash; Jeremy Mikola (@jmikola) <a href="https://twitter.com/jmikola/statuses/294319768637423616">January 24, 2013</a></blockquote>
+                        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </section>
+
+                    <section>
+                        <img src="img/man_pages.png" width="90%" class="transparent">
+                    </section>
+                </section>
+-->
+                <section>
+                    <section data-background="img/elephant_wireframe.jpg" data-background-size="cover" data-background-position="center"></section>
+
+                    <section>
+                        <h3>php-internals</h3>
+
+                        <img src="img/kangaroo_boxing.gif" width="80%">
+                    </section>
+
+                    <section>
+                        <h3>php-src</h3>
+
+                        <img src="img/php_git.png">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### PHP core does the heavy lifting
+
+                            * Language parsing, compiling
+                            * Macros for code scaffolding
+                            * Data structures, utility functions
+                            * Memory management, persistence
+                            * Thread safety
+                        </script>
+
+                        <aside class="notes">
+                            Macros greatly reduce the amount of code required to craft classes, functions, etc.
+
+                            Utility functions ease working with internal types (e.g. hash tables).
+
+                            PHP has its own API for memory allocation, including allocating memory to persist between requests.
+
+                            If compiled with debugging, PHP can also catch memory leaks in your C code.
+
+                            Zend provides thread-safety if you include TSRM macros in functions.
+                        </aside>
+                    </section>
+
+                    <section data-state="lxr" data-background="img/zelda_take_this.png" data-background-size="cover" data-background-position="center">
+                        <a href="http://lxr.php.net">lxr.php.net</a>
+
+                        <aside class="notes">
+                        </aside>
+                    </section>
+
+                    <section>
+                        <img src="img/lxr_search.png">
+                    </section>
+
+                    <section>
+                        <img src="img/lxr_source.png">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### A place for everything
+
+                            * Core source and syntax in `Zend/`
+                                * Parser, types, internal API
+                            * Extensions in `ext/` and PECL
+                            * Server APIs in `sapi/`
+                            * Tests live in `tests/`
+                        </script>
+
+                        <aside class="notes">
+                            Core source defines many macros and functions to operate on built-in types, as well as essential APIs such as memory management.
+
+                            Extensions can serve as boilerplate for starting a new PHP extension from scratch, and are great examples to learn from.
+
+                            Server APIs execute PHP source code (e.g. CLI, FPM, Apache).
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-background="img/grumpy_programmer.png" data-background-size="cover" data-background-position="center">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### PHPT tests
+
+                            * Name, code, and expected output
+                            * Used by both core and extensions
+                            * Single-purpose and debuggable
+                            * Documentation on [qa.php.net](http://qa.php.net/)
+
+                            <p class="fragment" style="margin-top: 1em;">Why not PHPUnit, PHPSpec, etc?</p>
+                        </script>
+
+                        <aside class="notes">
+                            PHPT files are divided into sections.
+
+                            Additional blocks can be specified to skip tests (by some logic), expect failures, simulate HTTP requests, define environment variables, pass CLI arguments, etc.
+
+                            Isolated execution makes investigating segfaults and the like much easier.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### An example PHPT test
+
+                            ```php
+                            --TEST--
+                            strrchr() tests
+                            --FILE--
+                            <?php
+                            var_dump(strrchr("", ""));
+                            var_dump(strrchr("abc", ""));
+                            var_dump(strrchr("", "abc"));
+                            var_dump(strrchr("abc", "abc"));
+                            ?>
+                            --EXPECTF-- 
+                            bool(false)
+                            bool(false)
+                            bool(false)
+                            string(3) "abc"
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            PHP's test framework will parse this file, execute it, and check for expected output.
+
+                            EXPECTF allows for printf-like patterns.
+
+                            Test failures will leave behind a diff file.
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-state="clippy">
+                        <div>
+                            It looks like you're giving a presentation on PHP internals. Would you like help?
+
+                            <br><br>
+
+                            <input type="checkbox" id="clippy-checkbox" onclick="if (this.checked) { Reveal.next(); }">
+                            <label for="clippy-checkbox">Talk about zvals</label>
+                        </div>
+
+                        <img src="img/clippy.png" class="transparent">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### PHP variables are zvals
+
+                            ```cpp
+                            typedef union _zvalue_value {
+                                long lval;                  /* long value */
+                                double dval;                /* double value */
+                                struct {                    /* string value */
+                                    char *val;
+                                    int len;
+                                } str;
+                                HashTable *ht;              /* hash table value */
+                                zend_object_value obj;      /* object value */
+                            } zvalue_value;
+                            ```
+
+                            ```cpp
+                            typedef struct _zval_struct {
+                                zvalue_value value;         /* value */
+                                zend_uint refcount__gc;     /* reference count */
+                                zend_uchar type;            /* active type */
+                                zend_uchar is_ref__gc;      /* is a reference? */
+                            } zval;
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            A union here is special structure allowing the same memory to be accessed with different type descriptions.
+
+                            HashTable and zend_object_value are also type-defined structures.
+
+                            Another benefit of typedef is having platform-independent types, such as "uint32_t", when int/long might vary.
+
+                            Also helpful for creating human-readable aliases for function signatures. PHP core does this quite a bit.
+                        </aside>
+                    </section>
+
+                    <section data-markdown class="small-table">
+                        <script type="text/template">
+                            ### Macros for accessing zval data
+
+                            | `zval`     | `zval*`      | `zval**`      |
+                            | ---------- | ------------ | ------------- |
+                            | `Z_LVAL`   | `Z_LVAL_P`   | `Z_LVAL_PP`   |
+                            | `Z_BVAL`   | `Z_BVAL_P`   | `Z_BVAL_PP`   |
+                            | `Z_DVAL`   | `Z_DVAL_P`   | `Z_DVAL_PP`   |
+                            | `Z_STRVAL` | `Z_STRVAL_P` | `Z_STRVAL_PP` |
+                            | `Z_STRLEN` | `Z_STRLEN_P` | `Z_STRLEN_PP` |
+                            | `Z_ARRVAL` | `Z_ARRVAL_P` | `Z_ARRVAL_PP` |
+                            | `Z_OBJVAL` | `Z_OBJVAL_P` | `Z_OBJVAL_PP` |
+                            | `Z_TYPE`   | `Z_TYPE_P`   | `Z_TYPE_PP`   |
+                        </script>
+
+                        <aside class="notes">
+                            This may seem overwhelming, but "_P" and "_PP" simply mean that the argument is a pointer, or pointer to a pointer, instead of a normal zval struct.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Macros for defining methods
+
+                            ```cpp
+                            PHP_METHOD(MongoCursor, limit)
+                            {
+                                long l;
+                                mongo_cursor *cursor;
+
+                                cursor = (mongo_cursor*) zend_object_store_get_object(
+                                    getThis() TSRMLS_CC
+                                );
+
+                                if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &l) ==
+                                    FAILURE) {
+                                    return;
+                                }
+
+                                php_mongo_cursor_set_limit(cursor, l);
+                                RETVAL_ZVAL(getThis(), 1, 0);
+                            }
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            Function and method macros abstract away the boilerplate for handling PHP arguments and return values in a C function.
+
+                            zend_parse_parameters (or ZPP for short) is an MVP here. Think of it like an sscanf for functions arguments.
+
+                            Of note, the TSRM macros get inserted before any variadic arguments.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Our method after pre-processing
+
+                            ```cpp
+                            void zim_MongoCursor_limit(int ht, zval *return_value,
+                                                       zval **return_value_ptr, zval *this_ptr,
+                                                       int return_value_used)
+                            {
+                                long l;
+                                mongo_cursor *cursor;
+
+                                if (zend_parse_parameters(ht, "l", &l) == FAILURE) {
+                                    return;
+                                }
+
+                                php_mongo_cursor_set_limit(cursor, l);
+
+                                zend_uchar is_ref = zval_isref_p(return_value);
+                                zend_uint refcount = zval_refcount_p(return_value);
+                                return_value->value = this_ptr->value;
+                                (*return_value).type = (*this_ptr).type;
+                                zval_copy_ctor(return_value);
+                                zval_set_isref_to_p(return_value, is_ref);
+                                zval_set_refcount_p(return_value, refcount);
+                            }
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            The C pre-processor evaluates these macros before compilation.
+
+                            After a few iterations of replacement, teir benefit becomes very clear.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Macros for…
+
+                            * Memory allocation
+                            * Working with hash tables
+                            * Comparisons, casts, operations
+                            * Defining class/function entries
+                            * Other macros
+                              ```cpp
+                              #define Z_TYPE(zval)        (zval).type
+                              #define Z_TYPE_P(zval_p)    Z_TYPE(*zval_p)
+                              #define Z_TYPE_PP(zval_pp)  Z_TYPE(**zval_pp)
+                              ```
+                        </script>
+                    </section>
+
+                    <section>
+                        <h1 class="meme">Macros</h1>
+
+                        <img src="img/x_y_everywhere.jpg">
+
+                        <h2 class="meme">Macros Everywhere</h2>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-background="img/walter_cooking.png" data-background-size="contain" data-background-position="center" data-background-size="90%" data-background-color="#653a29">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Ingredients for an extension
+
+                            * Autoconf, `phpize`, core libs
+                            * `config.m4` and `config.w32`
+                            * `php_myext.c` and `php_myext.h`
+                            * [Coding standards](https://github.com/php/php-src/blob/master/CODING_STANDARDS) and test coverage
+
+                            <p class="fragment" style="margin-top: 1em;">Windows? Difficult but [not impossible](https://wiki.php.net/internals/windows/stepbystepbuild).</p>
+                        </script>
+
+                        <aside class="notes">
+                            Building extensions on Linux/UNIX will require a familiar build environment (Autoconf, compiler, core sources). Windows is a bit trickier.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### The recipe
+
+                            ```no-highlight
+                            $ phpize
+                            Configuring for:
+                            PHP Api Version:         20100412
+                            Zend Module Api No:      20100525
+                            Zend Extension Api No:   220100525
+                            $
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            phpize is a binary in PHP core, which creates a configure script out of a module's configuration file.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### The recipe
+
+                            ```no-highlight
+                            $ ./configure
+                            checking for grep that handles long lines and -e... /bin/grep
+                            checking for egrep... /bin/grep -E
+                            checking for a sed that does not truncate output... /bin/sed
+                            checking for cc... cc
+                            checking whether the C compiler works... yes
+
+                            ...
+
+                            checking whether to build static libraries... no
+                            configure: creating ./config.status
+                            config.status: creating config.h
+                            config.status: executing libtool commands
+                            $
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            In turn, configure creates a Makefile for your project.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### The recipe
+
+                            ```no-highlight
+                            $ make
+
+                            ...
+
+                            Build complete.
+                            Don't forget to run 'make test'.
+                            $
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            Make compiles your project. Alternative targets exist: clean, test, install, etc.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <img src="img/xkcd_compiling.png" width="70%">
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Recommended reading
+
+                            * [PHP Internals Book](http://www.phpinternalsbook.com/)
+                            * Developer blogs
+                                * [Nikita Popov](http://nikic.github.io/), [Sara Golemon](http://blog.golemon.com/), [Anthony Ferrara](http://blog.ircmaxell.com/)
+                            * Kristina Chodorow's [tutorial series](http://www.kchodorow.com/blog/2011/08/11/php-extensions-made-eldrich-installing-php/) (2011)
+                            * Marcus Börger's [conference talks](http://talks.somabo.de/) (2009)
+                            * Zend Developer Zone articles
+                                * [Wrapping C++ Classes in a PHP Extension](http://devzone.zend.com/1435/wrapping-c-classes-in-a-php-extension/) (2009)
+                                * Sara Golemon's [tutorial series](http://devzone.zend.com/303/extension-writing-part-i-introduction-to-php-and-zend/) (2005)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Perhaps the most informitive<br>slide in this entire presentation
+
+                            [wiki.php.net/internals/references](https://wiki.php.net/internals/references)
+                        </script>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    <script type="text/template">
+                        # Thanks!
+
+                        ## [joind.in/8869](https://joind.in/8869)
+
+                        ### Questions?
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * http://pbfcomics.com/153/
+                        * http://www.flickr.com/photos/phuson/4311168776/
+                        * http://www.esourceengine.com/downloads/minecraft/minecraft-library.png
+                        * http://en.wikipedia.org/wiki/File:The_C_Programming_Language_cover.svg
+                        * http://xkcd.com/138/
+                        * http://en.wikipedia.org/wiki/File:Pointers.svg
+                        * http://www.flickr.com/photos/abmann/5286312715/
+                        * http://gifsoup.com/view/33383/kangaroo-boxing.html
+                        * http://breakingbadamc.tumblr.com/post/36457804409/lets-cook
+                        * http://xkcd.com/303/
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>

@@ -1,0 +1,180 @@
+li.de-em {
+    opacity: 0.5;
+    -webkit-filter: blur(0.05em);
+            filter: blur(0.05em);
+}
+
+div.col-inline {
+    display: inline-block;
+}
+
+div.col-left {
+    float: left;
+    width: 50%;
+}
+
+div.col-right {
+    float: right;
+    width: 50%;
+}
+
+span.dingbats {
+    font-family: "Dingbats";
+}
+
+.reveal section img.transparent {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.reveal section.small-table table {
+    font-size: 0.75em;
+    width: 70%;
+}
+
+.reveal table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.reveal table th {
+    padding: 10px 8px;
+    border-bottom: 3px solid #999;
+}
+
+.reveal table td {
+    padding: 9px 8px 0px 8px;
+}
+
+.reveal ul pre {
+    width: 100%;
+}
+
+.reveal h3,
+.reveal h4 {
+    text-transform: none;
+}
+
+.reveal h1.outline,
+.reveal h2.outline {
+    color: white;
+    text-shadow:  2px  2px 2px #000,
+                 -2px -2px 2px #000,
+                  2px -2px 2px #000,
+                 -2px  2px 2px #000,
+                  0px  0px 10px #000;
+}
+
+.reveal h1.meme,
+.reveal h2.meme {
+    font-family: "Impact";
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: white;
+    text-shadow:  2px  2px 1px #000,
+                 -2px -2px 1px #000,
+                  2px -2px 1px #000,
+                 -2px  2px 1px #000;
+}
+
+section[data-state="title"] h1 {
+    font-size: 1.8em;
+    text-align: right;
+}
+
+section[data-state="title"] p.bio {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../../common/img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="title"] p.bio a[href*="twitter"] {
+    background-image: url("../../common/img/twitter-bird-light-bgs.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding-left: 50px;
+}
+
+section[data-state="lxr"] a {
+    display: block;
+    font-size: 3em;
+    margin-top: 1.4em;
+}
+
+section[data-state="clippy"] > div {
+    background: rgba(255, 255, 204, 0.5);
+    border: 3px solid #000;
+    border-radius: 0.5em;
+    color: #333;
+    margin: 0;
+    padding: 1em 1.5em;
+    text-align: left;
+}
+
+section[data-state="clippy"] > div input[type="checkbox"] {
+    margin: 0 1em;
+    vertical-align: text-middle;
+    -webkit-transform: scale(2.5);
+       -moz-transform: scale(2.5);
+        -ms-transform: scale(2.5);
+         -o-transform: scale(2.5);
+            transform: scale(2.5);
+}
+
+section[data-state="clippy"] > div label {
+    vertical-align: text-bottom;
+}
+
+section[data-state="call-stack"] > fieldset {
+    display: inline-block;
+    margin: 0 auto;
+    width: 75%;
+}
+
+section[data-state="call-stack"] fieldset {
+    position: relative;
+    border: 2px solid #000;
+    background: rgba(102, 153, 204, 0.2);
+    line-height: 1em;
+    margin: 0.25em 1em 1em;
+    padding: 0;
+}
+
+section[data-state="call-stack"] legend {
+    font-size: 0.6em;
+    margin: 0 1em;
+    padding: 0 0.5em;
+    text-align: left;
+}
+
+section[data-state="call-stack"] code {
+    display: block;
+    font-size: 0.5em;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+section[data-state="call-stack"] span {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    font-size: 0.5em;
+}
+
+section[data-state="call-stack"] span:last-child {
+    top: auto;
+    bottom: 0em;
+}
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
