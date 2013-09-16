@@ -80,10 +80,6 @@ h1 span.mongodb-logo {
     }
 }
 
-section[data-state="title"] h1 {
-    font-size: 3em;
-}
-
 section[data-state="title"] p.bio {
     display: inline-block;
     margin-top: 1.5em;
