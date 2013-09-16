@@ -6,6 +6,13 @@
     }
 }
 
+/* Do not resize links within headers for print */
+@media print {
+    h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        font-size: 1em !important;
+    }
+}
+
 @font-face {
     font-family: "Lato";
     font-style: normal;
@@ -20,36 +27,9 @@
     src: local("Lato Regular"), local("Lato-Regular"), url("../../common/font/lato.woff") format("woff");
 }
 
-.reveal section pre {
-    margin-bottom: 2em;
-}
-
-.reveal code {
-    max-height: inherit;
-}
-
 .reveal h2 code,
 .reveal h3 code {
     text-transform: none;
-}
-
-/* Do not resize links within headers for print */
-@media print {
-    h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-        font-size: 1em !important;
-    }
-}
-
-/* Prevent clipping of underscores in fragments */
-.reveal section pre code span.fragment {
-    padding-bottom: 1px;
-}
-
-.reveal section pre code span.stdout {
-    display: inline-block;
-    margin: 0.5em 2em;
-    padding: 0 0.5em;
-    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .reveal section table {
@@ -70,27 +50,6 @@
     text-align: center;
 }
 
-@media print {
-    .reveal .footer {
-        display: none;
-    }
-}
-
-@media screen {
-    .reveal .footer {
-        position: absolute;
-        bottom: 10px;
-        left: 10px;
-        height: 70px;
-        width: 300px;
-        background-image: url("../img/10gen_white.png");
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        opacity: 0.5;
-    }
-}
-
 h1 span.mongodb-logo {
     display: block;
     height: 2em;
@@ -102,13 +61,32 @@ h1 span.mongodb-logo {
     background-size: contain;
 }
 
+@media screen {
+    section[data-background].overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    section[data-background] h1.black,
+    section[data-background] h2.black,
+    section[data-background] h3.black,
+    section[data-background] h4.black,
+    section[data-background] h5.black,
+    section[data-background] h6.black {
+        color: #000;
+    }
+
+    section[data-background] h1.hidden {
+        display: none;
+    }
+}
+
 section[data-state="title"] h1 {
     font-size: 3em;
 }
 
 section[data-state="title"] p.bio {
     display: inline-block;
-    margin-top: 1em;
+    margin-top: 1.5em;
     padding-left: 4em;
     height: 3em;
     background-image: url("../img/jmikola_cartoon.png");
@@ -117,50 +95,12 @@ section[data-state="title"] p.bio {
     background-size: contain;
 }
 
-section[data-state="about-10gen"] h2 {
-    text-indent: -9999px;
-    background-image: url("../img/10gen_white.png");
-    background-position: center;
+section[data-state="title"] p.bio a[href*="twitter"] {
+    background-image: url("../../common/img/twitter-bird-light-bgs.png");
+    background-position: left;
     background-repeat: no-repeat;
     background-size: contain;
-}
-
-.about-10gen .reveal .footer {
-    background-image: none;
-}
-
-.starting-off .state-background {
-    background-image: url("../img/highway.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-@media screen {
-    section[data-state="starting-off"] h2 {
-        color: #000;
-    }
-}
-
-section[data-state="starting-off"] ul {
-    background-color: rgba(0, 0, 0, 0.5);
-    margin-left: 0;
-    padding: 0.5em;
-    width: 100%;
-}
-
-section[data-state="starting-off"] li {
-    list-style-position: inside;
-    margin-top: 0.5em;
-}
-
-section[data-state="starting-off"] li:first-child {
-    margin-top: 0;
-}
-
-section[data-state="terminology"] th:first-child,
-section[data-state="terminology"] td:first-child {
-    text-align: right;
+    padding-left: 50px;
 }
 
 section[data-state="database-landscape"] div.diagram {
@@ -256,53 +196,6 @@ section[data-state="relational-diagram"] table#relational-authors {
     clear: left;
 }
 
-.relational-segue .state-background {
-    background-image: url("../img/sagecrm_schema.gif");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-@media screen {
-    section[data-state="relational-segue"] h1 {
-        color: #000;
-    }
-}
-
-.relational-segue .footer {
-    background-image: url("../img/10gen_black.png");
-}
-
-.getting-started .state-background {
-    background-image: url("../img/stopwatch_white.jpg");
-    background-position: top;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-@media screen {
-    section[data-state="getting-started"] h1,
-    section[data-state="getting-started"] h3,
-    section[data-state="getting-started"] h6 {
-        color: #000;
-    }
-}
-
-.getting-started .footer {
-    background-image: url("../img/10gen_black.png");
-}
-
-section[data-state="php-driver"] blockquote {
-    margin-top: 1em;
-}
-
-.get-cooking .state-background {
-    background-image: url("../img/panda_pan.jpg");
-    background-position: bottom;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
 section[data-state="driver-type-classes"] > ul > li {
     float: left;
     width: 45%;
@@ -310,23 +203,6 @@ section[data-state="driver-type-classes"] > ul > li {
 
 section[data-state="driver-type-classes"] > ul > li:nth-child(even) {
     margin-left: 5%;
-}
-
-@media screen {
-    section[data-state="identifiers"] blockquote {
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-}
-
-.identifiers .state-background {
-    background-image: url("../img/lego_police.jpg");
-    background-position: bottom;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-.identifiers .footer {
-    background-image: url("../img/10gen_black.png");
 }
 
 section[data-state="atomic-operators"] > ul {
@@ -343,30 +219,6 @@ section[data-state="atomic-operators"] > ul > li:nth-child(odd) {
     clear: left;
 }
 
-.querying .state-background {
-    background-image: url("../img/lego_sherlock.jpg");
-    background-position: top left;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-@media screen {
-    section[data-state="business-requirements"] h2 {
-        color: #000;
-    }
-
-    section[data-state="business-requirements"] blockquote {
-        background-color: rgba(0, 0, 0, 0.5);
-    }
-}
-
-.business-requirements .state-background {
-    background-image: url("../img/business_requirements.jpg");
-    background-position: top;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
 section[data-state="query-operators"] > ul {
     width: 100%;
 }
@@ -381,31 +233,6 @@ section[data-state="query-operators"] > ul > li:nth-child(3n+1) {
     clear: left;
 }
 
-.findandmodify .state-background {
-    background-image: url("../img/pickles.jpg");
-    background-position: bottom;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-section[data-state="findandmodify"] ul {
-    background-color: rgba(0, 0, 0, 0.5);
-    margin-left: 0;
-    padding: 0.5em;
-    width: 100%;
-}
-
-section[data-state="findandmodify"] li {
-    list-style-position: inside;
-}
-
-.indexing .state-background {
-    background-image: url("../img/rolodex.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
 section[data-state="commands"] ul {
     width: 100%;
 }
@@ -417,35 +244,6 @@ section[data-state="commands"] > ul > li > ul > li {
 
 section[data-state="commands"] > ul > li > ul > li:nth-child(3n+1) {
     clear: left;
-}
-
-.gridfs-title .state-background {
-    background-image: url("../img/container_ship.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-.geospatial-title .state-background {
-    background-image: url("../img/earth.jpg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-.companies .state-background {
-    background-image: url("../img/companies.png");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-section[data-state="companies"] h1 {
-    display: none;
-}
-
-.companies .reveal .footer {
-    background-image: none;
 }
 
 section[data-state="final"] ul,
