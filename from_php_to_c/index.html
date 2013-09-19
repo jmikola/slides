@@ -718,6 +718,8 @@ A little over a year ago, I left the world of PHP application development and jo
                                 long l;
                                 mongo_cursor *cursor;
 
+                                cursor = (mongo_cursor*) zend_object_store_get_object(this_ptr);
+
                                 if (zend_parse_parameters(ht, "l", &l) == FAILURE) {
                                     return;
                                 }
