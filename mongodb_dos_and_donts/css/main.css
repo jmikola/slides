@@ -7,15 +7,6 @@
     max-height: inherit;
 }
 
-.reveal pre > code > span.code-highlight {
-    background-color: #d3d3d3;
-}
-
-.reveal pre > code > span.inline-block {
-    display: inline-block;
-    width: 100%;
-}
-
 h1 span.logo-mongodb {
     height: 300px;
     width: 100%;
@@ -76,22 +67,6 @@ section[data-state="final"] h3 { margin-top: 1.5em; }
 section[data-state="photo-credits"] ul li {
     font-size: 0.5em;
     line-height: 1.2em;
-}
-
-@media screen {
-    .mongopool .state-background {
-        background-position: top;
-        background-repeat: no-repeat;
-        background-size: cover;
-    }
-
-    .mongopool .state-background {
-        background-image: url("../img/empty_pool.jpg");
-    }
-
-    section.bg {
-        background: rgba(255,255,255,0.75);
-    }
 }
 
 span.logo-mongodb {
