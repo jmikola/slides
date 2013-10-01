@@ -179,7 +179,7 @@ body {
   font-size: 0.55em !important;
 }
 
-.reveal code {
+.reveal pre code {
   font-family: Consolas, Inconsolata, monospace;
   max-height: inherit;
 }

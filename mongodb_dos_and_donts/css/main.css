@@ -3,6 +3,10 @@
     text-transform: none;
 }
 
+.reveal pre code {
+    max-height: inherit;
+}
+
 .reveal pre > code > span.code-highlight {
     background-color: #d3d3d3;
 }

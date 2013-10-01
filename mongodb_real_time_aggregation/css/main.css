@@ -2,6 +2,10 @@ li strike {
     opacity: 0.5;
 }
 
+.reveal pre code {
+    max-height: inherit;
+}
+
 div.col-left {
     float: left;
     width: 50%;
