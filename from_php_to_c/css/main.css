@@ -113,6 +113,10 @@ section[data-state="lxr"] a {
     margin-top: 1.4em;
 }
 
+.print-pdf section[data-state="lxr"] a {
+    margin-top: 3em;
+}
+
 section[data-state="clippy"] > div {
     background: rgba(255, 255, 204, 0.5);
     border: 3px solid #000;
