@@ -11,7 +11,10 @@
         <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
         <link rel="stylesheet" href="../common/css/theme/10gen.css">
         <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="../vendor/reveal.js/css/print/pdf.css" type="text/css" media="print">
+
+        <script>
+            document.write( '<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
 
         <!--[if lt IE 9]>
         <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
