@@ -5,6 +5,7 @@ Reveal.initialize({
     progress: true,
     history: true,
     rollingLinks: false,
+    transition: "linear",
 
     // Optional libraries used to extend on reveal.js
     dependencies: [
