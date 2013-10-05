@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Doctrine, Object Persistence, and You</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            document.write( '<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <img src="img/doctrine-logo.png" class="transparent" style="position: absolute; top: -1em; left: -5.5em; width: 6em;">
+
+                    <h1>Doctrine,<br>Object Persistence,<br>and You</h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Agenda
+
+                            <img src="img/xkcd-327.png" class="transparent" width="90%">
+
+                            * Design Patterns
+                            * Object Persistence
+                            * Behind the Persistence
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-state="contributors">
+                        <a href="https://github.com/derickr"><img src="https://0.gravatar.com/avatar/2ef995275795830995d4241368713176?d=https%3A%2F%2Fidenticons.github.com%2F5350e19da7a913fef8751229986a509c.png&amp;s=140"></a>
+                        <a href="https://github.com/bjori"><img src="https://2.gravatar.com/avatar/189511e30874ec6a3b583055f46fef78?d=https%3A%2F%2Fidenticons.github.com%2F46efca282b315142fbb5381ae47c8d45.png&amp;s=140"></a>
+                        <a href="https://github.com/jmikola"><img src="https://0.gravatar.com/avatar/f23700b51dc0c196c1dc02f84aeeecdf?d=https%3A%2F%2Fidenticons.github.com%2F706249dd3fc0b178c58be9f85127d29e.png&amp;s=140"></a>
+
+                        <br>
+
+                        <a href="https://github.com/mongodb/mongo-php-driver"><img src="../common/img/mongodb_onlight.png" width="50%" class="transparent"></a>
+                    </section>
+
+                    <section data-state="contributors">
+                        <a href="https://github.com/beberlei"><img src="https://2.gravatar.com/avatar/75f5fb3ddda052e46f1daed314ae69ab?d=https%3A%2F%2Fidenticons.github.com%2F91ab07539b36f85ba8180d74ad2bb3ee.png&amp;s=140"></a>
+                        <a href="https://github.com/Ocramius"><img src="https://0.gravatar.com/avatar/3cf7a8ab0bccee5b65d39b50a170a555?d=https%3A%2F%2Fidenticons.github.com%2F4f1c4fba7ee1878fdf1dbafb8164a229.png&amp;s=140"></a>
+                        <a href="https://github.com/asm89"><img src="https://1.gravatar.com/avatar/d07a7a143b14fc8309f9abb78d569344?d=https%3A%2F%2Fidenticons.github.com%2Fb94c9a25dc8344a58447d6f32231d15f.png&amp;s=140"></a>
+                        <a href="https://github.com/guilhermeblanco"><img src="https://0.gravatar.com/avatar/5f258a6128e0e026bf91f7ace0f85967?d=https%3A%2F%2Fidenticons.github.com%2F5d9248548f958594a229f782166a2384.png&amp;s=140"></a>
+                        <a href="https://github.com/jmikola"><img src="https://0.gravatar.com/avatar/f23700b51dc0c196c1dc02f84aeeecdf?d=https%3A%2F%2Fidenticons.github.com%2F706249dd3fc0b178c58be9f85127d29e.png&amp;s=140"></a>
+                        <a href="https://github.com/jwage"><img src="https://0.gravatar.com/avatar/f76041410752f9019752b6afd2bebc2a?d=https%3A%2F%2Fidenticons.github.com%2F95d7dfd5d3977e78ec60d7a9256e4be7.png&amp;s=140"></a>
+                        <a href="https://github.com/FabioBatSilva"><img src="https://0.gravatar.com/avatar/847009eb569c152f194f70e2deba99e1?d=https%3A%2F%2Fidenticons.github.com%2F719cf5f30cbd228c68ae742d8159fe4a.png&amp;s=140"></a>
+                        <a href="https://github.com/Seldaek"><img src="https://1.gravatar.com/avatar/48b79d17cd8a911327cbd88c122b1efb?d=https%3A%2F%2Fidenticons.github.com%2F616e84e6a0ef22fb49a1722721b05cf5.png&amp;s=140"></a>
+                        <a href="https://github.com/davidino"><img src="https://2.gravatar.com/avatar/14327ba6a017db91465d34f5910df5ab?d=https%3A%2F%2Fidenticons.github.com%2F88226d0c1ff4e5460320b6f0c4364e15.png&amp;s=140"></a>
+                        <a href="https://github.com/dbu"><img src="https://1.gravatar.com/avatar/c9f4f8ce2c2936bacaf49500b5a127dc?d=https%3A%2F%2Fidenticons.github.com%2F8b3432e34d73182c191e65586b395c06.png&amp;s=140"></a>
+                        <a href="https://github.com/fabpot"><img src="https://0.gravatar.com/avatar/f1a2c5905e121d09feba5ad73898ffca?d=https%3A%2F%2Fidenticons.github.com%2Fc84b270aa5893770d53468e5ccd5d512.png&amp;s=140"></a>
+                        <a href="https://github.com/golovanov"><img src="https://1.gravatar.com/avatar/fbfe5a0027befc4b766f5fdc4cd530d8?d=https%3A%2F%2Fidenticons.github.com%2F9bd7eb886a09e90a3379136996871272.png&amp;s=140"></a>
+                        <a href="https://github.com/kore"><img src="https://1.gravatar.com/avatar/29225b18371c37ec44c7b8831ea3dae3?d=https%3A%2F%2Fidenticons.github.com%2Fb8d41c3e14a12d9b6cfbfbcf8afa9d26.png&amp;s=140"></a>
+                        <a href="https://github.com/kriswallsmith"><img src="https://2.gravatar.com/avatar/097f39f4cd9a83a03d92c246a2797880?d=https%3A%2F%2Fidenticons.github.com%2F8ace2e1305aac8139dd035e9de3c81fb.png&amp;s=140"></a>
+                        <a href="https://github.com/lsmith77"><img src="https://2.gravatar.com/avatar/54787afbd0e7c30936101c2fa84bd89b?d=https%3A%2F%2Fidenticons.github.com%2F42c2d8d8bce5024ddda1f68cff3bd9cf.png&amp;s=140"></a>
+                        <a href="https://github.com/naderman"><img src="https://2.gravatar.com/avatar/9f580202b05cc640aa9297ab7a1ae764?d=https%3A%2F%2Fidenticons.github.com%2Fde0db7a0a7eb8bc0075d465f313244c8.png&amp;s=140"></a>
+                        <a href="https://github.com/odino"><img src="https://1.gravatar.com/avatar/7e1b44a243d0cd4a01e5de1fa41fc0ed?d=https%3A%2F%2Fidenticons.github.com%2Fd1b9fb035de40e6365fcb55a2b8eb437.png&amp;s=140"></a>
+                        <a href="https://github.com/nrk"><img src="https://1.gravatar.com/avatar/1c29f9b1bf5f1b88ed8b0c9a9be39788?d=https%3A%2F%2Fidenticons.github.com%2F3cdb06e1e8fb85c93740e70f493db646.png&amp;s=140"></a>
+                        <a href="https://github.com/richardfullmer"><img src="https://1.gravatar.com/avatar/ae002f3da6a8fb6714653dc49c9284b8?d=https%3A%2F%2Fidenticons.github.com%2Fe3e3672be10bed9e9531781895369a60.png&amp;s=140"></a>
+                        <a href="https://github.com/rndstr"><img src="https://0.gravatar.com/avatar/20f4b48ecceee43353a1ec364cd0059c?d=https%3A%2F%2Fidenticons.github.com%2F491991572cf97170a77cc98cc908684b.png&amp;s=140"></a>
+                        <a href="https://github.com/romanb"><img src="https://2.gravatar.com/avatar/a459a18ff578f511412e9b78b1c3a7fb?d=https%3A%2F%2Fidenticons.github.com%2F006c43135a6c5288e27b92e09757cbc2.png&amp;s=140"></a>
+                        <a href="https://github.com/schmittjoh"><img src="https://1.gravatar.com/avatar/96a13b96ece78afe3c2dc841edc4a8f5?d=https%3A%2F%2Fidenticons.github.com%2F76ac4dd6d29ba379bc7e819e4dcd5de2.png&amp;s=140"></a>
+                        <a href="https://github.com/stof"><img src="https://2.gravatar.com/avatar/7894bbdf1c05b18a1444ad8c76c9d583?d=https%3A%2F%2Fidenticons.github.com%2Fd339b80a37d1fe7e96192364ab2d75fe.png&amp;s=140"></a>
+                        <a href="https://github.com/avalanche123"><img src="https://2.gravatar.com/avatar/f000c9b4dd0656f60de1dc9e75f7386c?d=https%3A%2F%2Fidenticons.github.com%2F0d866018f63b5c0f9b822175e2c5d72c.png&amp;s=140"></a>
+                    </section>
+
+                    <section data-state="contributors">
+                        <a href="https://github.com/doctrine"><img src="img/doctrine-logo.png" width="50%" class="transparent"></a>
+                    </section>
+
+                    <section data-state="origins" data-background="img/tree_roots.jpg" data-background-size="cover" data-background-position="bottom">
+                        <ul id="history">
+                            <li id="peardb"><a href="http://pear.php.net/package/DB">PEAR DB</a></li>
+                            <li id="metabase"><a href="http://freecode.com/projects/metabase">Metabase</a></li>
+                            <li id="pearmdb"><a href="http://pear.php.net/package/MDB">PEAR MDB</a></li>
+                            <li id="pearmdb2"><a href="http://pear.php.net/package/MDB2">PEAR MDB2</a></li>
+                            <li id="zenddb"><a href="http://framework.zend.com/manual/1.12/en/zend.db.html">Zend_Db</a></li>
+                            <li id="doctrineorm"><a href="http://www.doctrine-project.org/projects/ormold.html">Doctrine ORM 1.x</a></li>
+                            <li id="doctrineorm2"><a href="http://www.doctrine-project.org/projects/orm.html">Doctrine ORM 2.x</a></li>
+                            <li id="doctrinedbal"><a href="http://www.doctrine-project.org/projects/dbal.html">Doctrine DBAL</a></li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>The Doctrine project's roots can be traced back many years.</p>
+                            <p>Bottom half consists of different DB abstraction designs.</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Design Patterns
+                        </script>
+                    </section>
+
+                    <section>
+                        <img src="img/fowler_book.jpg">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Who needs design patterns?
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Selecting Data from a Table
+
+                            ```php
+                            $con=mysqli_connect("example.com","peter","abc123","my_db");
+
+                            if (mysqli_connect_errno()) {
+                                echo "Failed to connect to MySQL: " . mysqli_connect_error();
+                            }
+
+                            $result = mysqli_query($con,"SELECT * FROM Persons");
+
+                            while($row = mysqli_fetch_array($result)) {
+                              echo $row['FirstName'] . " " . $row['LastName'];
+                              echo "<br>";
+                            }
+
+                            mysqli_close($con);
+                            ```
+
+                            <small>http://www.w3schools.com/php/php_mysql_select.asp</small>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Inserting Form Data into a Database
+
+                            ```php
+                            $con=mysqli_connect("example.com","peter","abc123","my_db");
+
+                            if (mysqli_connect_errno()) {
+                                echo "Failed to connect to MySQL: " . mysqli_connect_error();
+                            }
+
+                            $sql="INSERT INTO Persons (FirstName, LastName, Age) VALUES
+                                ('$_POST[firstname]','$_POST[lastname]','$_POST[age]')";
+
+                            if (!mysqli_query($con,$sql)) {
+                                die('Error: ' . mysqli_error($con));
+                            }
+
+                            mysqli_close($con);
+                            ```
+
+                            <small>http://www.w3schools.com/php/php_mysql_insert.asp</small>
+                        </script>
+                    </section>
+
+                    <section>
+                        <img src="img/w3fools-pity.jpg">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Data Source Architectural Patterns
+
+                            * Table data gateway
+                            * Row data gateway
+                            * Active record
+                            * Data mapper
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Gateway Patterns
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > An object that encapsulates access to an external system or resource.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/gateway.html)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Table Data Gateway
+
+                            e.g. Zend\Db\TableGateway
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > An object that acts as a Gateway to a database table. One instance handles all the rows in the table.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/tableDataGateway.html)
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Table Data Gateway</h3>
+
+                        <img src="img/poeaa-tablegateway.png" class="transparent" width="100%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            namespace Zend\Db\TableGateway;
+
+                            interface TableGatewayInterface
+                            {
+                                public function getTable();
+                                public function select($where = null);
+                                public function insert($set);
+                                public function update($set, $where = null);
+                                public function delete($where);
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Row Data Gateway
+
+                            e.g. Zend\Db\RowGateway
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > An object that acts as a Gateway to a single record in a data source. There is one instance per row.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/rowDataGateway.html)
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Row Data Gateway</h3>
+
+                        <img src="img/poeaa-rowgateway.png" class="transparent" width="70%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            namespace Zend\Db\RowGateway;
+
+                            interface RowGatewayInterface
+                            {
+                                public function save();
+                                public function delete();
+                            }
+                            ```
+
+                            <span class="fragment">Bring your own finder.</span>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What&rsquo;s the problem?
+
+                            * Gateways are thin abstractions
+                            * Data model not included
+                            * Hydration and persistence?
+                        </script>
+
+                        <aside class="notes">
+                            <p>Can be limiting for larger applications.</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Active Record
+
+                            e.g. Doctrine ORM 1.x
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > An object that wraps a row in a database table or view, encapsulates the database access, and adds domain logic on that data.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/activeRecord.html)
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Active Record</h3>
+
+                        <img src="img/poeaa-activerecord.png" class="transparent" width="50%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Active Record
+
+                            Sits on top of our domain model
+
+                            <span class="fragment">Row data gateway + business logic</span>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Domain Model
+
+                            * Data encapsulation
+                            * Business logic
+                            * Relationships
+                            * Validation?
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Active Record adds…
+
+                            * Factory method for new objects
+                            * Hydration for fetched objects
+                            * Persistence logic
+                            * Common queries
+                            * CRUD methods
+                        </script>
+
+                        <aside class="notes">
+                            Models are not simple objects and often extend a base class.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            // create Tito
+                            $user = User::create(['name' => 'Tito', 'state' => 'VA']);
+
+                            // read Tito
+                            $user = User::find_by_name('Tito');
+
+                            // update Tito
+                            $user->name = 'Tito Jr';
+                            $user->save();
+
+                            // delete Tito
+                            $user->delete();
+                            ```
+
+                            <small>http://phpactiverecord.org/projects/main/wiki/Quick_Start</small>
+                        </script>
+
+                        <aside class="notes">
+                            The active record design pattern is found in many PHP ORMs.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What&rsquo;s the problem?
+
+                            * [Single Responsibility Principle](http://en.wikipedia.org/wiki/Single_responsibility_principle)
+                            * Testability
+                            * [Multitenancy](http://en.wikipedia.org/wiki/Multitenancy)
+                            * Scalability and performance
+                        </script>
+
+                        <aside class="notes">
+                            <p>Some ORMs utilize static methods.</p>
+                            <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
+                            <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Data Mapper
+
+                            e.g. Doctrine ORM 2.x, ODMs
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > A layer of Mappers that moves data between objects and a database while keeping them independent of each other and the mapper itself.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/dataMapper.html)
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Data Mapper</h3>
+
+                        <img src="img/poeaa-datamapper.png" class="transparent" width="80%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Data Mapper
+
+                            Complements the domain model,<br>instead of augmenting it
+
+                            <span class="fragment">Manages hydration and persistence</span>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > The Data Mapper is a layer of software that separates the in-memory objects from the database.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/dataMapper.html)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### &#9745; Separation of concerns
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > With Data Mapper the in-memory objects needn&rsquo;t know even that there&rsquo;s a database present.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/dataMapper.html)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### &#9745; Testability
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            // create Jon
+                            $user = new User();
+                            $user->setName('Jon');
+                            $user->setState('TN');
+
+                            $manager->persist($user);
+                            $manager->flush();
+
+                            // read Jon
+                            $user = $manager->getRepository('User')
+                                            ->findOneBy(['name' => 'Jon']);
+
+                            // update Jon
+                            $user->setName('Jon Wage');
+                            $manager->flush();
+
+                            // delete Jon
+                            $manager->remove($user);
+                            $manager->flush();
+                            ```
+
+                            <small>http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/tutorials/getting-started.html</small>
+                        </script>
+
+                        <aside class="notes">
+                            We see three distinct classes here: the model, persistence manager, and repository (for queries).
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Data Mapper
+
+                            * Simple models
+                            * Manager handles persistence
+                            * Repository holds queries
+                        </script>
+
+                        <aside class="notes">
+                            Models can be plain PHP objects.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### &#9745; Multitenancy
+                        </script>
+
+                        <aside class="notes">
+                            Multitenancy is possible with multiple managers, each with their own database.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### &#9745; Scalability and performance
+                        </script>
+
+                        <aside class="notes">
+                            <p>Lighter models and few mappers makes better use of memory.</p>
+                            <p>Managers can flush changes for many objects at once.</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Object Persistence
+
+                            in Doctrine ORM 2.x, ODMs
+
+                            <span class="fragment"><small>Inspired by [Hibernate](http://www.hibernate.org/) and [JPA 2.0](http://jcp.org/en/jsr/detail?id=317)</small><span>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Architecture</h3>
+
+                        <ul id="architecture">
+                            <li id="eventmanager">EventManager</li>
+                            <li id="metadata">Metadata</li>
+                            <li id="hydrator">Hydrator</li>
+                            <li id="persister">Persister</li>
+                            <li id="unitofwork">UnitOfWork</li>
+                            <li id="objectmanager">ObjectManager</li>
+                            <li id="repository">Repository</li>
+                            <li id="query">Query</li>
+                        </ul>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Metadata
+
+                            ```php 
+                            /**
+                             * @Entity
+                             * @Table(name="products")
+                             */
+                            class Product
+                            {
+                                /**
+                                 * @Id
+                                 * @Column(type="integer")
+                                 * @GeneratedValue
+                                 */
+                                protected $id;
+
+                                /** @Column(type="string") */
+                                protected $name;
+
+                                // ...
+                            }
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            <p>Metadata is the mapping between the model and its storage.</p>
+                            <p>Doctrine has drivers for annotations, YAML, XML, and PHP.</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Hydrator</h3>
+
+                        <div>
+                            <img src="img/document-512.png" class="transparent" width="30%">
+                            <img src="img/left-512.png" class="transparent" width="15%" style="margin: 0 1em; margin-bottom: 2em;">
+                            <img src="img/database-512.png" class="transparent" width="30%">
+                        </div>
+
+                        <aside class="notes">
+                            <p>Hydrators use mapping information to instantiate models from storage.</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Persister</h3>
+
+                        <div>
+                            <img src="img/document-512.png" class="transparent" width="30%">
+                            <img src="img/right-512.png" class="transparent" width="15%" style="margin: 0 1em; margin-bottom: 2em;">
+                            <img src="img/database-512.png" class="transparent" width="30%">
+                        </div>
+
+                        <aside class="notes">
+                            <p>Persisters operate in the reverse direction (model to storage).</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Unit of Work
+
+                            aka 3,000 lines of<br>takin&rsquo; care of business
+                        </script>
+                    </section>
+
+                    <section>
+                        <img src="img/bto-tcb.jpg" width="80%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > A Unit of Work keeps track of everything you do during a business transaction that can affect the database.
+
+                            &mdash; Martin Fowler in [PoEAA](http://martinfowler.com/eaaCatalog/unitOfWork.html)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > When you&rsquo;re done, it figures out everything that needs to be done to alter the database as a result of your work.
+
+                            &mdash; Martin Fowler in [PoEAA](http://martinfowler.com/eaaCatalog/unitOfWork.html)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### <small>Unit of Work:</small> Object States
+
+                            * New
+                            * Managed
+                            * Removed
+                            * Detached
+                        </script>
+
+                        <aside class="notes">
+                            <p>New: I have no persistent identity (e.g. just created).</p>
+                            <p>Managed: I'm known to the manager and am being tracked for changes.</p>
+                            <p>Removed: I'm known, but will be removed on the next commit.</p>
+                            <p>Detached: I have a persistent identity, but am no longer being tracked.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            $user = new User();
+                            $user->setName('Jon'); // $user is NEW
+
+                            $manager->persist($user); // $user is MANAGED
+                            $manager->flush();
+
+                            $manager->remove($user); // $user is REMOVED
+                            $manager->flush();
+                            ```
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3><small>Unit of Work:</small> Identity Map</h3>
+
+                        <img src="img/poeaa-identitymap.png" class="transparent" width="80%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            $userA = $manager->getRepository('User')
+                                             ->findOneBy(['id' => 1]);
+
+                            $userB = $manager->getRepository('User')
+                                             ->findOneBy(['id' => 1]);
+
+                            $userA === $userB; // true
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            Anecdote about Symfony forms binding to the same user stored in the session.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3><small>Doctrine\Common\Persistence\</small>ObjectManager</h3>
+
+                        <div class="col-left">
+                            <ul>
+                                <li><code>find(<span class="arg">$class</span>, <span class="arg">$id</span>)</code></li>
+                                <li><code>persist(<span class="arg">$object</span>)</code></li>
+                                <li><code>remove(<span class="arg">$object</span>)</code></li>
+                                <li><code>flush()</code></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-right">
+                            <ul>
+                                <li><code>clear(<span class="arg">$class</span> = null)</code></li>
+                                <li><code>detach(<span class="arg">$object</span>)</code></li>
+                                <li><code>merge(<span class="arg">$object</span>)</code></li>
+                                <li><code>refresh(<span class="arg">$object</span>)</code></li>
+                            </ul>
+                        </div>
+
+                        <aside class="notes">
+                            <p>merge() will take an object and return its managed copy (must be assigned).</p>
+                            <p>refresh() will revert an in-memory changes to a managed object.</p> 
+                            <p>Might have multiple managers, usually for different database connections.</p> 
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Lifecycle Events
+
+                            * Remove
+                            * Persist
+                            * Update
+                            * Load
+                            * Flush
+                            * Clear
+                        </script>
+
+                        <aside class="notes">
+                            <p>Pre and post events exist for many of these.</p>
+                            <p>Also for loading metadata, storage-specific events (e.g. move for PHPCR, conflict for CoucheDB).</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Event Notification</h3>
+
+                        <div>
+                            <img src="img/error-512.png" class="transparent" width="30%">
+                            <img src="img/right-512.png" class="transparent" width="15%" style="margin: 0 1em; margin-bottom: 2.5em;">
+                            <img src="img/multicast-512.png" class="transparent" width="30%">
+                        </div>
+
+                        <aside class="notes">
+                            <p>Events are extension points into UnitOfWork and the application.</p>
+                            <p>Observe changes to domain objects.</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3><small>Doctrine\Common\</small>EventManager</h3>
+
+                        <ul>
+                            <li><code>dispatchEvent(<span class="arg">$event</span>, <span class="arg">$args</span> = null)</code></li>
+                            <li><code>getListeners(<span class="arg">$event</span> = null)</code></li>
+                            <li><code>hasListeners(<span class="arg">$event</span> = null)</code></li>
+                            <li><code>addEventListener(<span class="arg">$event</span>, <span class="arg">$listener</span>)</code></li>
+                            <li><code>removeEventListener(<span class="arg">$event</span>, <span class="arg">$listener</span>)</code></li>
+                            <li><code>addEventSubscriber(<span class="arg">$subscriber</span>)</code></li>
+                            <li><code>removeEventSubscriber(<span class="arg">$subscriber</span>)</code></li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>Implements the Domain Event pattern.</p>
+                            <p>Listeners are decoupled from the dispatcher. Notified only of the event subject and relevant args.</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3><small>Doctrine\Common\Persistence\</small>ObjectRepository</h3>
+
+                        <ul>
+                            <li><code>find(<span class="arg">$id</span>)</code></li>
+                            <li><code>findAll()</code></li>
+                            <li><code>findBy(<span class="arg">$criteria</span>, <span class="arg">…</span>)</code></li>
+                            <li><code>findOneBy(<span class="arg">$criteria</span>)</code></li>
+                            <li><code>getClassName()</code></li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>Not repositories in the Domain-Drive Design (by Eric Evans) sense.</p>
+                            <p>Can be extended with additional query methods, or other behaviors.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Query
+
+                            * Abstracts database query API
+                            * Fluent builder interface
+                            * Filter classes
+                            * ORM/ODM behavior
+                                * e.g. hydration, fetch mode
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            // $qb is a Doctrine\ORM\QueryBuilder
+                            $qb->select('u')
+                               ->from('User', 'u')
+                               ->where('u.name = :name OR u.nickname = :name')
+                               ->orderBy('u.age', 'DESC')
+                               ->setParameters(['name' => 'Jon'])
+                               ->getQuery()
+                               ->getResult()
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            The WHERE clause is a bit of DQL.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What this looks like in PHP
+
+                            ```php
+                            // $qb is a Doctrine\ORM\QueryBuilder
+                            $qb->select('u')
+                               ->from('User', 'u')
+                               ->where($qb->expr()->orX(
+                                   $qb->expr()->eq('u.name', ':name'),
+                                   $qb->expr()->like('u.nickname', ':name')
+                               ))
+                               ->orderBy('u.age', 'DESC')
+                               ->setParameters(['name' => 'Jon'])
+                               ->getQuery()
+                               ->getResult();
+                            ```
+                        </script>
+
+                        <aside class="notes">
+                            Expressions are encouraged over string clauses (less parsing).
+                        </aside>
+                    </section>
+
+                    <section data-background="img/dql-bnf.png" data-background-size="contain" data-background-position="center top">
+                        <aside class="notes">
+                            BNF grammar for DQL.
+                        </aside>
+                    </section>
+
+                    <section data-background="img/dql-query.png" data-background-size="contain" data-background-position="center top">
+                        <aside class="notes">
+                            <p>Practical example of some complex DQL: querying for a user's Facebook activity feed.</p>
+                            <p>Doctrine ORM will compile this down to SQL.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Performance and Tunability
+
+                            * Caching results, queries, etc.
+                            * Change tracking policies
+                            * Proxy objects, fetch modes
+                            * Code generation
+                        </script>
+
+                        <aside class="notes">
+                            <p>Fetch mode tuning can mitigate the n+1 problem.</p>
+                            <p>Deferred implicit: All managed objects checked for changes.</p>
+                            <p>Deferred explicit: UoW only considers persisted or cascaded objects.</p>
+                            <p>Notify: property modifications tracked manually.</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Behind the Persistence
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Packages</h3>
+
+                        <ul id="packages">
+                            <li id="cache">Cache</li>
+                            <li id="annotations">Annotations</li>
+                            <li id="lexer">Lexer</li>
+                            <li id="collections">Collections</li>
+                            <li id="inflector">Inflector</li>
+                            <li id="common">Common</li>
+                            <li id="dbal">DBAL</li>
+                            <li id="mongodb">MongoDB</li>
+                            <li id="couchdb">CouchDB</li>
+                            <li id="orm">ORM</li>
+                            <li id="mongodbodm"><small>MongoDB ODM</small></li>
+                            <li id="couchdbodm"><small>CouchDB ODM</small></li>
+                            <li id="phpcrodm"><small>PHPCR ODM</small></li>
+                        </ul>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### <small>Doctrine\Common\</small>Cache
+
+                            * Supports over a dozen backends
+                            * Namespaces and versioning
+                            * Very simple API
+                        </script>
+
+                        <aside class="notes">
+                            <p>fetch(), contains(), save(), delete()</p>
+                            <p>Cache PSR, when completed, will be supported in a later version.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### <small>Doctrine\Common\</small>Annotations
+
+                            * DocBlock annotation parsing
+                            * Utilizes the lexer component
+                            * Cache integration
+                        </script>
+
+                        <aside class="notes">
+                            <p>Used by Symfony, Zend Framework, etc.</p>
+                            <p>A de facto standard for PHP annotation parsing.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### <small>Doctrine\Common\</small>Collections
+
+                            * Object-oriented collection interface
+                            * ArrayCollection implementation
+                            * ORM/ODM persistent collections
+                            * Java-inspired Criteria API
+                        </script>
+
+                        <aside class="notes">
+                            <p>Persistent collections allow change-tracking of reference/embed-many relationships.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### <small>Doctrine\</small>DBAL
+
+                            * SQL database abstraction
+                            * Connection management
+                            * Type mapping
+                            * Query builder
+                        </script>
+
+                        <aside class="notes">
+                            <p>The underlying database abstraction of ORM, which can be used on its own.</p>
+                            <p>Also accessible through ORM for low-level operations.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### <small>Doctrine\</small>MongoDB
+
+                            * MongoDB driver abstraction
+                            * Error handling, recovery
+                            * Syntactic sugar
+                            * Query builder
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Wrapping Up
+
+                            TODO: Add some concluding slides.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > Essentially the ORM can handle about 80-90% of the mapping problems, but that last chunk always needs careful work by somebody who really understands how a relational database works.
+
+                            &mdash; Martin Fowler in [OrmHate](http://martinfowler.com/bliki/OrmHate.html)
+                        </script>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    <script type="text/template">
+                        # Thanks!
+
+                        ### https://joind.in/9085
+                        <br>
+
+                        ### Questions?
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * http://hqwallbase.com/images/big/Trees-Wallpaper-3008x2000.jpg
+                        * http://www.angryarchitect.com/wp-content/uploads/2010/04/FowlerFront.jpg
+                        * http://icons8.com by http://www.visualpharm.com/
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/jquery-1.10.2.min.js"></script>
+        <script src="../common/js/jquery.jsPlumb-1.5.2-min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

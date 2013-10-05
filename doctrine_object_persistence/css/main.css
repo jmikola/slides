@@ -1,0 +1,220 @@
+li.de-em {
+    opacity: 0.5;
+    -webkit-filter: blur(0.05em);
+            filter: blur(0.05em);
+}
+
+div.col-left {
+    float: left;
+    width: 50%;
+}
+
+div.col-right {
+    float: right;
+    width: 50%;
+}
+
+blockquote {
+    position: relative;
+}
+
+blockquote:before {
+    display: block;
+    content: "\201C";
+    font-family: Georgia, serif;
+    font-size: 6em;
+    font-weight: bold;
+    position: absolute;
+    left: -0.5em;
+    top: 0.2em;
+    color: #aaa;
+}
+
+.reveal pre code {
+    max-height: inherit;
+}
+
+.reveal section img.transparent {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.reveal section.small-table table {
+    font-size: 0.75em;
+    width: 70%;
+}
+
+.reveal table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.reveal table th {
+    padding: 10px 8px;
+    border-bottom: 3px solid #999;
+}
+
+.reveal table td {
+    padding: 9px 8px 0px 8px;
+}
+
+.reveal ul pre {
+    width: 100%;
+}
+
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+    text-transform: none;
+}
+
+.reveal h1.outline,
+.reveal h2.outline {
+    color: white;
+    text-shadow:  2px  2px 2px #000,
+                 -2px -2px 2px #000,
+                  2px -2px 2px #000,
+                 -2px  2px 2px #000,
+                  0px  0px 10px #000;
+}
+
+section[data-state="title"] h1 {
+    display: block;
+    font-size: 2.5em;
+    text-align: left;
+}
+
+section[data-state="title"] p.bio {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../../common/img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="title"] p.bio a[href*="twitter"] {
+    background-image: url("../../common/img/twitter-bird-light-bgs.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding-left: 50px;
+}
+
+section[data-state="contributors"] img {
+    margin: 0;
+}
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
+
+ul#history {
+    position: relative;
+    height: 12em;
+    width: 18em;
+    margin: 0 auto;
+}
+
+ul#history > li {
+    position: absolute;
+    display: inline-block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0.2em;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 3px solid #000;
+    border-radius: 15px;
+}
+
+ul#history > li > a { color: #000; }
+
+#peardb       { left:  0em; top:   0em; }
+#metabase     { left: 10em; top:   0em; }
+#pearmdb      { left:  4em; top: 2.5em; }
+#pearmdb2     { left:  2em; top:   5em; }
+#zenddb       { left: 12em; top:   5em; }
+#doctrineorm  { left:  5em; top: 7.5em; }
+#doctrineorm2 { left:  0em; top:  10em; }
+#doctrinedbal { left: 10em; top:  10em; }
+
+ul#architecture {
+    position: relative;
+    height: 12em;
+    width: 18em;
+    margin: 0 auto;
+}
+
+ul#architecture > li {
+    position: absolute;
+    display: inline-block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0.2em;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 3px solid #000;
+    border-radius: 15px;
+    z-index: 2;
+}
+
+#eventmanager  { left:  0em; top:   5em; }
+#metadata      { left: 10em; top:   0em; }
+#hydrator      { left:  7em; top: 2.5em; }
+#persister     { left: 13em; top: 2.5em; }
+#unitofwork    { left: 10em; top:   5em; }
+#objectmanager { left:  5em; top: 7.5em; }
+#repository    { left:  2em; top:  10em; }
+#query         { left: 12em; top:  10em; }
+
+ul#packages {
+    position: relative;
+    height: 12em;
+    width: 20em;
+    margin: 0 auto;
+}
+
+ul#packages > li {
+    position: absolute;
+    display: inline-block;
+    list-style-type: none;
+    margin: 0;
+    padding: 0 0.2em;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 3px solid #000;
+    border-radius: 15px;
+    z-index: 2;
+}
+
+ul#packages > li small { vertical-align: middle; }
+
+#cache       { left:    0em; top:   0em; }
+#annotations { left:    7em; top:   0em; }
+#collections { left:    0em; top:   3em; }
+#inflector   { left:   16em; top:   3em; }
+#lexer       { left:   17em; top:   0em; }
+#common      { left:    8em; top:   3em; }
+#mongodb     { left:    0em; top: 7.5em; }
+#dbal        { left:    6em; top: 7.5em; }
+#couchdb     { left:   10em; top: 7.5em; }
+#mongodbodm  { left:    0em; top:  10em; }
+#orm         { left:  6.1em; top:  10em; }
+#couchdbodm  { left:   10em; top:  10em; }
+#phpcrodm    { left: 15.5em; top: 7.5em; }
+
+._jsPlumb_connector { z-index: 1; }
+
+.origins .slide-background.present {
+    opacity: 0.7;
+}
+
+.reveal h3 small {
+    color: #999;
+    vertical-align: bottom;
+}
+
+span.arg { color: #008080; }
