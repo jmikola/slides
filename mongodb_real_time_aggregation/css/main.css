@@ -6,6 +6,27 @@ li strike {
     max-height: inherit;
 }
 
+.reveal section img.transparent {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.reveal h3,
+.reveal h4 {
+    text-transform: none;
+}
+
+.reveal h1.outline,
+.reveal h2.outline {
+    color: white;
+    text-shadow:  2px  2px 2px #000,
+                 -2px -2px 2px #000,
+                  2px -2px 2px #000,
+                 -2px  2px 2px #000,
+                  0px  0px 10px #000;
+}
+
 div.col-left {
     float: left;
     width: 50%;
@@ -121,6 +142,10 @@ section[data-state="pipeline"] pre {
     text-align: center;
 }
 
+.expressions .slide-background.present {
+    opacity: 0.7;
+}
+
 section[data-state="expressions"] ul > li > ul > li {
     font-size: 0.75em;
 }
@@ -208,7 +233,7 @@ div.mario-container {
     display: block;
     width: 256px; max-width: 256px;
     height: 128px; max-height: 128px;
-    border: 2px solid #fff;
+    border: 2px solid #000;
     overflow: hidden;
 
     -webkit-transform: scale(2);

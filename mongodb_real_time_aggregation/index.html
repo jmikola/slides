@@ -25,7 +25,7 @@
         <div class="reveal">
             <div class="slides">
                 <section data-state="title">
-                    <h1>Real-time Data Aggregation <small>with</small> <span class="logo-mongodb"></span></h1>
+                    <h1>Real-time Data Aggregation <small>with</small><br><span class="logo-mongodb"></span></h1>
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">@jmikola</a></p>
                 </section>
@@ -37,7 +37,7 @@
 
                     <div class="col-left">
                         <ul>
-                            <li>State of Aggregation</li>
+                            <li>Available Tools</li>
                             <li>Pipeline</li>
                             <li>Expressions</li>
                         </ul>
@@ -53,13 +53,13 @@
                 </section>
 
                 <section data-state="intro">
-                    <h2>State of Aggregation</h2>
+                    <h2>Setting the Stage</h2>
 
-                    <p>We're storing our data in MongoDB.</p>
+                    <p>We have data stored in MongoDB.</p>
 
                     <p>We need to do ad-hoc reporting,<br>grouping, common aggregations, etc.</p>
 
-                    <p>What are we using for this?</p>
+                    <p>What can we use for this?</p>
                 </section>
 
                 <section data-markdown>
@@ -96,6 +96,76 @@
                 <section>
                     <section data-markdown>
                         <script type="text/template">
+                            ## Single-purpose Commands
+
+                            * [count](http://docs.mongodb.org/manual/reference/command/count/)
+                            * [distinct](http://docs.mongodb.org/manual/reference/command/distinct/)
+                            * [group](http://docs.mongodb.org/manual/reference/command/group/)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Count
+
+                            ```js
+                            db.records.insert({ a: 1, b: 0 });
+                            db.records.insert({ a: 1, b: 1 });
+                            db.records.insert({ a: 1, b: 4 });
+                            db.records.insert({ a: 2, b: 2 });
+
+                            db.records.count(); // Returns 4
+
+                            db.records.count({ a: 1 }); // Returns 3
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Distinct
+
+                            ```js
+                            db.orders.insert({ customer: "A123", amount: 500, status: "A" });
+                            db.orders.insert({ customer: "A123", amount: 250, status: "A" });
+                            db.orders.insert({ customer: "B212", amount: 200, status: "A" });
+                            db.orders.insert({ customer: "A123", amount: 300, status: "D" });
+
+                            db.records.distinct(); // Returns ["A123", "B212"]
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <!-- highlight.js defaults to SQL here, so force another language -->
+                        <script type="text/template">
+                            ### Group
+
+                            ```objectivec
+                            db.records.insert({ a: 1, count: 4 });
+                            db.records.insert({ a: 1, count: 2 });
+                            db.records.insert({ a: 1, count: 4 });
+                            db.records.insert({ a: 2, count: 3 });
+                            db.records.insert({ a: 2, count: 1 });
+                            db.records.insert({ a: 1, count: 5 });
+                            db.records.insert({ a: 4, count: 4 });
+
+                            db.records.group({
+                                key: { a: 1 },
+                                cond: { a: { $lt: 3 } },
+                                reduce: function(cur, result) { result.count += cur.count },
+                                initial: { count: 0 }
+                            });
+
+                            // Returns [ { a: 1, count: 15 }, { a: 2, count: 4 } ]
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
                             ## MapReduce
 
                             * Extremely versatile, powerful
@@ -109,22 +179,22 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## MapReduce in MongoDB
+                            ### MapReduce in MongoDB
 
                             * Implemented with JavaScript
                             * Convenient, but difficult to debug
                             * [Incremental map-reduce](http://docs.mongodb.org/manual/tutorial/perform-incremental-map-reduce/) for batches
                             * Better concurrency with V8
-                            * Avoiding write locks
-                                * `inline`, `jsMode`, `nonAtomic`
                         </script>
-                    </section>
-                </section>
 
-                <section>
+                        <aside class="notes">
+                            Write locks (temp collections) can be avoided with options like inline, jsMode, and nonAtomic
+                        </aside>
+                    </section>
+
                     <section data-markdown>
                         <script type="text/template">
-                            ## [MongoQP](https://github.com/jmikola/mongoqp)
+                            ### MapReduce in Action: [MongoQP](https://github.com/jmikola/mongoqp)
 
                             * MongoDB includes a [database profiler](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/)
                             * Use map-reduce for query log analysis
@@ -135,12 +205,12 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## Profile Data
+                            ### Profile Data
 
                             ```js
                             {
                               "op" : "query",
-                              "ns" : "demo.github",
+                              "ns" : "db.collection",
                               "query" : { … },
                               "ntoreturn" : 0,
                               "ntoskip" : 0,
@@ -155,46 +225,27 @@
                         </script>
                     </section>
 
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## Queries
-
-                            ```js
-                            c = db.github;
-                            types = c.distinct('type');
-
-                            types.forEach(function(t) {
-                              c.find({ type: t });
-                            });
-
-                            c.find({ payload: { $exists: false }});
-
-                            c.find({ "repository.language": "PHP", type: "PushEvent" });
-
-                            c.find({ "repository.forks": { $gt: 5 }});
-                            ```
-                        </script>
+                    <section>
+                        <img src="img/mongoqp.png" class="transparent">
                     </section>
                 </section>
 
                 <section>
-                    <section>
-                        <p>And now for something completely different…</p>
+                    <p>And now for something completely different…</p>
 
-                        <img src="img/monty_python.jpg" alt="monty_python.jpg">
-                    </section>
+                    <img src="img/monty_python.jpg" alt="monty_python.jpg">
+                </section>
 
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## Aggregation Framework
+                <section data-markdown>
+                    <script type="text/template">
+                        ## Aggregation Framework
 
-                            * Declared with BSON, executes in C++
-                            * Flexible, functional, and *simple*
-                                * Operation pipeline
-                                * Computational expressions
-                            * Plays nice with sharding
-                        </script>
-                    </section>
+                        * Declared with BSON, like queries
+                        * Executes in C++, not JavaScript
+                        * Flexible, functional, and *simple*
+                            * Operation pipeline
+                            * Computational expressions
+                    </script>
                 </section>
 
                 <section>
@@ -220,7 +271,7 @@
                                 * Filter or transform data
                                 * Input/output chain
 
-                            ```
+                            ```no-highlight
                             ps ax | grep mongod | head -n 1
                             ```
                         </script>
@@ -286,9 +337,12 @@
 
                             * Filter documents
                             * Uses existing [query syntax](http://docs.mongodb.org/manual/reference/operators/)
-                            * Geospatial operators supported since 2.4
-                            * No JavaScript execution via `$where`
                         </script>
+
+                        <aside class="notes">
+                            Geospatial operators supported since 2.4.
+                            No JavaScript execution via $where.
+                        </aside>
                     </section>
 
                     <section>
@@ -455,7 +509,7 @@
 
                         <div class="pipeline-step pipeline-out">
                             <pre><code class="language-javascript">{ _id: 375,
-  avgPagesPerChapter: 24.22222222222222,
+  avgPagesPerChapter: 24.2222222222,
   lang: "English"
 }</code></pre>
                         </div>
@@ -522,8 +576,11 @@
                                 * `$max`, `$min`, `$avg`, `$sum`
                                 * `$addToSet`, `$push`
                                 * `$first`, `$last`
-                            * Processes all data in memory
                         </script>
+
+                        <aside class="notes">
+                            All data is processed in memory.
+                        </aside>
                     </section>
 
                     <section>
@@ -655,10 +712,7 @@
                             ## $unwind
 
                             * Operate on an array field
-                            * Yield new documents for each array element
-                                * Array replaced by element value
-                                * Missing/empty fields &rarr; no output
-                                * Non-array fields &rarr; error
+                            * For each element, yield a document
                             * Pipe to `$group` to aggregate array values
                         </script>
                     </section>
@@ -709,10 +763,13 @@
 
                             * Sort documents by one or more fields
                                 * Same order syntax as [cursors](http://docs.mongodb.org/manual/reference/method/cursor.sort/)
-                                * Waits for earlier pipeline operator to return
-                                * In-memory unless early and indexed
                             * Limit and skip follow cursor behavior
                         </script>
+
+                        <aside class="notes">
+                            Sort exhausts the previous pipeline operator before emitting anything.
+                            Sorts occur in-memory unless they are early in the pipeline and indexed.
+                        </aside>
                     </section>
 
                     <section>
@@ -822,17 +879,8 @@
                 </section>
 
                 <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            # Expressions
-
-                            * <strike>State of Aggregation</strike>
-                            * <strike>Pipeline</strike>
-                            * Expressions
-                            * Usage and Limitations
-                            * Sharding
-                            * Looking Ahead
-                        </script>
+                    <section data-state="expressions" data-background="img/mario_beads.jpg" data-background-size="cover" data-background-position="top">
+                        <h1 class="outline">Expressions</h1>
                     </section>
 
                     <section data-markdown>
@@ -867,17 +915,8 @@
                 </section>
 
                 <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            # Usage
-
-                            * <strike>State of Aggregation</strike>
-                            * <strike>Pipeline</strike>
-                            * <strike>Expressions</strike>
-                            * Usage and Limitations
-                            * Sharding
-                            * Looking Ahead
-                        </script>
+                    <section data-background="img/mario_shell.png" data-background-size="14em" data-background-position="right 1em top 35%">
+                        <h1>Usage</h1>
                     </section>
 
                     <section data-markdown>
@@ -953,9 +992,10 @@
                 <section>
                     <section data-markdown>
                         <script type="text/template">
-                            ## [Time-series Visualization](https://github.com/jmikola/silex-mongodb-aggregation-demo)
+                            ### Aggregation Framework in Action
 
-                            * Currency exchange rate data
+                            * [Time-series visualization](https://github.com/jmikola/silex-mongodb-aggregation-demo)
+                            * Stock ticker data
                             * Real-time candlestick charts
                                 * Open/close rates per minute
                                 * Plot peak points and averages
@@ -976,20 +1016,17 @@
                             ```
                         </script>
                     </section>
+
+                    <section>
+                        <img src="img/candlestick.png">
+
+                        <p><a href="http://git.io/mongodb-demo">http://git.io/mongodb-demo</a></p>
+                    </section>
                 </section>
 
                 <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            # Sharding
-
-                            * <strike>State of Aggregation</strike>
-                            * <strike>Pipeline</strike>
-                            * <strike>Expressions</strike>
-                            * <strike>Usage and Limitations</strike>
-                            * Sharding
-                            * Looking Ahead
-                        </script>
+                    <section data-background="img/mario_warp_zone.png" data-background-size="cover" data-background-position="center">
+                        <h1 class="outline">Sharding</h1>
                     </section>
 
                     <section data-markdown>
@@ -1000,8 +1037,11 @@
                                 * Shards execute pipeline up to that point
                                 * **mongos** merges results and continues
                             * Early `$match` may excuse shards
-                            * CPU and memory implications for **mongos**
                         </script>
+
+                        <aside class="notes">
+                            CPU and memory implications for mongos.
+                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -1068,22 +1108,13 @@
                 </section>
 
                 <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            # Looking Ahead
-
-                            * <strike>State of Aggregation</strike>
-                            * <strike>Pipeline</strike>
-                            * <strike>Expressions</strike>
-                            * <strike>Usage and Limitations</strike>
-                            * <strike>Sharding</strike>
-                            * Looking Ahead
-                        </script>
+                    <section data-background="img/mario_star.png" data-background-size="20em" data-background-position="right 1em center">
+                        <h1 style="text-align: left">Looking Ahead</h1>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## Framework Use Cases
+                            ### Framework Use Cases
 
                             * Basic aggregation queries
                             * Ad-hoc reporting
@@ -1094,18 +1125,20 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## Future Enhancements
+                            ### Future Enhancements
 
-                            * [`$out`](https://jira.mongodb.org/browse/SERVER-3253) operator for output control
-                            * [Optimizing `$match` position](https://jira.mongodb.org/browse/SERVER-4506)
-                            * [Pipeline explain facility](https://jira.mongodb.org/browse/SERVER-4504)
-                            * Memory improvements [grouping sorted input](https://jira.mongodb.org/browse/SERVER-4507)
+                            * Coming in MongoDB 2.6
+                                * [`$out`](https://jira.mongodb.org/browse/SERVER-3253) operator for output control
+                                * [Pipeline explain facility](https://jira.mongodb.org/browse/SERVER-4504)
+                            * Down the road
+                                * [Optimizing `$match` position](https://jira.mongodb.org/browse/SERVER-4506)
+                                * [Grouping sorted input](https://jira.mongodb.org/browse/SERVER-4507)
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## Enabling Developers
+                            ### Enabling Developers
 
                             * Doing more within MongoDB, faster
                             * Refactoring MapReduce and groupings
@@ -1131,13 +1164,17 @@
                     </script>
                 </section>
 
-                <section data-state="photo-credits">
-                    <h3>Photo Credits</h3>
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Photo Credits
 
-                    <ul>
-                        <li><a href="http://dilbert.com/strips/comic/2012-09-05">http://dilbert.com/strips/comic/2012-09-05</a></li>
-                        <li><a href="http://img.timeinc.net/time/photoessays/2009/monty_python/monty_python_02.jpg">http://img.timeinc.net/time/photoessays/2009/monty_python/monty_python_02.jpg</a></li>
-                    </ul>
+                        * http://dilbert.com/strips/comic/2012-09-05
+                        * http://img.timeinc.net/time/photoessays/2009/monty_python/monty_python_02.jpg
+                        * http://elevatedscholars.files.wordpress.com/2011/01/dscf0459.jpg
+                        * http://purenintendo.com/wp-content/uploads/2009/10/i_20476.jpg
+                        * http://i198.photobucket.com/albums/aa77/Stinger1118/Video%20Games/SuperMarioBrosWarpZone.jpg
+                        * http://www.blogcdn.com/www.joystiq.com/media/2009/10/marioart102613.jpg
+                    </script>
                 </section>
             </div>
         </div>
