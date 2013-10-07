@@ -931,52 +931,64 @@
                         </script>
                     </section>
 
-                    <section>
-                        <h2>Collection Method</h2>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Collection Method
 
-                        <pre><code class="language-javascript">db.books.aggregate([
-  { $sort: { created: 1 }},
-  { $unwind: "$subjects" },
-  { $group: { _id: "$subjects", n: { $sum: 1 },
-              fc: { $first: "$created" } }},
-  { $project: { _id: 1, n: 1, fc: { $year: "$fc" }}}
-]);</code></pre>
+                            ```js
+                            db.books.aggregate([
+                              { $sort: { created: 1 }},
+                              { $unwind: "$subjects" },
+                              { $group: { _id: "$subjects", n: { $sum: 1 },
+                                          fc: { $first: "$created" } }},
+                              { $project: { _id: 1, n: 1, fc: { $year: "$fc" }}}
+                            ]);
+                            ```
 
-                        &#x25BC;
+                            &#x25BC;
 
-                        <pre><code class="language-javascript">{
-  result: [
-    { "_id": "Fantasy", "num": 6, "fc": 2008 },
-    { "_id": "Historical", "num": 7, "fc": 2012 },
-    { "_id": "World Literature", "n": 2, "fc": 2009 }
-    // Other results follow…
-  ],
-  ok: 1
-}</code></pre>
+                            ```js
+                            {
+                              result: [
+                                { "_id": "Fantasy", "num": 6, "fc": 2008 },
+                                { "_id": "Historical", "num": 7, "fc": 2012 },
+                                { "_id": "World Literature", "n": 2, "fc": 2009 }
+                                // Other results follow…
+                              ],
+                              ok: 1
+                            }
+                            ```
+                        </script>
                     </section>
 
-                    <section>
-                        <h2>Database Command</h2>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Database Command
 
-                        <pre><code class="language-javascript">db.runCommand({ aggregate: "books", pipeline: [
-  { $sort: { created: 1 }},
-  { $unwind: "$subjects" },
-  { $group: { _id: "$subjects", n: { $sum: 1 },
-              fc: { $first: "$created" } }},
-  { $project: { _id: 1, n: 1, fc: { $year: "$fc" }}}
-]});</code></pre>
+                            ```js
+                            db.runCommand({ aggregate: "books", pipeline: [
+                              { $sort: { created: 1 }},
+                              { $unwind: "$subjects" },
+                              { $group: { _id: "$subjects", n: { $sum: 1 },
+                                          fc: { $first: "$created" } }},
+                              { $project: { _id: 1, n: 1, fc: { $year: "$fc" }}}
+                            ]});
+                            ```
 
-                        &#x25BC;
+                            &#x25BC;
 
-                        <pre><code class="language-javascript">{
-  result: [
-    { "_id": "Fantasy", "num": 6, "fc": 2008 },
-    { "_id": "Historical", "num": 7, "fc": 2012 },
-    { "_id": "World Literature", "n": 2, "fc": 2009 }
-    // Other results follow…
-  ],
-  ok: 1
-}</code></pre>
+                            ```js
+                            {
+                              result: [
+                                { "_id": "Fantasy", "num": 6, "fc": 2008 },
+                                { "_id": "Historical", "num": 7, "fc": 2012 },
+                                { "_id": "World Literature", "n": 2, "fc": 2009 }
+                                // Other results follow…
+                              ],
+                              ok: 1
+                            }
+                            ```
+                        </script>
                     </section>
 
                     <section data-markdown>
