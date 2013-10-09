@@ -54,7 +54,7 @@
 
                         <br>
 
-                        <a href="https://github.com/mongodb/mongo-php-driver"><img src="../common/img/mongodb_onlight.png" width="50%" class="transparent"></a>
+                        <span class="fragment"><a href="https://github.com/mongodb/mongo-php-driver"><img src="../common/img/mongodb_onlight.png" width="50%" class="transparent"></a></span>
                     </section>
 
                     <section data-state="contributors">
@@ -402,6 +402,25 @@
                             <p>Some ORMs utilize static methods.</p>
                             <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
                             <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Scalability and Performance
+
+                            Fat models eat memory
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>An Elephant Never Forgets</h3>
+
+                        <img src="img/php-gc-benchmark.png" width="80%" class="transparent">
+
+                        <aside class="notes">
+                            <p>PHP 5.2's lacked garbage collection.</p>
+                            <p>5.3 brought that plus: faster spl_object_hash(), overriding accessibility with Reflection.</p>
                         </aside>
                     </section>
                 </section>
@@ -974,8 +993,8 @@
                         <script type="text/template">
                             ### <small>Doctrine\</small>DBAL
 
+                            * Thin layer atop PDO
                             * SQL database abstraction
-                            * Connection management
                             * Type mapping
                             * Query builder
                         </script>
@@ -983,6 +1002,7 @@
                         <aside class="notes">
                             <p>The underlying database abstraction of ORM, which can be used on its own.</p>
                             <p>Also accessible through ORM for low-level operations.</p>
+                            <p>Abstracts Data-Definition Language (DDL) for databaes.</p>
                         </aside>
                     </section>
 
@@ -996,14 +1016,29 @@
                             * Query builder
                         </script>
                     </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### But wait, there&rsquo;s more!
+
+                            * CouchDB client and ODM
+                            * PHP Content Repository ODM
+                            * OrientDB ODM
+                            * Database migrations
+                        </script>
+
+                        <aside class="notes">
+                            <p>Symfony and ZF integrations for ORM/ODM libraries.</p>
+                            <p>Community integrations for other frameworks.</p>
+                            <p>Java joke: OXM (Object to XML).</p>
+                        </aside>
+                    </section>
                 </section>
 
                 <section>
                     <section data-markdown>
                         <script type="text/template">
                             ## Wrapping Up
-
-                            TODO: Add some concluding slides.
                         </script>
                     </section>
 
@@ -1012,6 +1047,33 @@
                             > Essentially the ORM can handle about 80-90% of the mapping problems, but that last chunk always needs careful work by somebody who really understands how a relational database works.
 
                             &mdash; Martin Fowler in [OrmHate](http://martinfowler.com/bliki/OrmHate.html)
+                        </script>
+
+                        <aside class="notes">
+                            <p>ORMs (and ODMs) are not an excuse for ignorance.</p>
+                            <p>Guilherme Blanco: "ORMs don't kill your database, developers do".</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Pertinent Resources
+
+                            http://github.com/doctrine
+
+                            <span class="fragment">http://doctrine-project.org/</span>
+
+                            <span class="fragment">http://doctrine-project.org/jira</span>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Freenode IRC
+
+                            \#doctrine
+
+                            \#doctrine-dev
                         </script>
                     </section>
                 </section>
