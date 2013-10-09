@@ -297,6 +297,7 @@
 
                         <aside class="notes">
                             <p>Can be limiting for larger applications.</p>
+                            <p>Zend\Db does integrate with ZF's hydrator component (DIY).</p>
                         </aside>
                     </section>
                 </section>
@@ -316,6 +317,14 @@
 
                             &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/activeRecord.html)
                         </script>
+                    </section>
+
+                    <section>
+                        <img src="img/dhh.jpg" width="80%">
+
+                        <aside class="notes">
+                            <p>David Heinemeier Hansson.</p>
+                            <p>Ruby on Rails, 37 Signals.</p>
                     </section>
 
                     <section>
@@ -419,8 +428,8 @@
                         <img src="img/php-gc-benchmark.png" width="80%" class="transparent">
 
                         <aside class="notes">
-                            <p>PHP 5.2's lacked garbage collection.</p>
-                            <p>5.3 brought that plus: faster spl_object_hash(), overriding accessibility with Reflection.</p>
+                            <p>PHP 5.2 lacked garbage collection.</p>
+                            <p>5.3 added GC and: faster spl_object_hash(), overriding accessibility with Reflection.</p>
                         </aside>
                     </section>
                 </section>
@@ -484,6 +493,9 @@
                         <script type="text/template">
                             ### &#9745; Testability
                         </script>
+                    </section>
+
+                    <section data-background="img/grumpy_programmer.png" data-background-size="cover" data-background-position="center">
                     </section>
 
                     <section data-markdown>
@@ -565,6 +577,10 @@
 
                             <span class="fragment"><small>Inspired by [Hibernate](http://www.hibernate.org/) and [JPA 2.0](http://jcp.org/en/jsr/detail?id=317)</small><span>
                         </script>
+
+                        <aside class="notes">
+                            JSR 317
+                        </aside>
                     </section>
 
                     <section>
@@ -651,7 +667,7 @@
                     </section>
 
                     <section>
-                        <img src="img/bto-tcb.jpg" width="80%">
+                        <img src="img/tcb-movie.jpg" width="50%">
                     </section>
 
                     <section data-markdown>
@@ -681,10 +697,12 @@
                         </script>
 
                         <aside class="notes">
-                            <p>New: I have no persistent identity (e.g. just created).</p>
-                            <p>Managed: I'm known to the manager and am being tracked for changes.</p>
-                            <p>Removed: I'm known, but will be removed on the next commit.</p>
-                            <p>Detached: I have a persistent identity, but am no longer being tracked.</p>
+                            <p>
+                                New: I have no persistent identity (e.g. just created).
+                                <br>Managed: I'm known to the manager and am being tracked for changes.
+                                <br>Removed: I'm known, but will be removed on the next commit.
+                                <br>Detached: I have a persistent identity, but am no longer being tracked.
+                            </p>
                         </aside>
                     </section>
 
@@ -944,6 +962,10 @@
                         </ul>
                     </section>
 
+                    <section>
+                        <img src="img/composer.png" width="50%" class="transparent">
+                    </section>
+
                     <section data-markdown>
                         <script type="text/template">
                             ### <small>Doctrine\Common\</small>Cache
@@ -1002,7 +1024,7 @@
                         <aside class="notes">
                             <p>The underlying database abstraction of ORM, which can be used on its own.</p>
                             <p>Also accessible through ORM for low-level operations.</p>
-                            <p>Abstracts Data-Definition Language (DDL) for databaes.</p>
+                            <p>Abstracts Data-Definition Language (DDL) for databases.</p>
                         </aside>
                     </section>
 
@@ -1064,6 +1086,8 @@
                             <span class="fragment">http://doctrine-project.org/</span>
 
                             <span class="fragment">http://doctrine-project.org/jira</span>
+
+                            <span class="fragment"><img src="img/servergrove.png" width="50%" class="transparent"></span>
                         </script>
                     </section>
 
