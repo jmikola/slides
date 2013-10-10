@@ -549,6 +549,24 @@
                             <div class="mario-sprite"></div>
                         </div>
                     </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Aggregation Framework
+
+                            ```js
+                            db.books.aggregate([
+                              { $sort: { created: 1 }},
+                              { $unwind: "$subjects" },
+                              { $group: {
+                                _id: "$subjects",
+                                count: { $sum: 1 },
+                                firstCreated: { $first: { $year: "$created" }}
+                              }}
+                            ]);
+                            ```
+                        </script>
+                    </section>
                 </section>
 
                 <section>
@@ -774,21 +792,21 @@
                             ### Benchmarking ODM
 
                             ```no-highlight
-                            $ ./benchmark-odm-flush.php 100000
-                            Flushing 100000 documents: 47.423843 seconds, 576978944 bytes
-                            150732800 bytes still allocated after benchmarking
+                            $ ./benchmark-driver.php 10000
+                            Inserting 10000 documents took 2.423844 seconds and used 524288 bytes
+                            3145728 bytes still allocated after benchmarking
 
-                            $ ./benchmark-odm-query.php 100000
-                            Inserting 100000 documents: 15.918296 seconds, 3670016 bytes
-                            8126464 bytes still allocated after benchmarking
+                            $ ./benchmark-odm-driver.php 10000
+                            Inserting 10000 documents took 2.810581 seconds and used 524288 bytes
+                            3145728 bytes still allocated after benchmarking
 
-                            $ ./benchmark-odm-driver.php 100000
-                            Inserting 100000 documents: 4.305500 seconds, 524288 bytes
-                            6029312 bytes still allocated after benchmarking
+                            $ ./benchmark-odm-query.php 10000
+                            Inserting 10000 documents took 4.055221 seconds and used 2621440 bytes
+                            4718592 bytes still allocated after benchmarking
 
-                            $ ./benchmark-driver.php 100000
-                            Inserting 100000 documents: 1.120347 seconds, 524288 bytes
-                            6029312 bytes still allocated after benchmarking
+                            $ ./benchmark-odm-flush.php 10000
+                            Flushing 10000 documents took 0.943906 seconds and used 43515904 bytes
+                            26214400 bytes still allocated after benchmarking
                             ```
 
                             <small>[https://gist.github.com/jmikola/2725976](https://gist.github.com/jmikola/2725976)</small>
