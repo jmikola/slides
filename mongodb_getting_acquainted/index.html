@@ -567,9 +567,6 @@
                             $db->users;
                             $db->selectCollection('users');
 
-                            // Create a capped collection limited to 10KiB and 10 documents
-                            $db->createCollection('logs', true, 10240, 10);
-
                             $db->dropCollection('users'); // Drop "test.users"
                             $db->drop();                  // Drop the entire database
                             ```
@@ -698,7 +695,7 @@
                             // Strings will not match an ObjectId
                             $c->find(['_id' => '5033ea5ce84df1110f000001']);
 
-                            // Use MongoId in query criteria
+                            // Use MongoId objects in query criteria
                             $c->find(['_id' => new MongoId('5033ea5ce84df1110f000001')]);
                             ```
                         </script>
@@ -845,7 +842,7 @@
                             * Does the criteria match a document?
                                 * Yes, update the document
                                 * No, insert the document
-                            * [Insert applies modifiers to criteria arg](http://docs.mongodb.org/manual/applications/update/#update-operations-with-the-upsert-flag)
+                            * [Apply modifiers to criteria and insert](http://docs.mongodb.org/manual/applications/update/#update-operations-with-the-upsert-flag)
                         </script>
                     </section>
 
@@ -1324,7 +1321,7 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## MapReduce
+                            ## Map<span style="opacity:0.5;">Reduce</span>
 
                             ```php
                             $map = '
@@ -1333,7 +1330,15 @@
                                     emit(this.tags[i], { authors: [this.author] });
                                 }
                             }';
+                            ```
+                        </script>
+                    </section>
 
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## <span style="opacity:0.5">Map</span>Reduce
+
+                            ```php
                             $reduce = '
                             function(key, values) {
                                 var result = { authors: [] };
