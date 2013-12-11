@@ -1,0 +1,977 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Async PHP with React</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/tomorrow-night.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/moon.css" id="theme">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            document.write( '<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <img src="img/react_logo.png" class="transparent" alt="React" width="50%" style="display: inline-block;">
+
+                    <br>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        ### Let&rsquo;s make a web server
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Node.js
+
+                            ```javascript
+                            var http = require('http');
+                            var server = new http.Server();
+
+                            server.on('request', function(req, res) {
+                                res.writeHead(200, {'Content-Type': 'text/plain'});
+                                res.end('Hello World');
+                            });
+
+                            server.listen(8000, '127.0.0.1');
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Python
+
+                            ```python
+                            from twisted.internet import reactor
+                            from twisted.web.server import Site
+                            from twisted.web.resource import Resource
+
+                            class HelloWorldPage(Resource):
+                                isLeaf = True
+                                def render_GET(self, request):
+                                    return "Hello World"
+
+                            resource = HelloWorldPage()
+                            factory = Site(resource)
+                            reactor.listenTCP(8000, factory)
+                            reactor.run()
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## PHP
+
+                            ```php
+                            $server = stream_socket_server('tcp://127.0.0.1:8000');
+
+                            while ($conn = stream_socket_accept($server, -1)) {
+                                fwrite($conn, "HTTP/1.1 200 OK\r\n");
+                                fwrite($conn, "Content-Length: 11\r\n\r\n");
+                                fwrite($conn, "Hello World");
+                                fclose($conn);
+                            }
+                            ```
+
+                            <span class="fragment">What&rsquo;s the difference?</span>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h2>Blocking IO</h2>
+
+                        <p><code><span class="blur">stream_socket_accept($server, </span><span class="highlight">-1</span><span class="blur">)</span></code></p>
+
+                        <p class="fragment">Why is this a problem?</p>
+
+                        <aside class="notes">
+                            Timeout: wait X seconds, -1 is forever
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-state="io-diagram">
+                        <h2>Blocking IO</h2>
+
+                        <div class="block-container">
+                            <hr>
+                            <div class="io block" style="width: 3em;">IO</div>
+                            <div class="cpu block" style="width: 3em;">CPU</div>
+                            <div class="io block" style="width: 6em;">IO</div>
+                            <div class="cpu block" style="width: 3em;">CPU</div>
+                            <div class="io block" style="width: 4.5em;">IO</div>
+                            <div class="cpu block" style="width: 3em;">CPU</div>
+                        </div>
+
+                        <aside class="notes">
+                            CPU idles while waiting for IO.
+                            <br>
+                            Synchronous, no parallelization, not scalable.
+                            <br>
+                            Blocks not drawn to scale. IO is <em>slow</em>.
+                        </aside>
+                    </section>
+
+                    <section data-state="io-latencies">
+                        <h2>Common Latencies</h2>
+
+                        <table>
+                            <tr><td>L1 cache reference</td>                           <td>0.5 ns</td></tr>
+                            <tr><td>Branch mispredict</td>                            <td>5   ns</td></tr>
+                            <tr><td>L2 cache reference</td>                           <td>7   ns</td></tr>
+                            <tr><td>Mutex lock/unlock</td>                           <td>25   ns</td></tr>
+                            <tr><td>Main memory reference</td>                      <td>100   ns</td></tr>
+                            <tr><td>Send 1K bytes over 1 Gbps network</td>       <td>10,000   ns</td></tr>
+                            <tr><td>Read 4K randomly from SSD</td>              <td>150,000   ns</td></tr>
+                            <tr><td>Read 1 MB sequentially from memory</td>     <td>250,000   ns</td></tr>
+                            <tr><td>Round trip within same datacenter</td>      <td>500,000   ns</td></tr>
+                            <tr><td>Read 1 MB sequentially from SSD</td>      <td>1,000,000   ns</td></tr>
+                            <tr><td>Disk seek</td>                           <td>10,000,000   ns</td></tr>
+                            <tr><td>Read 1 MB sequentially from disk</td>    <td>20,000,000   ns</td></tr>
+                            <tr><td>Round trip from US to Europe</td>       <td>150,000,000   ns</td></tr>
+                        </table>
+
+                        <p><small><a href="https://gist.github.com/jboner/2841832">https://gist.github.com/jboner/2841832</a></small></p>
+
+                        <aside class="notes">
+                            AKA "latency numbers every programmer should know."
+                            <br>
+                            Average CPU instruction is around a nanosecond.
+                        </aside>
+                    </section>
+
+                    <section data-state="io-latencies">
+                        <h2>Common Latencies</h2>
+
+                        <table>
+                            <tbody class="blur">
+                                <tr><td>L1 cache reference</td>                       <td>0.5 ns</td></tr>
+                                <tr><td>Branch mispredict</td>                        <td>5   ns</td></tr>
+                                <tr><td>L2 cache reference</td>                       <td>7   ns</td></tr>
+                                <tr><td>Mutex lock/unlock</td>                       <td>25   ns</td></tr>
+                                <tr><td>Main memory reference</td>                  <td>100   ns</td></tr>
+                            </tbody>
+                            <tr><td>Send 1K bytes over 1 Gbps network</td>       <td>10,000   ns</td></tr>
+                            <tr><td>Read 4K randomly from SSD</td>              <td>150,000   ns</td></tr>
+                            <tr><td>Read 1 MB sequentially from memory</td>     <td>250,000   ns</td></tr>
+                            <tr><td>Round trip within same datacenter</td>      <td>500,000   ns</td></tr>
+                            <tr><td>Read 1 MB sequentially from SSD</td>      <td>1,000,000   ns</td></tr>
+                            <tr><td>Disk seek</td>                           <td>10,000,000   ns</td></tr>
+                            <tr><td>Read 1 MB sequentially from disk</td>    <td>20,000,000   ns</td></tr>
+                            <tr><td>Round trip from US to Europe</td>       <td>150,000,000   ns</td></tr>
+                        </table>
+
+                        <p><small><a href="https://gist.github.com/jboner/2841832">https://gist.github.com/jboner/2841832</a></small></p>
+
+                        <aside class="notes">
+                            Network and disk IO is orders of magnitude slower than memory.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>C10k Problem</h2>
+
+                        <blockquote style="margin-top: 1em;">
+                            <p>You can buy a 1000MHz machine with 2 gigabytes of RAM and an 1000Mbit/sec Ethernet card for $1200 or so. At 20000 clients, that&rsquo;s 50KHz, 100Kbytes, and 50Kbits/sec per client.</p>
+                            <p>It shouldn&rsquo;t take any more horsepower than that to take four kilobytes from the disk and send them to the network once a second for each of twenty thousand clients.</p>
+                            <p>So hardware is no longer the bottleneck.</p>
+                        </blockquote>
+
+                        <p><small><a href="http://www.kegel.com/c10k.html">http://www.kegel.com/c10k.html</a></small></p>
+
+                        <aside class="notes">
+                            Quote from 2001.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### How can we solve this?
+                        </script>
+                    </section>
+
+                    <section data-state="io-diagram">
+                        <h2>Threading</h2>
+
+                        <div class="block-container">
+                            <div class="concurrency" style="left: 3.7em; width: 7.9em; height: 5.8em;"></div>
+                            <hr>
+                            <div class="io block" style="width: 3em;">IO</div>
+                            <div class="cpu block" style="width: 3em;">CPU</div>
+                            <br>
+                            <hr>
+                            <div class="io block" style="width: 9em;">IO</div>
+                            <div class="cpu block" style="width: 3em;">CPU</div>
+                            <br>
+                            <hr>
+                            <div class="io block" style="width: 4.5em;">IO</div>
+                            <div class="cpu block" style="width: 3em;">CPU</div>
+                        </div>
+
+                        <aside class="notes">
+                            Trade-off: context switching, managing concurrency, scaling to thousands of threads?
+                            <br>
+                            Replacing threads with processes: worker pool?
+                        </aside>
+                    </section>
+
+                    <section data-state="io-diagram">
+                        <h2>Non-blocking IO</h2>
+
+                        <div class="block-container">
+                            <hr>
+                            <div class="io block" style="width: 3em;">IO</div>
+                            <div class="cpu block" style="width: 3em;">CPU</div>
+                            <br>
+                            <hr>
+                            <div class="io block" style="width: 9em;">IO</div>
+                            <div class="cpu block" style="width: 3em; margin-left: 2.5em;">CPU</div>
+                            <br>
+                            <hr>
+                            <div class="io block" style="width: 4.5em;">IO</div>
+                            <div class="cpu block" style="width: 3em; margin-left: 2.8em;">CPU</div>
+                        </div>
+
+                        <aside class="notes">
+                            Event-driven. System calls can poll IO.
+                            <br>
+                            select() for socket IO. mincore() for paging (memory-mapped files).
+                            <br>
+                            Nginx vs. Apache.
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Tools within PHP
+
+                            * `pthreads`
+                            * `popen()`
+                            * `proc_open()`
+                            * `pcntl_fork()`
+                            * `socket_select()`
+                            * `stream_select()`
+                            * `stream_set_blocking()`
+                            * `curl_multi_select()`
+
+                            <aside class="notes">
+                                Not the easiest APIs to use.
+                                <br>
+                                We will consider stream_select(), based on select() in C.
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## $ man 2 select
+
+                            ```no-highlight
+                            SELECT(2)                 Linux Programmer's Manual
+
+                            NAME
+
+                                select, pselect - synchronous I/O multiplexing
+
+                            SYNOPSIS
+
+                                #include <sys/select.h>
+
+                                int select(int nfds, fd_set *readfds, fd_set *writefds,
+                                           fd_set *exceptfds, struct timeval *timeout);
+
+                                int pselect(int nfds, fd_set *readfds, fd_set *writefds,
+                                            fd_set *exceptfds, const struct timespec *timeout,
+                                            const sigset_t *sigmask);
+
+                            DESCRIPTION
+
+                                select() and pselect() allow a program to monitor multiple file
+                                descriptors, waiting until one or more of the file descriptors become
+                                "ready" for some class of I/O operation (e.g., input possible).  A
+                                file descriptor is considered ready if it is possible to perform the
+                                corresponding I/O operation (e.g., read(2)) without blocking.
+                            ```
+                            <!-- ' -->
+
+                            <aside class="notes">
+                                Multiplexing: combining multiple signal/streams into one.
+                                <br>
+                                Polling multiple IO streams at a time.
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Polling IO
+
+                            ```php
+                            $readable = $readStreams;
+                            $writable = $writeStreams;
+                            $except = null;
+
+                            if (stream_select($readable, $writable, $except, 1)) {
+                                foreach ($readable as $stream) {
+                                    // ...
+                                }
+
+                                foreach ($writable as $stream) {
+                                    // ...
+                                }
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Arrays of streams passed by reference to stream_select(). After, arrays contain streams ready for IO.
+                                <br>
+                                Null timeout blocks. Zero timeout polls instantaneously (bad within loop).
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h2>Event Loop</h2>
+
+                        <ul>
+                            <li>Tracks timers and streams</li>
+                            <li class="fragment">Each loop iteration is a "tick"</li>
+                            <li class="fragment">Ticks execute timers and poll IO</li>
+                            <li class="fragment">Polling timeout can be calculated</li>
+                            <li class="fragment">No timers/streams ends loop</li>
+                        </ul>
+
+                        <aside class="notes">
+                            Timers: run once, periodically, cancel.
+                            <br>
+                            Blocking on stream_select() is OK if waiting for IO is the only thing to do.
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <img src="img/react_logo.png" class="transparent" alt="React" width="60%" style="display: inline-block;">
+
+                        <br>
+
+                        <span class="fragment">Event-driven</span><span class="fragment">, non-blocking I/O</span><span class="fragment"> with PHP.</span>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Hello World
+
+                            ```php
+                            $loop = React\EventLoop\Factory::create();
+                            $socket = new React\Socket\Server($loop);
+                            $http = new React\Http\Server($socket);
+
+                            $http->on('request', function ($req, $res) {
+                                $res->writeHead(200, ['Content-Type' => 'text/plain']);
+                                $res->end('Hello World');
+                            });
+
+                            $socket->listen(8000);
+                            $loop->run();
+                            ```
+
+                            <aside class="notes">
+                                Similar to previous stream_socket_accept() example, but we can potentially process multiple requests at a time.
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h2>Reactor Pattern</h2>
+
+                        <img src="img/nuclear_power_plant-512.png" width="50%" class="transparent" style="opacity: 0.5">
+
+                        <span style="position: absolute; left: 0; top: 5em;">Resources</span>
+                        <span style="position: absolute; left: 0; top: 10em;">Demultiplexer</span>
+                        <span style="position: absolute; right: 0; top: 5em;">Dispatcher</span>
+                        <span style="position: absolute; right: 0; top: 10em;">Request Handlers</span>
+
+                        <aside class="notes">
+                            Demultiplexer blocks on resources with event loop.
+                            <br>
+                            Dispatches to handler synchronously when resource ready for non-blocking IO.
+                            <br>
+                            Less common proactor pattern: async dispatch (Boost.Asio).
+                        </aside>
+                    </section>
+
+                    <section data-state="stack">
+                        <h2>React&rsquo;s Stack</h2>
+
+                        <div class="fragment roll-in" data-fragment-index="6">
+                            <div class="block" style="background-color: #e9c062">DNode</div>
+                            <div class="block" style="background-color: #e9c062">AR.Drone</div>
+                            <div class="block" style="background-color: #e9c062">Whois</div>
+                            <div class="block" style="background-color: #e9c062">SOCKS</div>
+                        </div>
+                        <div class="fragment roll-in" data-fragment-index="5">
+                            <div class="block" style="background-color: #e9c062">Redis</div>
+                            <div class="block" style="background-color: #e9c062">WebSockets</div>
+                            <div class="block" style="background-color: #e9c062">Stomp</div>
+                            <div class="block" style="background-color: #e9c062">ØMQ</div>
+                            <div class="block" style="background-color: #e9c062">IRC</div>
+                        </div>
+                        <div class="fragment roll-in" data-fragment-index="4">
+                            <div class="block" style="background-color: #e9c062">DNS</div>
+                            <div class="block" style="background-color: #e9c062">Http</div>
+                            <div class="block" style="background-color: #e9c062">HttpClient</div>
+                        </div>
+                        <div class="fragment roll-in" data-fragment-index="3">
+                            <div class="block" style="background-color: #cda869">Socket</div>
+                            <div style="display: inline; position: absolute; right: 4.75em;" class="fragment roll-in" data-fragment-index="7">
+                                <div class="block" style="background-color: #cda869">ChildProcess</div>
+                            </div>
+                        </div>
+                        <div class="fragment roll-in" data-fragment-index="2">
+                            <div class="block" style="background-color: #cf6a4c">Stream</div>
+                        </div>
+                        <div>
+                            <div class="block" style="background-color: #8f9d6a">EventLoop</div>
+                        </div>
+                        <div class="fragment roll-in" data-fragment-index="1">
+                            <hr style="width: 30%">
+                            <div class="block" style="background-color: #7587a6">EventEmitter</div>
+                        </div>
+
+                        <aside class="notes">
+                            Événement: Based on Node.js EventEmitter API.
+                            <br>
+                            PHP DNS resolution blocks, so async resolver was needed.
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Event Loop</h2>
+
+                        <div>
+                            <ul>
+                                <li>Add/remove readable/writable streams</li>
+                                <li>Schedule run-once or periodic timers</li>
+                                <li>
+                                    <div>Multiple implementations</div>
+                                    <ul>
+                                        <li class="fragment roll-in">StreamSelectLoop uses <a href="http://php.net/stream_select">stream_select()</a></li>
+                                        <li class="fragment roll-in">LibEventLoop uses <a href="http://pecl.php.net/package/libevent">libevent</a> extension</li>
+                                        <li class="fragment roll-in">LibEvLoop uses <a href="https://github.com/m4rw3r/php-libev">libev</a> extension</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <aside class="notes">
+                            libev improves upon libevent. Originally used by Node.js.
+                            <br>
+                            libuv is cross-platform, now used by Node.js. PHP extension experimental.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Event Loop
+
+                            ```php
+                            $loop = React\EventLoop\Factory::create();
+                            $server = stream_socket_server('tcp://127.0.0.1:8080');
+                            stream_set_blocking($server, 0);
+
+                            $loop->addReadStream($server, function ($server) use ($loop) {
+                                $conn = stream_socket_accept($server);
+
+                                $data  = "HTTP/1.1 200 OK\r\n";
+                                $data .= "Content-Length: 11\r\n\r\n"
+                                $data .= "Hello World";
+
+                                $loop->addWriteStream($conn, function ($conn) use (&$data, $loop) {
+                                    $bytesWritten = fwrite($conn, $data);
+
+                                    if ($bytesWritten === strlen($data)) {
+                                        fclose($conn);
+                                        $loop->removeStream($conn);
+                                    } else {
+                                        $data = substr($data, 0, $bytesWritten);
+                                    }
+                                });
+                            });
+
+                            $loop->run();
+                            ```
+
+                            <aside class="notes">
+                                EventLoop can use raw streams. Readable data, open connection. When writable, write data until completion.
+                                <br>
+                                Writing could take multiple iterations (likely not for 50 bytes).
+                                <br>
+                                stream_set_blocking() is still important!
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Stream
+
+                            * Wraps a PHP stream resource
+                            * Registered with the event loop
+                            * Readable and writable
+                            * Buffered reads and writes
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## ReadableStream
+
+                            * `isReadable()`
+                            * `pause()`
+                            * `resume()`
+                            * `pipe(WritableStream $dest)`
+                            * `close()`
+
+                            ### Events
+
+                            `data`, `end`, `error`, `close`
+
+                            <aside class="notes">
+                                Data event when stream can be read.
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## WritableStream
+
+                            * `isWritable()`
+                            * `write($data)`
+                            * `end($data = null)`
+                            * `close()`
+
+                            ### Events
+
+                            `drain`, `error`, `close`, `pipe`
+
+                            <aside class="notes">
+                                Drain event when buffer was full, but can now accept data.
+                                <br>
+                                Pipe event when a readable is piped to us.
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h2>Streams</h2>
+
+                        <div>
+                            <img src="img/pipe_right.png" class="transparent" style="height: 5em;">
+                            <img src="img/mario_small_running.gif" class="transparent" style="height: 2.5em; margin: 1em;">
+                            <img src="img/pipe_left.png" class="transparent" style="height: 5em;">
+                        </div>
+
+                        <p style="word-spacing: 2.5em;">Readable &rarr; Writable</p>
+                    </section>
+
+                    <section>
+                        <h2>CompositeStream</h2>
+
+                        <div>
+                            <img src="img/mario_small_running.gif" class="transparent" style="height: 2.5em; margin: 1em;">
+                            <img src="img/pipe_left.png" class="transparent" style="height: 5em;"><span class="fragment"><img src="img/pipe_center.png" class="transparent" style="height: 5em; width: 2.5em"></span><img src="img/pipe_right.png" class="transparent" style="height: 5em;">
+                            <img src="img/mario_small_running.gif" class="transparent" style="height: 2.5em; margin: 1em;">
+                        </div>
+
+                        <p>Joins writable and readable streams</p>
+                    </section>
+
+                    <section>
+                        <h2>ThroughStream</h2>
+
+                        <div>
+                            <img src="img/mario_big_running.gif" class="transparent" style="height: 4em; margin: 1em;">
+                            <img src="img/pipe_left.png" class="transparent" style="height: 5em;"><img src="img/pipe_right.png" class="transparent" style="height: 5em;">
+                            <img src="img/mario_cape_running.gif" class="transparent" style="height: 4em; margin: 0.8em;">
+                        </div>
+
+                        <p>Allows data to be filtered</p>
+                    </section>
+
+                    <section>
+                        <h2>BufferedSink</h2>
+
+                        <div>
+                            <img src="img/mario_small_running.gif" class="transparent" style="height: 3em; margin: 1em;">
+                            <img src="img/pipe_left.png" class="transparent" style="height: 5em;"><img src="img/stone_block.png" class="transparent" style="height: 5em;"><img src="img/pipe_right_small.png" class="transparent" style="height: 2.5em;">
+                            <img src="img/question_block.png" class="transparent" style="height: 2.5em; margin-left: 1em;">
+                        </div>
+
+                        <p>Converts writable stream to a promise</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <img src="img/mlp_segway.png" height="100%" class="transparent">
+
+                        <aside class="notes">
+                            Segue!
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Promises</h2>
+
+                        <p class="fragment" style="font-size: 1.25em;">Wouldn&rsquo;t it be nice if asynchronous<br>functions could return immediately?</p>
+
+                        <aside class="notes">
+                            Avoid callback hell. Better code structure, testability.
+                            <br>
+                            Direct correspondence between sync and async functions.
+                            <br>
+                            Implementation of CommonJS Promises/A spec.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Deferred</h2>
+
+                        <ul style="margin-bottom: 1.5em;">
+                            <li><code>promise()</code></li>
+                            <li><code>resolve($value = null)</code></li>
+                            <li><code>reject($reason = null)</code></li>
+                            <li><code>progress($update = null)</code></li>
+                        </ul>
+
+                        <p class="fragment">Computation or unit of work that<br>may not have completed yet</p>
+
+                        <aside class="notes">
+                            Encapsulates a promise. Can ultimately be resolved or rejected. Progress may be updated before then.
+                            <br>
+                            Producer. Promises consume the result.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Promise</h2>
+
+                        <p>Placeholder for the result of a deferred computation</p>
+
+                        <p class="fragment" style="margin-top: 1.5em"><code>then($onFulfilled, $onRejected, $onProgress)</code></p>
+
+                        <p class="fragment" style="margin-top: 1.5em"><code>then()</code> returns a new Promise composing the first</p>
+
+                        <aside class="notes">
+                            Chaining then() creates a promise pipeline.
+                            <br>
+                            Upon resolution/rejection, the fulfilled/rejected promise is forwarded to the next handler.
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Promises in Action
+
+                            ```php
+                            $loop = React\EventLoop\Factory::create();
+                            $factory = new React\Dns\Resolver\Factory();
+                            $dns = $factory->create('8.8.8.8', $loop);
+
+                            $dns
+                                ->resolve($argv[1])
+                                ->then(
+                                    function ($ip) { echo "Host: $ip\n"; },
+                                    function ($e) { echo "Error: {$e->getMessage()}\n"; }
+                                );
+
+                            $loop->run();
+                            ```
+
+                            ```no-highlight
+                            $ php dns.php warsaw2013.symfony.com
+                            Host: 79.125.119.210
+                            ```
+
+                            <aside class="notes">
+                                resolve() creates a Deferred internally and returns a Promise, which we can use immediately.
+                                <br>
+                                Uncaught exceptions result in a RejectedPromise.
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h2>Spoiler Alert</h2>
+
+                        <pre style="font-size: 1em;"><code class="no-highlight" data-trim>
+$ php dns.php warsaw2014.symfony.com
+Host: 79.125.119.210
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h3>Suggested Reading</h3>
+
+                        <p style="margin-top: 1.5em"><a href="http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/">&ldquo;You&rsquo;re missing the point of promises&rdquo;</a></p>
+
+                        <p class="fragment" style="margin-top: 1.5em">Now back to the stack&hellip;</p>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Socket
+
+                            * Abstracts `stream_socket_server()`
+                            * Connections are readable/writable
+                            * Server and client contexts
+                            * TCP connections
+
+                            <aside class="notes">
+                                UDP datagrams being discussed (Node.js supports).
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Server
+
+                            * `listen($port, $host)`
+                            * `getPort()`
+                            * `shutdown()`
+
+                            ### Events
+
+                            `connection`, `error`
+
+                            <aside class="notes">
+                                getPort() returns the local socket name via stream_socket_get_name().
+                                <br>
+                                Connection events from server stream are accepted: new streams.
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Connection
+
+                            * `getRemoteAddress()`
+                            * `isReadable()` <!-- .element: style="opacity: 0.5" -->
+                            * `pause()` <!-- .element: style="opacity: 0.5" -->
+                            * `resume()` <!-- .element: style="opacity: 0.5" -->
+                            * `pipe(WritableStream $dest)` <!-- .element: style="opacity: 0.5" -->
+                            * `isWritable()` <!-- .element: style="opacity: 0.5" -->
+                            * `write($data)` <!-- .element: style="opacity: 0.5" -->
+                            * `end($data = null)` <!-- .element: style="opacity: 0.5" -->
+                            * `close()` <!-- .element: style="opacity: 0.5" -->
+
+                            ### Events
+
+                            `data`, `drain`, `end`,<br>`error`, `close`, `pipe`
+
+                            <aside class="notes">
+                                getRemoteAddress() like Socket::getPort(). Local socket name.
+                                <br>
+                                Extends Stream, implements readable/writable.
+                                <br>
+                                Uses stream_socket_recvfrom() instead of fread().
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## TCP Chat
+
+                            ```php
+                            $loop = React\EventLoop\Factory::create();
+                            $socket = new React\Socket\Server($loop);
+                            $clients = new SplObjectStorage();
+
+                            $socket->on('connection', function ($conn) use ($clients) {
+                                $clients->attach($conn);
+
+                                $conn->on('data', function ($data) use ($clients, $conn) {
+                                    foreach ($clients as $client) {
+                                        if ($conn === $client) {
+                                            continue;
+                                        }
+
+                                        $client->write($conn->getRemoteAddress().': '.$data);
+                                    }
+                                });
+
+                                $conn->on('end', function () use ($clients, $conn) {
+                                    $clients->detach($conn);
+                                });
+                            });
+
+                            $socket->listen(4000);
+                            $loop->run();
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Avoid Blocking</h2>
+
+                        <ul>
+                            <li>Database queries</li>
+                            <li class="fragment">Disk and file IO</li>
+                            <li class="fragment">CPU-intensive tasks</li>
+                        </ul>
+
+                        <aside class="notes">
+                            Async mysqlnd. React component for file IO in progress.
+                            <br>
+                            CPU usage easy to miss. json_encode()? array functions? Can block everything!
+                            <br>
+                            <!-- http://zef.me/4561/node-js-and-the-case-of-the-blocked-event-loop -->
+                            Ted Dziuba's 2012 post on blocking fibonacci calculations in Node.js.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Helpful Tools</h2>
+
+                        <p>Inter-process communication</p>
+
+                        <p class="fragment" style="margin-top: 1.5em;">Message queues</p>
+
+                        <p class="fragment" style="margin-top: 1.5em;">Break up computations with<br><code>$loop->nextTick(callable)</code></p>
+
+                        <aside class="notes">
+                            IPC: Stomp, Dnode, ChildProcess component
+                            <br>
+                            Message queues: ØMQ, Redis
+                            <br>
+                            nextTick() can divide computations across event loop iterations.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Async MySQL</h2>
+
+                        <ul>
+                            <li><code>mysqli_query($link, $query, MYSQLI_ASYNC)</code></li>
+                            <li><code>mysqli_poll(&$read, &$error, &$reject, $sec)</code></li>
+                            <li><code>mysqli_reap_async_query($link)</code></li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2>Async MySQL</h2>
+
+                        <ul style="margin-bottom: 1.5em;">
+                            <li class="blur"><code>mysqli_query($link, $query, MYSQLI_ASYNC)</code></li>
+                            <li><code>mysqli_poll(&$read, &$error, &$reject, $sec)</code></li>
+                            <li class="blur"><code>mysqli_reap_async_query($link)</code></li>
+                        </ul>
+
+                        <p class="fragment">This looks a lot like <code>stream_select()</code><p>
+
+                        <aside class="notes">
+                            Async requires mysqlnd.
+                            <br>
+                            New React component?
+                        </aside>
+                    </section>
+                </section>
+
+                <section data-background="img/igorw_glass.jpg" data-background-size="cover" data-background-position="center">
+                    <aside class="notes">
+                        Quite possibly the future of PHP /s
+                    </aside>
+                </section>
+
+                <section>
+                    <img src="img/composer.png" class="transparent" width="40%">
+
+                    <pre style="font-size: 0.95em;"><code class="no-highlight" data-trim>
+$ composer require "react/react=0.4.*@dev"
+                    </code></pre>
+                </section>
+
+                <section>
+                    <h2>WebSockets</h2>
+
+                    <img src="img/websockets_logo.png" class="transparent" width="50%">
+
+                    <p><small><a href="https://github.com/cboden/Ratchet">https://github.com/cboden/Ratchet</a></small></p>
+                </section>
+
+                <section>
+                    <h2>GifSockets</h2>
+
+                    <img src="img/infinite_swanson.gif" class="transparent" width="50%">
+
+                    <p><small><a href="https://github.com/videlalvaro/gifsockets">https://github.com/videlalvaro/gifsockets</a><br><a href="https://github.com/reactphp/gifsocket">https://github.com/reactphp/gifsocket</a></small></p>
+
+                    <aside class="notes">
+                        "This library is the websockets of the '90s"
+                        <br>
+                        Stream data through non-terminating GIF. Works in IE6!
+                    </aside>
+                </section>
+
+                <section data-markdown data-background="img/react_square.png" data-background-size="5.5em" data-background-position="left 1em bottom 1em">
+                    <script type="text/template">
+                        ## Thanks! <!-- .element: style="margin: 2em 0;" -->
+
+                        * [`joind.in/10377`](https://joind.in/10377)
+                        * [`reactphp.org`](http://reactphp.org)
+
+                        ### Questions? <!-- .element: style="margin-top: 3.5em;" -->
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * http://www.mariouniverse.com/sprites/snes/smw
+                        * http://larsurus.deviantart.com/art/Lyra-on-Segway-PNG-269707453
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>

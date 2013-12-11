@@ -1,0 +1,175 @@
+@import url(http://fonts.googleapis.com/css?family=Press+Start+2P);
+
+.blur {
+    opacity: 0.5;
+    -webkit-filter: blur(0.05em);
+            filter: blur(0.05em);
+}
+
+div.col-left {
+    float: left;
+    width: 50%;
+}
+
+div.col-right {
+    float: right;
+    width: 50%;
+}
+
+blockquote {
+    position: relative;
+}
+
+blockquote:before {
+    display: block;
+    content: "\201C";
+    font-family: Georgia, serif;
+    font-size: 6em;
+    font-weight: bold;
+    position: absolute;
+    left: -0.5em;
+    top: 0.2em;
+    color: #aaa;
+}
+
+.reveal pre code {
+    max-height: inherit;
+}
+
+.reveal section img.transparent {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.reveal ul pre {
+    width: 100%;
+}
+
+.reveal h1 { font-size: 3em; }
+.reveal h2 { font-size: 1.5em; }
+.reveal h3 { font-size: 1em; }
+
+.reveal h3:not(:first-child) { margin-top: 1em; }
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+    font-family: "Press Start 2P", monospace;
+    text-transform: none;
+}
+
+.reveal h2 { margin-bottom: 1em; }
+
+.reveal span.highlight { color: #eee8d5; }
+
+section[data-state="title"] h1 {
+    display: block;
+    font-size: 2.5em;
+    text-align: left;
+}
+
+section[data-state="title"] p.bio {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../img/jmikola_cartoon_pixelated.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="title"] p.bio a[href*="twitter"] {
+    background-image: url("../../common/img/twitter-bird-light-bgs.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding-left: 50px;
+}
+
+section[data-state="io-diagram"] div.block-container {
+    display: inline-block;
+    position: relative;
+    text-align: left;
+}
+
+section[data-state="io-diagram"] hr {
+    position: absolute;
+    z-index: -2;
+    margin-top: 0.9em;
+    margin-left: 0.25em;
+    height: 0.2em;
+    background: #006882;
+    border: 0;
+    width: 90%;
+}
+
+section[data-state="io-diagram"] div.block {
+    display: inline-block;
+    margin: 0.25em;
+    padding: 0.5em;
+    border: 3px solid #000;
+    border-radius: 15px;
+    font-family: monospace;
+    font-size: 0.75em;
+    font-weight: bold;
+    line-height: 1em;
+    text-align: center;
+}
+
+section[data-state="io-diagram"] div.cpu { background-color: #823f00; }
+section[data-state="io-diagram"] div.io { background-color: #361a00; }
+
+section[data-state="io-diagram"] div.concurrency {
+    position: absolute;
+    z-index: -1;
+    background-color: #823f00;
+    opacity: 0.5;
+    border: 0.1em dotted white;
+}
+
+section[data-state="io-latencies"] table {
+    margin-bottom: 1em;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+section[data-state="io-latencies"] table td {
+    margin: 0;
+    padding: 0.3em;
+    font-family: monospace;
+    font-size: 0.66em;
+    line-height: 1em;
+    border-bottom: 0.1em solid #006882; 
+}
+
+section[data-state="io-latencies"] table td:last-child { text-align: right; }
+
+section[data-state="stack"] div.block {
+    display: inline-block;
+    margin: 0.25em;
+    padding: 0.5em;
+    border: 3px solid #000;
+    border-radius: 15px;
+    font-family: monospace;
+    font-size: 0.75em;
+    font-weight: bold;
+    line-height: 1em;
+    text-align: center;
+    color: #000;
+}
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
+
+.reveal h3 small {
+    color: #999;
+    vertical-align: bottom;
+}
