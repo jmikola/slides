@@ -254,7 +254,7 @@
                             e.g. Zend\Db\RowGateway
                         </script>
                     </section>
-
+<!--
                     <section data-markdown>
                         <script type="text/template">
                             > An object that acts as a Gateway to a single record in a data source. There is one instance per row.
@@ -262,13 +262,13 @@
                             &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/rowDataGateway.html)
                         </script>
                     </section>
-
+-->
                     <section>
                         <h3>Row Data Gateway</h3>
 
                         <img src="img/poeaa-rowgateway.png" class="transparent" width="70%">
                     </section>
-
+<!--
                     <section data-markdown>
                         <script type="text/template">
                             ### What this looks like in PHP
@@ -286,7 +286,7 @@
                             <span class="fragment">Bring your own finder.</span>
                         </script>
                     </section>
-
+-->
                     <section data-markdown>
                         <script type="text/template">
                             ### What&rsquo;s the problem?
@@ -312,20 +312,20 @@
                         </script>
                     </section>
 
-                    <section data-markdown>
-                        <script type="text/template">
-                            > An object that wraps a row in a database table or view, encapsulates the database access, and adds domain logic on that data.
-
-                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/activeRecord.html)
-                        </script>
-                    </section>
-
                     <section>
                         <img src="img/dhh.jpg" width="80%">
 
                         <aside class="notes">
                             <p>David Heinemeier Hansson.</p>
                             <p>Ruby on Rails, 37 Signals.</p>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > An object that wraps a row in a database table or view, encapsulates the database access, and adds domain logic on that data.
+
+                            &mdash; Martin Fowler in [PoEAA](http://www.martinfowler.com/eaaCatalog/activeRecord.html)
+                        </script>
                     </section>
 
                     <section>
@@ -404,12 +404,38 @@
 
                             * [Single Responsibility Principle](http://en.wikipedia.org/wiki/Single_responsibility_principle)
                             * Testability
+                        </script>
+
+                        <aside class="notes">
+                            <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
+                            <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2 class="meme">One does not simply</h2>
+
+                        <img src="img/boromir.jpg" width="80%">
+
+                        <h2 class="meme">Mock out ActiveRecord</h2>
+
+                        <aside class="notes">
+                            <p>Some ORMs utilize static methods.</p>
+                            <p>Models depend on database resources.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What&rsquo;s the problem?
+
+                            * [Single Responsibility Principle](http://en.wikipedia.org/wiki/Single_responsibility_principle)
+                            * Testability
                             * [Multitenancy](http://en.wikipedia.org/wiki/Multitenancy)
                             * Scalability and performance
                         </script>
 
                         <aside class="notes">
-                            <p>Some ORMs utilize static methods.</p>
                             <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
                             <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
                         </aside>
@@ -497,6 +523,9 @@
                     </section>
 
                     <section data-background="img/grumpy_programmer.png" data-background-size="cover" data-background-position="center">
+                    </section>
+
+                    <section data-background="img/tests.jpg" data-background-size="cover" data-background-position="center">
                     </section>
 
                     <section data-markdown>
@@ -663,7 +692,7 @@
                         <script type="text/template">
                             ### Unit of Work
 
-                            aka 3,000 lines of<br>takin&rsquo; care of business
+                            <img src="img/brain-512.png" class="transparent" width="30%">
                         </script>
                     </section>
 
@@ -760,7 +789,7 @@
 
                         <div class="col-right">
                             <ul>
-                                <li><code>clear(<span class="arg">$class</span> = null)</code></li>
+                                <li><code>clear(<!-- <span class="arg">$class</span> = null -->)</code></li>
                                 <li><code>detach(<span class="arg">$object</span>)</code></li>
                                 <li><code>merge(<span class="arg">$object</span>)</code></li>
                                 <li><code>refresh(<span class="arg">$object</span>)</code></li>
@@ -769,7 +798,7 @@
 
                         <aside class="notes">
                             <p>merge() will take an object and return its managed copy (must be assigned).</p>
-                            <p>refresh() will revert an in-memory changes to a managed object.</p> 
+                            <p>refresh() will revert any in-memory changes to a managed object.</p>
                             <p>Might have multiple managers, usually for different database connections.</p> 
                         </aside>
                     </section>
@@ -811,9 +840,9 @@
                         <h3><small>Doctrine\Common\</small>EventManager</h3>
 
                         <ul>
-                            <li><code>dispatchEvent(<span class="arg">$event</span>, <span class="arg">$args</span> = null)</code></li>
-                            <li><code>getListeners(<span class="arg">$event</span> = null)</code></li>
-                            <li><code>hasListeners(<span class="arg">$event</span> = null)</code></li>
+                            <li><code>dispatchEvent(<span class="arg">$event</span>, <span class="arg">$args</span><!-- = null-->)</code></li>
+                            <li><code>getListeners(<span class="arg">$event</span><!-- = null-->)</code></li>
+                            <li><code>hasListeners(<span class="arg">$event</span><!-- = null-->)</code></li>
                             <li><code>addEventListener(<span class="arg">$event</span>, <span class="arg">$listener</span>)</code></li>
                             <li><code>removeEventListener(<span class="arg">$event</span>, <span class="arg">$listener</span>)</code></li>
                             <li><code>addEventSubscriber(<span class="arg">$subscriber</span>)</code></li>
@@ -961,6 +990,8 @@
 
                     <section>
                         <img src="img/composer.png" width="50%" class="transparent">
+
+                        <a href="https://packagist.org/packages/doctrine/">packagist.org/packages/doctrine/</a>
                     </section>
 
                     <section data-markdown>

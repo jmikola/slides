@@ -1,3 +1,14 @@
+.reveal h2.meme {
+    font-family: "Impact";
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: white;
+    text-shadow:  2px  2px 1px #000,
+                 -2px -2px 1px #000,
+                  2px -2px 1px #000,
+                 -2px  2px 1px #000;
+}
+
 li.de-em {
     opacity: 0.5;
     -webkit-filter: blur(0.05em);
