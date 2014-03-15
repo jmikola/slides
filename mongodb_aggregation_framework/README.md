@@ -7,7 +7,7 @@ Additionally, Ross Lawley has a [repository of demos](https://github.com/rozza/d
 
 ### Presented
 
- * 2013-03-03 at [MidwestPHP](https://joind.in/talk/view/8223)
+ * 2013-03-03 at [Midwest PHP](https://joind.in/talk/view/8223)
  * 2013-01-31 for [10gen webinar](http://www.10gen.com/events/webinar/whats-new-in-aggregation)
  * 2012-10-24 at [MongoDB Boston](http://www.10gen.com/events/mongodb-boston)
  * 2012-09-12 at [London Lithium/CakePHP meetup](http://www.meetup.com/lithium-uk/events/79406232/)
