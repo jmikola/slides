@@ -30,6 +30,16 @@
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
                 </section>
 
+                <section data-state="contributors">
+                    <a href="https://github.com/derickr"><img src="https://0.gravatar.com/avatar/2ef995275795830995d4241368713176?d=https%3A%2F%2Fidenticons.github.com%2F5350e19da7a913fef8751229986a509c.png&amp;s=140"></a>
+                    <a href="https://github.com/bjori"><img src="https://2.gravatar.com/avatar/189511e30874ec6a3b583055f46fef78?d=https%3A%2F%2Fidenticons.github.com%2F46efca282b315142fbb5381ae47c8d45.png&amp;s=140"></a>
+                    <a href="https://github.com/jmikola"><img src="https://0.gravatar.com/avatar/f23700b51dc0c196c1dc02f84aeeecdf?d=https%3A%2F%2Fidenticons.github.com%2F706249dd3fc0b178c58be9f85127d29e.png&amp;s=140"></a>
+
+                    <br>
+
+                    <span class="fragment"><a href="https://github.com/mongodb/mongo-php-driver"><img src="../common/img/mongodb_onlight.png" width="50%" class="transparent"></a></span>
+                </section>
+
                 <section>
                     <h2>Agenda</h2>
 
@@ -90,7 +100,7 @@
                     </section>
 
                     <section>
-                        <h3>Connection Pooling</h3>
+                        <h3>Persistent Connections</h3>
 
                         <p>Re-use connections within a PHP worker process.</p>
                     </section>
@@ -153,7 +163,7 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ### Don't like connection pooling?
+                            ### Don't like persistent connections?
 
                             Call [MongoClient::close()](http://php.net/manual/en/mongoclient.close.php) after each request.
 
@@ -203,8 +213,8 @@
                             ```js
                             {
                                 _id: "jmikola",
-                                name: 'Jeremy Mikola',
-                                friends: [ 'bjori', 'derickr' ]
+                                name: "Jeremy Mikola",
+                                friends: [ "bjori", "derickr" ]
                             }
                             ```
 
@@ -213,10 +223,10 @@
                             ```js
                             {
                                 _id: "jmikola",
-                                name: 'Jeremy Mikola',
+                                name: "Jeremy Mikola",
                                 friends: [
-                                    { id: 'bjori', name: 'Hannes Magnusson' },
-                                    { id: 'derickr', name: 'Derick Rethans' }
+                                    { id: "bjori", name: "Hannes Magnusson" },
+                                    { id: "derickr", name: "Derick Rethans" }
                                 ]
                             }
                             ```
@@ -347,6 +357,10 @@
                         <p><a href="https://speakerdeck.com/jnunemaker/mongodb-for-analytics-3">MongoDB for Analytics</a><br>&mdash; John Nunemaker</p>
                     </section>
 
+                    <section>
+                        <iframe class="speakerdeck-iframe" style="border: 0px; background-color: transparent; margin: 0px; padding: 0px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; width: 20em; height: 17em; background-position: initial initial; background-repeat: initial initial;" frameborder="0" src="https://speakerdeck.com/player/981aa470220c01305d2612313933acc8?slide=39" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                    </section>
+
                     <section data-markdown>
                         <script type="text/template">
                             ### Don't abuse schema flexibility
@@ -376,6 +390,10 @@
 
                             [Profile](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/) slow queries.
                         </script>
+                    </section>
+
+                    <section>
+                        <img src="img/mongoqp.png" alt="mongoqp.png" style="width: 100%" class="transparent">
                     </section>
                 </section>
 
@@ -458,9 +476,9 @@
                         <script type="text/template">
                             ### Write Concerns
 
-                            `w` is the new `safe`.
+                            `w` replaces `safe`.
 
-                            <span class="fragment">`w=1` is the new default.</span>
+                            <span class="fragment">`w=1` is the default.</span>
 
                             <span class="fragment">`w=majority` for replication.</span>
 
@@ -511,7 +529,7 @@
                         <script type="text/template">
                             ### [Read Preferences](http://docs.mongodb.org/manual/applications/replication/#read-preference)
 
-                            `secondaryPreferred` is the new `slaveOk`.
+                            `secondaryPreferred` replaces `slaveOk`.
 
                             <span class="fragment">`primary`, `primaryPreferred`<br>`secondary`, `nearest`</span>
 
@@ -599,7 +617,11 @@
                         <script type="text/template">
                             ### Replication vs. Sharding
 
-                            Replication is the tool for data safety, high availability, and disaster recovery.
+                            <br>
+
+                            Replication is the tool for data safety,<br>high availability, and disaster recovery.
+
+                            <br>
 
                             Sharding is the tool for scaling a system.
                         </script>
@@ -715,10 +737,14 @@
                     </section>
 
                     <section>
+                        <h3>What does sharding do for us?</h3>
+
                         <img src="img/sharding_cache-1.png" alt="sharding_cache-1.png" style="width: 80%;">
                     </section>
 
                     <section>
+                        <h3>Sharding provides horizontal scalability</h3>
+
                         <img src="img/sharding_cache-2.png" alt="sharding_cache-2.png" style="width: 80%;">
                     </section>
                 </section>

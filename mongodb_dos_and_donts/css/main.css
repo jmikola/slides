@@ -7,6 +7,12 @@
     max-height: inherit;
 }
 
+.reveal section img.transparent {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
 h1 span.logo-mongodb {
     height: 300px;
     width: 100%;
