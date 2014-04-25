@@ -1,7 +1,7 @@
 Reveal.initialize({
     // Full list of configuration options available here:
     // https://github.com/hakimel/reveal.js#configuration
-    controls: true,
+    controls: false,
     progress: true,
     history: true,
     rollingLinks: false,

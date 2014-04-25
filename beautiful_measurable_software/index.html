@@ -1,0 +1,1142 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Developing Beautiful, Measurable Software</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            document.write( '<link rel="stylesheet" href="../vendor/reveal.js/css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <h1>Developing Beautiful,<br>Measurable Software</h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+                <section>
+                    <img src="img/xkcd-844.png" class="transparent" style="float:left;margin:0;">
+
+                    <h2>Agenda</h2>
+
+                    <ul>
+                        <li>Training</li>
+                        <li>Metrics</li>
+                        <li>Tools</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/weightlift-512.png" class="transparent" width="30%">
+
+                            ## Training
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/twa.jpg" width="50%">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > The core concepts behind good design are well understood. Cohesion, loose coupling, no redundancy, encapsulation, testability, readability, and focus. Yet it’s hard to put those concepts into practice.
+
+                            &mdash; Jeff Bay in [Object Calisthenics](http://www.xpteam.com/jeff/writings/objectcalisthenics.rtf)
+
+                            <aside class="notes">
+                                <p>We know good code when we see it.</p>
+                                <p>Practice designing and implementing these qualities.</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## **Object** Calisthenics
+
+                            Object-oriented programming
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Object **Calisthenics**
+
+                            /ˌkaləsˈTHeniks/ – *noun*
+
+                            gymnastic exercises to achieve bodily<br>fitness and grace of movement.
+
+                            <small>early 19th century: from Greek *kallos* (beauty) + *sthenos* (strength)</small>
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            <img src="img/info-512.png" class="transparent" width="30%">
+
+                            These are exercises,<br>not hard and fast rules.
+
+                            <aside class="notes">
+                                <p>Originally written for Java; adapting for PHP</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/one_finger-512.png" class="transparent" width="30%">
+
+                            ### Only one level of<br>indentation per method
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Only one level of indentation per method
+
+                            ```php
+                            class Board
+                            {
+                                public function representation()
+                                {
+                                    $buffer = new Buffer();
+
+                                    for ($i = 0; $i < 10; $i++) {
+                                        for ($j = 0; $j < 10; $j++) {
+                                            $buffer->append($this->data[$i][$j]);
+                                        }
+                                        $buffer->append("\n");
+                                    }
+
+                                    return (string) $buffer;
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Only one level of indentation per method
+
+                            ### Extract Method
+
+                            > You have a code fragment that can be grouped together. Turn the fragment into a method whose name explains the purpose of the method.
+
+                            &mdash; Martin Fowler in [Refactoring](http://martinfowler.com/books/refactoring.html)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Only one level of indentation per method
+
+                            ```php
+                            class Board
+                            {
+                                public function representation()
+                                {
+                                    $buffer = new Buffer();
+
+                                    for ($i = 0; $i < 10; $i++) {
+                                        collectRow($buffer, $i);
+                                    }
+
+                                    return (string) $buffer;
+                                }
+
+                                function collectRow(Buffer $buffer, $row)
+                                {
+                                    for ($i = 0; $i < 10; $i++) {
+                                        $buffer->append($this->data[$row][$i]);
+                                    }
+
+                                    $buffer->append("\n");
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/two_fingers-512.png" class="transparent" width="30%">
+
+                            ### Avoid using `else`
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Avoid using `else`
+
+                            ```php
+                            function login($username, $password)
+                            {
+                                if ($this->userRepository->isValid($username, $password)) {
+                                    $this->redirect('homepage');
+                                } else {
+                                    $this->session->addFlash('error', 'Invalid credentials');
+                                    $this->redirect('login');
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Avoid using `else`
+
+                            ```php
+                            function login($username, $password)
+                            {
+                                if ($this->userRepository->isValid($username, $password)) {
+                                    return $this->redirect('homepage');
+                                }
+
+                                $this->session->addFlash('error', 'Invalid credentials');
+                                $this->redirect('login');
+                            }
+                            ```
+
+                            <p class="fragment">Optimistic vs. Defensive Programming</p>
+
+                            <aside class="notes">
+                                <p>Optimistic checks for errors up front, defaults to valid case.</p>
+                                <p>Defensive is the opposite; code is less likely to allow unexpected errors.</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/three_fingers-512.png" class="transparent" width="30%">
+
+                            ### Wrap primitives and strings
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Wrap primitives and strings
+
+                            But PHP objects are expensive!
+
+                            <p class="fragment">Avoid <a href="http://c2.com/cgi/wiki?PrimitiveObsession">primitive obsession</a><br><small>(i.e. using primitives to represent domain ideas)</small></p>
+
+                            <p class="fragment">Replace with <a href="http://en.wikipedia.org/wiki/Value_object">value objects</a><br><small>(i.e. immutable entities with some behavior)</small></p>
+
+                            <aside class="notes">
+                                <p>Currency, Date, Message classes</p>
+                                <p>Facilitates static analysis, self-documenting code</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/four_fingers-512.png" class="transparent" width="30%">
+
+                            ### First class collections
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### First class collections
+
+                            If a class contains a collection, it<br>should have no other member variables
+
+                            <p class="fragment">Behaviors for the collection have a home<br><small>(e.g. combining, filtering, mapping)</small></p>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h4>First class collections</h4>
+
+                        <h3><small>Doctrine\Common\Collections\</small>ArrayCollection</h3>
+
+                        <div class="col-left" style="font-size:0.7em;">
+                            <ul>
+                                <li><code>__construct(<span class="arg">array $elements</span>)</code></li>
+                                <li><code>count()</code></li>
+                                <li><code>getIterator()</code></li>
+                                <li><code>slice(<span class="arg">$offset</span>, <span class="arg">$length</span>)</code></li>
+                                <li><code>matching(<span class="arg">Criteria $criteria</span>)</code></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-right" style="font-size:0.7em;">
+                            <ul>
+                                <li><code>exists(<span class="arg">Closure $p</span>)</code></li>
+                                <li><code>filter(<span class="arg">Closure $p</span>)</code></li>
+                                <li><code>forAll(<span class="arg">Closure $p</span>)</code></li>
+                                <li><code>map(<span class="arg">Closure $p</span>)</code></li>
+                                <li><code>partition(<span class="arg">Closure $p</span>)</code></li>
+                            </ul>
+                        </div>
+
+                        <div style="clear:both;"></div>
+
+                        <p class="fragment" style="margin-top:1em;">Collection interface extends<br>Countable, IteratorAggregate, ArrayAccess</p>
+
+                        <aside class="notes">
+                            <p>ORM and ODM have PersistentCollection, which contains elements with a persistent state.</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+
+                            ### One <strike>dot</strike> per line
+
+                            T_OBJECT_OPERATOR
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### One dot per line
+
+                            ### Law of Demeter<br><small>(Principle of Least Knowledge)</small>
+
+                            <p class="fragment">Only talk to friends</p>
+
+                            <p class="fragment">Don&rsquo;t circumvent encapsulation</p>
+
+                            <p class="fragment"><a href="http://en.wikipedia.org/wiki/Method_chaining">Method chaining</a> and <a href="http://en.wikipedia.org/wiki/Fluent_interface">fluent APIs</a> are still OK</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### One dot per line
+
+                            ```php
+                            class Piece
+                            {
+                                /** @var string */
+                                public $representation;
+                            }
+
+                            class Location
+                            {
+                                /** @var Piece */
+                                public $current;
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### One dot per line
+
+                            ```php
+                            class Board
+                            {
+                                /** @var Location[] */
+                                private $squares;
+
+                                public function representation()
+                                {
+                                    $buffer = new Buffer();
+
+                                    foreach ($this->squares as $location) {
+                                        $char = substr($location->current->representation, 0, 1);
+                                        $buffer->append($char);
+                                    }
+
+                                    return (string) $buffer;
+                                }
+                            }
+                            ```
+
+                            <p class="fragment">Board should only deal with its Locations.<br>Why is it formatting Piece representations?</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### One dot per line
+
+                            ```php
+                            class Piece
+                            {
+                                /** @var string */
+                                private $representation;
+
+                                function addTo(Buffer $buffer)
+                                {
+                                    $buffer->append(substr($this->representation, 0, 1));
+                                }
+                            }
+
+                            class Location
+                            {
+                                /** @var Piece */
+                                private $current;
+
+                                function addTo(Buffer $buffer)
+                                {
+                                    $this->current->addTo($buffer);
+                                }
+                            }
+                            ```
+
+                            <p class="fragment">Applying the <a href="http://en.wikipedia.org/wiki/Open/closed_principle">open/closed principle</a></p>
+
+                            <aside class="notes">
+                                <p>Entities should be "open for extension, but closed for modification"</p>
+                                <p>Default to private member variables</p>
+                                <p>Break substr() into a separate method as needed</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### One dot per line
+
+                            ```php
+                            class Board {
+                                /** @var Location[] */
+                                private $squares;
+
+                                function representation() {
+                                    $buffer = new Buffer();
+
+                                    foreach ($this->squares as $location) {
+                                        $location->addTo($buffer);
+                                    }
+
+                                    return (string) $buffer;
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+                            <img src="img/one_finger-512.png" class="transparent" width="30%">
+
+                            ### <strike>Don&rsquo;t</strike> Do not abbreviate
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Do not abbreviate
+
+                            Why do you want to abbreviate?
+
+                            <p class="fragment">Repeating a name too frequently<br>hints at code duplication.</p>
+
+                            <p class="fragment">Method names being too long<br>hints at misplaced responsibility.</p>
+
+                            <aside class="notes">
+                                <p>Order::shipOrder() can simply be ship()</p>
+                                <p>Single Responsibility Principle</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+                            <img src="img/two_fingers-512.png" class="transparent" width="30%">
+
+                            ### Keep your entities small
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Keep your entities small
+
+                            50 LOC per class and 10 files per package
+
+                            <p class="fragment">The goal is readability and maintainability</p>
+
+                            <aside class="notes">
+                                <p>This limits responsibility per class</p>
+                                <p>Packages should collect classes that work together towards a common goal</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+                            <img src="img/three_fingers-512.png" class="transparent" width="30%">
+
+                            ### Limit classes to two<br>member variables
+
+                            <aside class="notes">
+                                <p>Rafael and Guilherme suggest 5 for PHP</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Limit classes to two member variables
+
+                            Decompose objects with many attributes<br>into a hierarchy of collaborating objects
+
+                            <p class="fragment">Higher cohesion and better encapsulation</p>
+
+                            <aside class="notes">
+                                <p>Involves primitive wrapping and small entities</p>
+                                <p>Not a rule for data models (i.e. reference objects)</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Limit classes to two member variables
+
+                            Leaves us with two types of classes
+
+                            <p class="fragment">Those that maintain state of a single variable</p>
+
+                            <p class="fragment">Those that coordinate two separate variables</p>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+                            <img src="img/four_fingers-512.png" class="transparent" width="30%">
+
+                            ### No getters and setters<br>for class properties
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### No getters and setters for class properties
+
+                            Strong encapsulation boundaries force<br>behaviors to be placed in the object model
+
+                            <p class="fragment">Decisions based on an object&rsquo;s state<br>should be made within that object</p>
+
+                            <aside class="notes">
+                                <p>Don&rsquo;t ask objects for state, decide and tell them externally</p>
+                                <p>Localizes changes for new features, less duplication errors</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### No getters and setters for class properties
+
+                            ### Tell, don&rsquo;t ask
+
+                            > Procedural code gets information then makes decisions. Object-oriented code tells objects to do things.
+
+                            &mdash; Alec Sharp in [Smalltalk by Example](http://pragprog.com/articles/tell-dont-ask)
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/finger_and_thumb-512.png" class="transparent" width="30%">
+
+                            ### No static methods<br>or utility classes
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### No static methods or utility classes
+
+                            Classes without state have<br>no identity, no *raison d&#39;être*
+
+                            <p class="fragment">They manipulate data from other objects<br>and frequently violate encapsulation</p>
+
+                            <aside class="notes">
+                                <p>Conflicts with "Tell, don&rsquo;t ask"</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/line_chart-512.png" class="transparent" width="30%">
+
+                            ## Metrics
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/wtf_code.png" class="transparent" width="60%">
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>What else can we measure?</h3>
+
+                        <ul>
+                            <li class="fragment">Source lines of code</li>
+                            <li class="fragment">Code coverage</li>
+                            <li class="fragment">Bug density</li>
+                            <li class="fragment">Cohesion and coupling</li>
+                            <li class="fragment">Cyclomatic complexity</li>
+                            <li class="fragment">Function points</li>
+                            <li class="fragment">Custom design constraints</li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>Logical lines of code ignores whitespace, comments</p>
+                            <p>FPA assigns complexity to requirements (not algorithms)</p>
+                            <p>Custom constraints: coding standards, class/method/name lengths, comments</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/workflow-512.png" class="transparent" width="30%">
+
+                            ### Cyclomatic Complexity
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Cyclomatic Complexity
+
+                            Number of decision points in a function<br><small>(e.g. `if`, `while`, `for`, `case`)</small>
+
+                            <p class="fragment">General indication of program complexity</p>
+
+                            <p class="fragment">Spoiler alert: positive correlation with defects</p>
+
+                            <aside class="notes">
+                                <p>Programs are a graph and we can count paths through it</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Cyclomatic Complexity
+
+                            <div class="code-marker fragment">1</div>
+                            <div class="code-marker fragment"><br><br>2</div>
+                            <div class="code-marker fragment"><br><br><br>3</div>
+                            <div class="code-marker fragment"><br><br><br><br><br><br><br><br>4</div>
+
+                            ```php
+                            public function foo($a, $b)
+                            {
+                                if ($a) {
+                                    if ($b) {
+                                        echo 'a and b';
+                                    } else {
+                                        echo 'a'
+                                    }
+                                } elseif ($b) {
+                                    echo 'b';
+                                } else {
+                                    echo 'neither'
+                                }
+                            }
+                            ```
+
+                            <p class="fragment">One entry point and three `if` conditions: CC = 4</p>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h4>Cyclomatic Complexity</h4>
+
+                        <img src="img/aferrara.png" class="transparent fragment" width="20%" style="position:absolute;right:0;z-index:99">
+
+                        <table style="margin-top:2em;">
+                            <tr><th>CC</th><th>Complexity</th></tr>
+                            <tr><td>1&ndash;4</td><td>Low</td></tr>
+                            <tr><td>5&ndash;7</td><td>Moderate</td></tr>
+                            <tr><td>8&ndash;10</td><td>High</td></tr>
+                            <tr><td>11+</td><td>Very high</td></tr>
+                        </table>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/genealogy-512.png" class="transparent" width="30%">
+
+                            ### NPath Complexity
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### NPath Complexity
+
+                            Number of unique execution paths in a function
+
+                            <p class="fragment">Alternatively, the number of tests<br>required for full <a href="http://en.wikipedia.org/wiki/Branch_coverage">branch coverage</a></p>
+
+                            <aside class="notes">
+                                <p>Other coverage criteria: function, statement, condition</p>
+                                <p>Also loop: zero, once, and multiple iterations</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### NPath Complexity
+
+                            <div class="code-marker fragment"><br><br><br><br>1</div>
+                            <div class="code-marker fragment"><br><br><br><br><br><br>2</div>
+                            <div class="code-marker fragment"><br><br><br><br><br><br><br><br><br>3</div>
+                            <div class="code-marker fragment"><br><br><br><br><br><br><br><br><br><br><br>4</div>
+
+                            ```php
+                            public function foo($a, $b)
+                            {
+                                if ($a) {
+                                    if ($b) {
+                                        echo 'a and b';
+                                    } else {
+                                        echo 'a'
+                                    }
+                                } elseif ($b) {
+                                    echo 'b';
+                                } else {
+                                    echo 'neither'
+                                }
+                            }
+                            ```
+
+                            <p class="fragment">CC = 4 and NPath = 4</p>
+
+                            <aside class="notes">
+                                <p>CC and Npath are not generally the same</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### NPath Complexity
+
+                            ```php
+                            public function foo($a, $b, $c)
+                            {
+                                if ($a) {
+                                    if ($b) {
+                                        echo 'a and b';
+                                    } else {
+                                        echo 'a'
+                                    }
+                                } elseif ($b) {
+                                    echo 'b';
+                                } else {
+                                    echo 'neither'
+                                }
+
+                                if ($c) {
+                                    echo 'c';
+                                }
+                            }
+                            ```
+
+                            <p class="fragment">CC += 1 and NPath &#xd7;= 2</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### NPath Complexity
+
+                            <img src="img/aferrara-glass.png" class="transparent fragment" width="20%" style="position:absolute;right:0;z-index:99">
+
+                            ```php
+                            public function foo($a, $b, $c, $d)
+                            {
+                                if ($a) {
+                                    echo 'a';
+                                }
+
+                                if ($b) {
+                                    echo 'b';
+                                }
+
+                                if ($c) {
+                                    echo 'c';
+                                }
+
+                                if ($d) {
+                                    echo 'd';
+                                }
+                            }
+                            ```
+
+                            <p class="fragment">CC = 5 and NPath = 16!</p>
+                            <p class="fragment">Worst case: NPath = 2<sup>(CC - 1)</sup></p>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/swiss_army_knife-512.png" class="transparent" width="30%">
+
+                            ## Tools
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3 style="margin-bottom:1.5em;"><a href="http://phpqatools.org/">PHP Quality Assurance Toolchain</a><span class="fragment" style="position:absolute;right:0;"><br><small>by Sebastian Bergmann</small></span></h3>
+
+                        <div class="col-left">
+                            <ul>
+                                <li><a href="http://www.phpunit.de/">PHPUnit</a></li>
+                                <li><a href="http://github.com/sebastianbergmann/phploc">PHPLOC</a></li>
+                                <li><a href="http://github.com/sebastianbergmann/phpcpd">PHP Copy/Paste Detector</a></li>
+                                <li><a href="http://github.com/sebastianbergmann/phpdcd">PHP Dead Code Detector</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-right">
+                            <ul>
+                                <li><a href="http://behat.org/">Behat</a></li>
+                                <li><a href="http://pdepend.org/">PHP_Depend</a></li>
+                                <li><a href="http://phpmd.org/">PHP Mess Detector</a></li>
+                                <li><a href="http://github.com/squizlabs/PHP_CodeSniffer/">PHP_CodeSniffer</a></li>
+                            </ul>
+                        </div>
+
+                        <aside class="notes">
+                            <p>Left column from Sebastian Bergmann</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h3><a href="http://github.com/sebastianbergmann/phploc">PHPLOC</a> <small>by Sebastian Bergmann</small></h3>
+
+                        <ul>
+                            <li>Measures and analyzes a project</li>
+                            <li class="fragment">LOC stats per class, method</li>
+                            <li class="fragment">Cyclomatic complexity</li>
+                            <li class="fragment">Dependencies on methods, attributes</li>
+                            <li class="fragment">Code structure</li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>Logical LOC, comments, non-comment</p>
+                            <p>Complexity per LLOC, number of methods</p>
+                            <p>Track static and global usage</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) <small>by Greg Sherwood</small>
+
+                            ```no-highlight
+                            $ phpcs /path/to/code/
+
+                            FILE: /path/to/code/example.php
+                            ------------------------------------------------------------------------
+                            FOUND 4 ERROR(S) AFFECTING 4 LINE(S)
+                            ------------------------------------------------------------------------
+                              2 | ERROR | Missing file doc comment
+                             47 | ERROR | Line not indented correctly; expected 4 spaces but found 1
+                             51 | ERROR | Missing function doc comment
+                             88 | ERROR | Line not indented correctly; expected 9 spaces but found 6
+                            ------------------------------------------------------------------------
+                            ```
+
+                            <p class="fragment">Profiles for PSR-1 and PSR-2 <a href="https://github.com/squizlabs/PHP_CodeSniffer/tree/master/CodeSniffer/Standards">included</a></p>
+
+                            <p class="fragment">Works well with <a href="http://cs.sensiolabs.org/">PHP Coding Standards Fixer</a></p>
+
+                            <aside class="notes">
+                                <p>Enforce a coding stan as a pre-commit hook</p>
+                                <p>Works as a pre-commit hook</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h3><a href="http://pdepend.org/">PHP_Depend</a> <small>by Manuel Pichler</small></h3>
+
+                        <ul>
+                            <li>Code analysis and metrics</li>
+                            <li class="fragment">NPath and cyclomatic complexity</li>
+                            <li class="fragment">Weighted method count</li>
+                            <li class="fragment">Coupling analysis</li>
+                            <li class="fragment">Code rank</li>
+                            <li class="fragment">Dozens of <a href="http://pdepend.org/documentation/software-metrics.html">additional metrics</a></li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>WMC: sum of class complexity (baseline 1; better abstraction and polymorphism)</p>
+                            <p>Code rank is PageRank for packages, classes</p>
+                            <p>Afferent (incoming) and efferrent (outgoing) coupling</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### [PHP_Depend](http://pdepend.org/) <small>by Manuel Pichler</small>
+
+                            ### Abstraction Instability Chart
+
+                            <img src="img/pdepend-jdepend.png" class="transparent" width="70%">
+
+                            <aside class="notes">
+                                <p>Instability is outgoing coupling / total coupling</p>
+                                <p>Abstraction is abstract classes / total classes</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h3><a href="http://phpmd.org/">PHP Mess Detector</a> <small>by Manuel Pichler</small></h3>
+
+                        <ul>
+                            <li>Frontend for PHP_Depend</li>
+                            <li class="fragment">Code size, complexity</li>
+                            <li class="fragment">Design (syntax, classes)</li>
+                            <li class="fragment">Unused code</li>
+                            <li class="fragment">Naming conventions</li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>Rules engine, similar to code sniffer</p>
+                            <p>Set thresholds for metrics</p> 
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3><a href="http://phpmd.org/">PHP Mess Detector</a> <small>by Manuel Pichler</small></h3>
+
+                        <img src="img/xkcd-292.png" class="transparent" width="100%">
+
+                        <aside class="notes">
+                            <p>Instability is outgoing coupling / total coupling</p>
+                            <p>Abstraction is abstract classes / total classes</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h3><a href="https://github.com/scrutinizer-ci/php-analyzer">PHP Analyzer</a> <small>by Johannes Schmitt</small></h3>
+
+                        <ul>
+                            <li>Code analysis and fixing</li>
+                            <li class="fragment">Type inference</li>
+                            <li class="fragment">Suspicious, unused code</li>
+                            <li class="fragment">Deprecated functionality</li>
+                            <li class="fragment">Coupling and cohesion</li>
+                            <li class="fragment">Framework-specific checks</li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>Checks: reflection, op precedence, access control</p>
+                            <p>Fixes: docs, reflection, use statements</p>
+                            <p>Supersedes HHVM's analyzer (now focused on Hack)</p>
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/services-512.png" class="transparent" width="30%">
+
+                            ## Continuous<br>Integration
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > Continuous Integration is practice where members of a team integrate their work frequently. Each integration is verified by an automated build (including test) to detect integration errors as quickly as possible.
+
+                            &mdash; Martin Fowler in [Continuous Integration](http://martinfowler.com/articles/continuousIntegration.html)
+
+                            <aside class="notes">
+                                <p>Automate feedback for tests and metrics</p>
+                                <p>Track metrics over time</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h4>Continuous Integration</h4>
+
+                        <img src="img/jenkins.png" class="transparent" width="80%">
+
+                        <h3 class="fragment"><a href="http://jenkins-php.org/">jenkins-php.org</a> <small>by Sebastian Bergmann</small></h3>
+                    </section>
+
+                    <section>
+                        <h4>Continuous Integration</h4>
+
+                        <div class="col-left" style="width:49%">
+                            <img src="img/travis-mascot-600px.png" class="transparent" style="height:8em;">
+                            <h3><a href="https://travis-ci.org/">Travis CI</a></h3>
+                        </div>
+
+                        <div class="col-right fragment" style="width:49%">
+                            <img src="img/scrutinizer.png" class="transparent" style="height:6em;padding:1em 0;">
+                            <h3><a href="https://scrutinizer-ci.com/">Scrutinizer CI</a></h3>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3><a href="https://scrutinizer-ci.com/">Scrutinizer CI</a><br><small>by Johannes Schmitt</small></h3>
+
+                        <ul>
+                            <li>Automated code analysis</li>
+                            <li class="fragment">Code rating</li>
+                            <li class="fragment">Tracking changes/stability</li>
+                            <li class="fragment">External code coverage</li>
+                            <li class="fragment">Automated fixes</li>
+                            <li class="fragment"><a href="https://scrutinizer-ci.com/docs/refactoring/">Refactoring tips</a></li>
+                        </ul>
+
+                        <aside class="notes">
+                            <p>Like Travis, YML config, git commit hooks</p>
+                            <p>Code coverage from PHPUnit runs on Travis</p>
+                            <p>Integrates all tools we covered</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <img src="img/scrutinizer-tour.png" width="100%">
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/idea-512.png" class="transparent" width="30%">
+
+                            ## A Final Thought
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            > There are only two types of code, code that delivers business value, and code that doesn&rsquo;t. The cleanest code that doesn&rsquo;t deliver value is still crap.
+
+                            &mdash; Anthony Ferrara in [Beyond Clean Code](http://blog.ircmaxell.com/2013/11/beyond-clean-code.html)
+
+                            <aside class="notes">
+                                <p>Automate feedback for tests and metrics</p>
+                                <p>Track metrics over time</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-state="beyond-clean-code">
+                        <h4>Beyond Clean Code</h4>
+
+                        <table style="margin-top:2em;">
+                            <tr><td></td><th>Good Business Value</th><th>Poor Business Value</th></tr>
+                            <tr><th>Clean Code</th><td>Excellent</td><td>Bad</td></tr>
+                            <tr><th>Dirty Code</th><td>Good</td><td>Garbage</td></tr>
+                        </table>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    <script type="text/template">
+                        # Thanks!
+
+                        ----
+
+                         * [Your Code Sucks, Let&rsquo;s Fix It!](http://www.slideshare.net/rdohms/object-calisthenicstek13) <small>by Rafael Dohms</small>
+                         * [Object Calisthenics Applied to PHP](http://www.slideshare.net/guilhermeblanco/object-calisthenics-applied-to-php) <small>by Guilherme Blanco</small>
+                         * [Object Calisthenics](http://williamdurand.fr/2013/06/03/object-calisthenics/) <small>by William Durand</small>
+                         * [Development by the Numbers](http://blog.ircmaxell.com/2013/05/development-by-numbers-slides.html) <small>by Anthony Ferrara</small>
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * http://xkcd.com/844/
+                        * http://xkcd.com/292/
+                        * http://imagery.pragprog.com/products/105/twa.jpg
+                        * http://icons8.com by http://www.visualpharm.com/
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>
