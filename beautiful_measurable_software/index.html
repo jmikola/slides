@@ -25,23 +25,21 @@
         <div class="reveal">
             <div class="slides">
                 <section data-state="title">
-                    <h1>Developing Beautiful, Measurable Software</h1>
+                    <h1>Developing Beautiful,<br>Measurable Software</h1>
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
                 </section>
 
                 <section>
-                    <section>
-                        <img src="img/xkcd-844.png" class="transparent" style="float:left;margin:0;">
+                    <img src="img/xkcd-844.png" class="transparent" style="float:left;margin:0;">
 
-                        <h2>Agenda</h2>
+                    <h2>Agenda</h2>
 
-                        <ul>
-                            <li>Training</li>
-                            <li>Metrics</li>
-                            <li>Tools</li>
-                        </ul>
-                    </section>
+                    <ul>
+                        <li>Training</li>
+                        <li>Metrics</li>
+                        <li>Tools</li>
+                    </ul>
                 </section>
 
                 <section>
@@ -610,8 +608,6 @@
                     </section>
                 </section>
 
-                <section></section>
-
                 <section>
                     <section data-markdown>
                         <script type="text/template">
@@ -706,7 +702,7 @@
                     <section>
                         <h4>Cyclomatic Complexity</h4>
 
-                        <img src="img/aferrara.png" class="transparent fragment" width="20%" style="position:absolute;right:0;">
+                        <img src="img/aferrara.png" class="transparent fragment" width="20%" style="position:absolute;right:0;z-index:99">
 
                         <table style="margin-top:2em;">
                             <tr><th>CC</th><th>Complexity</th></tr>
@@ -809,6 +805,8 @@
                         <script type="text/template">
                             #### NPath Complexity
 
+                            <img src="img/aferrara-glass.png" class="transparent fragment" width="20%" style="position:absolute;right:0;z-index:99">
+
                             ```php
                             public function foo($a, $b, $c, $d)
                             {
@@ -832,13 +830,9 @@
 
                             <p class="fragment">CC = 5 and NPath = 16!</p>
                             <p class="fragment">Worst case: NPath = 2<sup>(CC - 1)</sup></p>
-
-                            <img src="img/aferrara-glass.png" class="transparent fragment" width="23%" style="position:absolute;top:0;right:0;z-index:1;">
                         </script>
                     </section>
                 </section>
-
-                <section></section>
 
                 <section>
                     <section data-markdown>
@@ -1118,8 +1112,6 @@
                 <section data-markdown>
                     <script type="text/template">
                         # Thanks!
-
-                        ### Questions?
 
                         ----
 
