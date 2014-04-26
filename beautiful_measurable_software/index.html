@@ -167,13 +167,13 @@
                                     $buffer = new Buffer();
 
                                     for ($i = 0; $i < 10; $i++) {
-                                        collectRow($buffer, $i);
+                                        $this->collectRow($buffer, $i);
                                     }
 
                                     return (string) $buffer;
                                 }
 
-                                function collectRow(Buffer $buffer, $row)
+                                public function collectRow(Buffer $buffer, $row)
                                 {
                                     for ($i = 0; $i < 10; $i++) {
                                         $buffer->append($this->data[$row][$i]);
@@ -691,12 +691,12 @@
                                     if ($b) {
                                         echo 'a and b';
                                     } else {
-                                        echo 'a'
+                                        echo 'a';
                                     }
                                 } elseif ($b) {
                                     echo 'b';
                                 } else {
-                                    echo 'neither'
+                                    echo 'neither';
                                 }
                             }
                             ```
@@ -708,7 +708,7 @@
                     <section>
                         <h4>Cyclomatic Complexity</h4>
 
-                        <img src="img/aferrara.png" class="transparent fragment" width="20%" style="position:absolute;right:0;z-index:99">
+                        <img src="img/aferrara.png" class="transparent fragment" width="20%" style="position:absolute;right:0.5em;z-index:99">
 
                         <table style="margin-top:2em;">
                             <tr><th>CC</th><th>Complexity</th></tr>
@@ -760,12 +760,12 @@
                                     if ($b) {
                                         echo 'a and b';
                                     } else {
-                                        echo 'a'
+                                        echo 'a';
                                     }
                                 } elseif ($b) {
                                     echo 'b';
                                 } else {
-                                    echo 'neither'
+                                    echo 'neither';
                                 }
                             }
                             ```
@@ -789,12 +789,12 @@
                                     if ($b) {
                                         echo 'a and b';
                                     } else {
-                                        echo 'a'
+                                        echo 'a';
                                     }
                                 } elseif ($b) {
                                     echo 'b';
                                 } else {
-                                    echo 'neither'
+                                    echo 'neither';
                                 }
 
                                 if ($c) {
@@ -807,36 +807,34 @@
                         </script>
                     </section>
 
-                    <section data-markdown>
-                        <script type="text/template">
-                            #### NPath Complexity
+                    <section>
+                        <h4>NPath Complexity</h4>
 
-                            <img src="img/aferrara-glass.png" class="transparent fragment" width="20%" style="position:absolute;right:0;z-index:99">
+                        <img src="img/aferrara-glass.png" class="transparent fragment" width="20%" style="position:absolute;right:0.5em;z-index:99">
 
-                            ```php
-                            public function foo($a, $b, $c, $d)
-                            {
-                                if ($a) {
-                                    echo 'a';
-                                }
+                        <pre><code class="php" data-trim>
+public function foo($a, $b, $c, $d)
+{
+    if ($a) {
+        echo 'a';
+    }
 
-                                if ($b) {
-                                    echo 'b';
-                                }
+    if ($b) {
+        echo 'b';
+    }
 
-                                if ($c) {
-                                    echo 'c';
-                                }
+    if ($c) {
+        echo 'c';
+    }
 
-                                if ($d) {
-                                    echo 'd';
-                                }
-                            }
-                            ```
+    if ($d) {
+        echo 'd';
+    }
+}
+                        </code></pre>
 
-                            <p class="fragment">CC = 5 and NPath = 16!</p>
-                            <p class="fragment">Worst case: NPath = 2<sup>(CC - 1)</sup></p>
-                        </script>
+                        <p class="fragment">CC = 5 and NPath = 16!</p>
+                        <p class="fragment">Worst case: NPath = 2<sup>(CC - 1)</sup></p>
                     </section>
                 </section>
 
@@ -982,7 +980,7 @@
                     </section>
 
                     <section>
-                        <h3><a href="http://phpmd.org/">PHP Mess Detector</a> <small>by Manuel Pichler</small></h3>
+                        <h4><a href="http://phpmd.org/">PHP Mess Detector</a> <small>by Manuel Pichler</small></h4>
 
                         <img src="img/xkcd-292.png" class="transparent" width="100%">
 
@@ -1059,7 +1057,7 @@
                     </section>
 
                     <section>
-                        <h3><a href="https://scrutinizer-ci.com/">Scrutinizer CI</a><br><small>by Johannes Schmitt</small></h3>
+                        <h3><a href="https://scrutinizer-ci.com/">Scrutinizer CI</a> <small>by Johannes Schmitt</small></h3>
 
                         <ul>
                             <li>Automated code analysis</li>
@@ -1078,6 +1076,8 @@
                     </section>
 
                     <section>
+                        <h4><a href="https://scrutinizer-ci.com/">Scrutinizer CI</a> <small>by Johannes Schmitt</small></h4>
+
                         <img src="img/scrutinizer-tour.png" width="100%">
                     </section>
                 </section>
