@@ -127,13 +127,12 @@
                             * Date/Time functions: `strftime()`, `time()`
                             * Extensions modeled on C APIs
                                 * `curl`, `gd`, `gmp`, `mysql`, `pcntl`
+
+                            <aside class="notes">
+                                <p>Much of PHP&rsquo;s syntax was modeled after C and Java.</p>
+                                <p>Many of its components bear striking similarities to C APIs.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Much of PHP's syntax was modeled after C and Java.
-
-                            Many of its components bear striking similarities to C APIs.
-                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -169,11 +168,11 @@
                               return 0;
                             }
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            Obvious differences: typed variables; including the IO library; the main() function.
-                        </aside>
+                            <aside class="notes">
+                                <p>Obvious differences: typed variables; including the IO library; the main() function.</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -186,13 +185,12 @@
                             | Typing  | Dynamic        | Static      |
                             | Scoping | Function-level | Block-level |
                             | Memory  | Automatic      | Manual      |
+
+                            <aside class="notes">
+                                <p>C source must be compiled before executing.</p>
+                                <p>Types are known/checked at compile time (static).</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            C source must be compiled before executing.
-
-                            Types are known/checked at compile time (static).
-                        </aside>
                     </section>
                 </section>
 
@@ -220,13 +218,12 @@
                             * Type declarations
                             * Function prototypes
                             * Defined constants, macros
+
+                            <aside class="notes">
+                                <p>Constants and macros are evaluated during pre-processing and before compilation.</p>
+                                <p>Macros allow concise syntax (often function-like) to expand into complex code snippets.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Constants and macros are evaluated during pre-processing and before compilation.
-
-                            Macros allow concise syntax (often function-like) to expand into complex code snippets.
-                        </aside>
                     </section>
 
                     <section>
@@ -249,11 +246,11 @@
                             * Dynamic linking (`.so`, `.dll`)
                                 * Modules loaded at run-time
                                 * More flexibility, slight overhead
-                        </script>
 
-                        <aside class="notes">
-                            Illustrated with PHP extensions: compiled in vs. loaded dynamically (e.g. PECL).
-                        </aside>
+                            <aside class="notes">
+                                <p>Illustrated with PHP extensions: compiled in vs. loaded dynamically (e.g. PECL).</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -265,13 +262,12 @@
                             * Block-level scoping
                             * Source and header files
                             * `extern` and `static`
+
+                            <aside class="notes">
+                                <p>Extern may be used to declare a global variable that will be known after linking.</p>
+                                <p>Static may be used to restrict visibility to the same file.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Extern may be used to declare a global variable that will be known after linking.
-
-                            Static may be used to restrict visibility to the same file.
-                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -283,19 +279,13 @@
                             * Floating point numbers
                                 * `float`, `double`
                             * Array and `struct` aggregates
+
+                            <aside class="notes">
+                                <p>Ints: 8, 16, 32 or 64-bit. Floats and doubles typically 32 and 64-bit. Varies by platform.</p>
+                                <p>Arrays are sequence of a type in memory. Length must be tracked separately.</p>
+                                <p>Strings aren&rsquo;t a type: null-terminated character arrays.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Typically, integer types are 8, 16, 32 and 64-bit, respectively. This varies by platform.
-
-                            Floats and doubles are typically 32 and 64-bit, respectively.
-
-                            Structures aggregate multiple data fields into a single variable.
-
-                            Arrays are a collection of values, all of the same type, stored continguously in memory. Length must be tracked separately.
-
-                            Strings aren't a type; they are null-terminated character arrays.
-                        </aside>
                     </section>
                 </section>
 
@@ -327,11 +317,11 @@
                             | -------- | -------- | ------------ |
                             | `a`      | `0x8130` | `0x00000003` |
                             | `ptr`    | `0x8134` | `0x00000000` |
-                        </script>
 
-                        <aside class="notes">
-                            A NULL pointer refers to memory address zero.
-                        </aside>
+                            <aside class="notes">
+                                A NULL pointer refers to memory address zero.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown class="small-table">
@@ -346,11 +336,11 @@
                             | -------- | -------- | ------------ |
                             | `a`      | `0x8130` | `0x00000003` |
                             | `ptr`    | `0x8134` | `0x00008130` |
-                        </script>
 
-                        <aside class="notes">
-                            While PHP uses the ampersand unary operator to reference a variable, in C it returns a variable's memory address (often for assignment to a pointer).
-                        </aside>
+                            <aside class="notes">
+                                While PHP uses the ampersand unary operator to reference a variable, in C it returns a variable&rsquo;s memory address (often for assignment to a pointer).
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown class="small-table">
@@ -365,11 +355,11 @@
                             | -------- | -------- | ------------ |
                             | `a`      | `0x8130` | `0x00000006` |
                             | `ptr`    | `0x8134` | `0x00008130` |
-                        </script>
 
-                        <aside class="notes">
-                            Dereferencing a pointer allows us to read/write to its memory address.
-                        </aside>
+                            <aside class="notes">
+                                Dereferencing a pointer allows us to read/write to its memory address.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -388,17 +378,14 @@
                             sizeof(a);   /* 4 × sizeof(int) */
                             sizeof(ptr); /* sizeof(int*) */
                             ```
+
+                            <aside class="notes">
+                                <p>Arrays can be thought of as pointers to their first element.</p>
+                                <p>Array access: pointer arithmetic and dereferencing.</p>
+                                <p>Pointer arithmetic uses the size of the type it points to.</p>
+                                <p>sizeof operator reports different results for each.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Arrays can be thought of as pointers to their first element.
-
-                            Array access syntax is a form of pointer arithmetic and dereferencing.
-
-                            Pointer arithmetic uses the size of the type it points to.
-
-                            Note that the sizeof operator will report different results for each.
-                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -419,15 +406,13 @@
                             /* Heap allocation */
                             int *foo = malloc(10 * sizeof(int));
                             ```
+
+                            <aside class="notes">
+                                <p>Stack memory is simple and typically faster than dynamically allocated memory.</p>
+                                <p>Each function allocates a portion of limited stack memory, which is then freed upon return. Deep recursion can lead to stack overflows.</p>
+                                <p>Dynamic allocation pulls from a large pool of memory called the heap.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Stack memory is simple and typically faster than dynamically allocated memory.
-
-                            Each function allocates a portion of limited stack memory, which is then freed upon return. Deep recursion can lead to stack overflows.
-
-                            Dynamic allocation pulls from a large pool of memory called the heap.
-                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -450,7 +435,7 @@
 <!--
                 <section>
                     <section>
-                        <blockquote class="twitter-tweet" data-conversation="none" data-dnt="true" align="center"><p>Timeless, inimitable <a href="http://t.co/7jCmxgif">http://t.co/7jCmxgif</a></p>&mdash; Jeremy Mikola (@jmikola) <a href="https://twitter.com/jmikola/statuses/294319768637423616">January 24, 2013</a></blockquote>
+                        <blockquote class="twitter-tweet" data-conversation="none" data-dnt="true" align="center"><p>Timeless, inimitable <a href="http://www.cs.cf.ac.uk/Dave/C/">cs.cf.ac.uk/Dave/C/</a></p>&mdash; Jeremy Mikola (@jmikola) <a href="https://twitter.com/jmikola/statuses/294319768637423616">January 24, 2013</a></blockquote>
                         <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                     </section>
 
@@ -483,25 +468,20 @@
                             * Data structures, utility functions
                             * Memory management, persistence
                             * Thread safety
+
+                            <aside class="notes">
+                                <p>Macros for classes, functions, etc. Utility functions ease working with internal types (e.g. hash tables).</p>
+                                <p>PHP has API for memory allocation (can persist between requests). Debug builds can catch memory leaks.</p>
+                                <p>Thread safety with TSRM macros.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Macros greatly reduce the amount of code required to craft classes, functions, etc.
-
-                            Utility functions ease working with internal types (e.g. hash tables).
-
-                            PHP has its own API for memory allocation, including allocating memory to persist between requests.
-
-                            If compiled with debugging, PHP can also catch memory leaks in your C code.
-
-                            Zend provides thread-safety if you include TSRM macros in functions.
-                        </aside>
                     </section>
 
                     <section data-state="lxr" data-background="img/zelda_take_this.png" data-background-size="cover" data-background-position="center">
                         <a href="http://lxr.php.net">lxr.php.net</a>
 
                         <aside class="notes">
+                            <a href="http://en.wikipedia.org/wiki/LXR_Cross_Referencer">LXR Cross Referencer</a>: general-purpose source code indexer, with links to definition and usage of identifiers.
                         </aside>
                     </section>
 
@@ -522,15 +502,13 @@
                             * Extensions in `ext/` and PECL
                             * Server APIs in `sapi/`
                             * Tests live in `tests/`
+
+                            <aside class="notes">
+                                <p>Core source defines many macros and functions to operate on built-in types, as well as essential APIs such as memory management.</p>
+                                <p>Extensions can serve as boilerplate for starting a new PHP extension from scratch, and are great examples to learn from.</p>
+                                <p>Server APIs execute PHP source code (e.g. CLI, FPM, Apache).</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Core source defines many macros and functions to operate on built-in types, as well as essential APIs such as memory management.
-
-                            Extensions can serve as boilerplate for starting a new PHP extension from scratch, and are great examples to learn from.
-
-                            Server APIs execute PHP source code (e.g. CLI, FPM, Apache).
-                        </aside>
                     </section>
                 </section>
 
@@ -548,15 +526,13 @@
                             * Documentation on [qa.php.net](http://qa.php.net/)
 
                             <p class="fragment" style="margin-top: 1em;">Why not PHPUnit, PHPSpec, etc?</p>
+
+                            <aside class="notes">
+                                <p>PHPT files are divided into sections.</p>
+                                <p>Additional blocks can be specified to skip tests (by some logic), expect failures, simulate HTTP requests, define environment variables, pass CLI arguments, etc.</p>
+                                <p>Isolated execution makes investigating segfaults and the like much easier.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            PHPT files are divided into sections.
-
-                            Additional blocks can be specified to skip tests (by some logic), expect failures, simulate HTTP requests, define environment variables, pass CLI arguments, etc.
-
-                            Isolated execution makes investigating segfaults and the like much easier.
-                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -579,15 +555,13 @@
                             bool(false)
                             string(3) "abc"
                             ```
+
+                            <aside class="notes">
+                                <p>PHP&rsquo;s test framework will parse this file, execute it, and check for expected output.</p>
+                                <p>EXPECTF allows for printf-like patterns.</p>
+                                <p>Test failures will leave behind a diff file.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            PHP's test framework will parse this file, execute it, and check for expected output.
-
-                            EXPECTF allows for printf-like patterns.
-
-                            Test failures will leave behind a diff file.
-                        </aside>
                     </section>
                 </section>
 
@@ -630,17 +604,13 @@
                                 zend_uchar is_ref__gc;      /* is a reference? */
                             } zval;
                             ```
+
+                            <aside class="notes">
+                                <p>A union here is special structure allowing the same memory to be accessed with different type descriptions.</p>
+                                <p>HashTable and zend_object_value are also type-defined structures.</p>
+                                <p>typedef allows for platform-independent types, such as "uint32_t", when int/long might vary. Also for creating human-readable aliases for function signatures. PHP core does this quite a bit.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            A union here is special structure allowing the same memory to be accessed with different type descriptions.
-
-                            HashTable and zend_object_value are also type-defined structures.
-
-                            Another benefit of typedef is having platform-independent types, such as "uint32_t", when int/long might vary.
-
-                            Also helpful for creating human-readable aliases for function signatures. PHP core does this quite a bit.
-                        </aside>
                     </section>
 
                     <section data-markdown class="small-table">
@@ -657,11 +627,11 @@
                             | `Z_ARRVAL` | `Z_ARRVAL_P` | `Z_ARRVAL_PP` |
                             | `Z_OBJVAL` | `Z_OBJVAL_P` | `Z_OBJVAL_PP` |
                             | `Z_TYPE`   | `Z_TYPE_P`   | `Z_TYPE_PP`   |
-                        </script>
 
-                        <aside class="notes">
-                            This may seem overwhelming, but "_P" and "_PP" simply mean that the argument is a pointer, or pointer to a pointer, instead of a normal zval struct.
-                        </aside>
+                            <aside class="notes">
+                                This may seem overwhelming, but "_P" and "_PP" simply mean that the argument is a pointer, or pointer to a pointer, instead of a normal zval struct.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -687,15 +657,13 @@
                                 RETVAL_ZVAL(getThis(), 1, 0);
                             }
                             ```
+
+                            <aside class="notes">
+                                <p>Function and method macros abstract away the boilerplate for handling PHP arguments and return values in a C function.</p>
+                                <p>zend_parse_parameters (or ZPP for short) is an MVP here. Think of it like an sscanf for functions arguments.</p>
+                                <p>Of note, the TSRM macros get inserted before any variadic arguments.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            Function and method macros abstract away the boilerplate for handling PHP arguments and return values in a C function.
-
-                            zend_parse_parameters (or ZPP for short) is an MVP here. Think of it like an sscanf for functions arguments.
-
-                            Of note, the TSRM macros get inserted before any variadic arguments.
-                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -727,13 +695,12 @@
                                 zval_set_refcount_p(return_value, refcount);
                             }
                             ```
+
+                            <aside class="notes">
+                                <p>The C pre-processor evaluates these macros before compilation.</p>
+                                <p>After a few iterations of replacement, teir benefit becomes very clear.</p>
+                            </aside>
                         </script>
-
-                        <aside class="notes">
-                            The C pre-processor evaluates these macros before compilation.
-
-                            After a few iterations of replacement, teir benefit becomes very clear.
-                        </aside>
                     </section>
 
                     <section data-markdown>
@@ -776,11 +743,11 @@
                             * [Coding standards](https://github.com/php/php-src/blob/master/CODING_STANDARDS) and test coverage
 
                             <p class="fragment" style="margin-top: 1em;">Windows? Difficult but [not impossible](https://wiki.php.net/internals/windows/stepbystepbuild).</p>
-                        </script>
 
-                        <aside class="notes">
-                            Building extensions on Linux/UNIX will require a familiar build environment (Autoconf, compiler, core sources). Windows is a bit trickier.
-                        </aside>
+                            <aside class="notes">
+                                Building extensions on Linux/UNIX will require a familiar build environment (Autoconf, compiler, core sources). Windows is a bit trickier.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -795,11 +762,11 @@
                             Zend Extension Api No:   220100525
                             $
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            phpize is a binary in PHP core, which creates a configure script out of a module's configuration file.
-                        </aside>
+                            <aside class="notes">
+                                phpize is a binary in PHP core, which creates a configure script out of a module&rsquo;s configuration file.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -822,11 +789,11 @@
                             config.status: executing libtool commands
                             $
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            In turn, configure creates a Makefile for your project.
-                        </aside>
+                            <aside class="notes">
+                                In turn, configure creates a Makefile for your project.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -842,11 +809,11 @@
                             Don't forget to run 'make test'.
                             $
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            Make compiles your project. Alternative targets exist: clean, test, install, etc.
-                        </aside>
+                            <aside class="notes">
+                                Make compiles your project. Alternative targets exist: clean, test, install, etc.
+                            </aside>
+                        </script>
                     </section>
 
                     <section>
