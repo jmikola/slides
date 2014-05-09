@@ -37,6 +37,19 @@ div.col-right {
     width: 50%;
 }
 
+div.col-inline {
+    display: inline-block;
+}
+
+div.col-inline + div.col-inline {
+    margin-left: 2em;
+}
+
+.reveal section.spaced-out p {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+}
+
 section[data-state="title"] h1 {
     font-size: 1.8em;
     text-align: right;
