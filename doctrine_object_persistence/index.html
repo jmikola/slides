@@ -300,12 +300,12 @@
                             * Gateways are thin abstractions
                             * Data model not included
                             * Hydration and persistence?
-                        </script>
 
-                        <aside class="notes">
-                            <p>Can be limiting for larger applications.</p>
-                            <p>Zend\Db does integrate with ZF's hydrator component (DIY).</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Can be limiting for larger applications.</p>
+                                <p>Zend\Db does integrate with ZF&rsquo;s hydrator component (DIY).</p>
+                            </aside>
+                        </script>
                     </section>
                 </section>
 
@@ -370,11 +370,11 @@
                             * Persistence logic
                             * Common queries
                             * CRUD methods
-                        </script>
 
-                        <aside class="notes">
-                            Models are not simple objects and often extend a base class.
-                        </aside>
+                            <aside class="notes">
+                                Models are not simple objects and often extend a base class.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -397,11 +397,11 @@
                             ```
 
                             <small>http://phpactiverecord.org/projects/main/wiki/Quick_Start</small>
-                        </script>
 
-                        <aside class="notes">
-                            The active record design pattern is found in many PHP ORMs.
-                        </aside>
+                            <aside class="notes">
+                                The active record design pattern is found in many PHP ORMs.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -410,12 +410,12 @@
 
                             * [Single Responsibility Principle](http://en.wikipedia.org/wiki/Single_responsibility_principle)
                             * Testability
-                        </script>
 
-                        <aside class="notes">
-                            <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
-                            <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
+                                <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section>
@@ -439,12 +439,12 @@
                             * Testability
                             * [Multitenancy](http://en.wikipedia.org/wiki/Multitenancy)
                             * Scalability and performance
-                        </script>
 
-                        <aside class="notes">
-                            <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
-                            <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>If models persist themselves, how do we support multiple databases or batch writes?</p>
+                                <p>For NoSQL databases, does this mean we have multiple classes access one collection?</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -561,11 +561,11 @@
                             ```
 
                             <small>http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/tutorials/getting-started.html</small>
-                        </script>
 
-                        <aside class="notes">
-                            We see three distinct classes here: the model, persistence manager, and repository (for queries).
-                        </aside>
+                            <aside class="notes">
+                                We see three distinct classes here: the model, persistence manager, and repository (for queries).
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -575,32 +575,32 @@
                             * Simple models
                             * Manager handles persistence
                             * Repository holds queries
-                        </script>
 
-                        <aside class="notes">
-                            Models can be plain PHP objects.
-                        </aside>
+                            <aside class="notes">
+                                Models can be plain PHP objects.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
                             ### &#9745; Multitenancy
-                        </script>
 
-                        <aside class="notes">
-                            Multitenancy is possible with multiple managers, each with their own database.
-                        </aside>
+                            <aside class="notes">
+                                Multitenancy is possible with multiple managers, each with their own database.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
                             ### &#9745; Scalability and performance
-                        </script>
 
-                        <aside class="notes">
-                            <p>Lighter models and few mappers makes better use of memory.</p>
-                            <p>Managers can flush changes for many objects at once.</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Lighter models and few mappers makes better use of memory.</p>
+                                <p>Managers can flush changes for many objects at once.</p>
+                            </aside>
+                        </script>
                     </section>
                 </section>
 
@@ -612,11 +612,11 @@
                             in Doctrine ORM 2.x, ODMs
 
                             <span class="fragment"><small>Inspired by [Hibernate](http://www.hibernate.org/) and [JPA 2.0](http://jcp.org/en/jsr/detail?id=317)</small><span>
-                        </script>
 
-                        <aside class="notes">
-                            JSR 317
-                        </aside>
+                            <aside class="notes">
+                                JSR 317
+                            </aside>
+                        </script>
                     </section>
 
                     <section>
@@ -658,12 +658,12 @@
                                 // ...
                             }
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            <p>Metadata is the mapping between the model and its storage.</p>
-                            <p>Doctrine has drivers for annotations, YAML, XML, and PHP.</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Metadata is the mapping between the model and its storage.</p>
+                                <p>Doctrine has drivers for annotations, YAML, XML, and PHP.</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section>
@@ -726,16 +726,16 @@
                             * Managed
                             * Removed
                             * Detached
-                        </script>
 
-                        <aside class="notes">
-                            <p>
-                                New: I have no persistent identity (e.g. just created).
-                                <br>Managed: I'm known to the manager and am being tracked for changes.
-                                <br>Removed: I'm known, but will be removed on the next commit.
-                                <br>Detached: I have a persistent identity, but am no longer being tracked.
-                            </p>
-                        </aside>
+                            <aside class="notes">
+                                <p>
+                                    New: I have no persistent identity (e.g. just created).
+                                    <br>Managed: I&rsquo;m known to the manager and am being tracked for changes.
+                                    <br>Removed: I&rsquo;m known, but will be removed on the next commit.
+                                    <br>Detached: I have a persistent identity, but am no longer being tracked.
+                                </p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -774,11 +774,11 @@
 
                             $userA === $userB; // true
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            Anecdote about Symfony forms binding to the same user stored in the session.
-                        </aside>
+                            <aside class="notes">
+                                Anecdote about Symfony forms binding to the same user stored in the session.
+                            </aside>
+                        </script>
                     </section>
 
                     <section>
@@ -819,12 +819,12 @@
                             * Load
                             * Flush
                             * Clear
-                        </script>
 
-                        <aside class="notes">
-                            <p>Pre and post events exist for many of these.</p>
-                            <p>Also for loading metadata, storage-specific events (e.g. move for PHPCR, conflict for CoucheDB).</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Pre and post events exist for many of these.</p>
+                                <p>Also for loading metadata, storage-specific events (e.g. move for PHPCR, conflict for CoucheDB).</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section>
@@ -904,11 +904,11 @@
                                ->getQuery()
                                ->getResult()
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            The WHERE clause is a bit of DQL.
-                        </aside>
+                            <aside class="notes">
+                                The WHERE clause is a bit of DQL.
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -928,11 +928,11 @@
                                ->getQuery()
                                ->getResult();
                             ```
-                        </script>
 
-                        <aside class="notes">
-                            Expressions are encouraged over string clauses (less parsing).
-                        </aside>
+                            <aside class="notes">
+                                Expressions are encouraged over string clauses (less parsing).
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-background="img/dql-bnf.png" data-background-size="contain" data-background-position="center top">
@@ -956,14 +956,14 @@
                             * Change tracking policies
                             * Proxy objects, fetch modes
                             * Code generation
-                        </script>
 
-                        <aside class="notes">
-                            <p>Fetch mode tuning can mitigate the n+1 problem.</p>
-                            <p>Deferred implicit: All managed objects checked for changes.</p>
-                            <p>Deferred explicit: UoW only considers persisted or cascaded objects.</p>
-                            <p>Notify: property modifications tracked manually.</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Fetch mode tuning can mitigate the n+1 problem.</p>
+                                <p>Deferred implicit: All managed objects checked for changes.</p>
+                                <p>Deferred explicit: UoW only considers persisted or cascaded objects.</p>
+                                <p>Notify: property modifications tracked manually.</p>
+                            </aside>
+                        </script>
                     </section>
                 </section>
 
@@ -1007,12 +1007,12 @@
                             * Supports over a dozen backends
                             * Namespaces and versioning
                             * Very simple API
-                        </script>
 
-                        <aside class="notes">
-                            <p>fetch(), contains(), save(), delete()</p>
-                            <p>Cache PSR, when completed, will be supported in a later version.</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>fetch(), contains(), save(), delete()</p>
+                                <p>Cache PSR, when completed, will be supported in a later version.</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -1022,12 +1022,12 @@
                             * DocBlock annotation parsing
                             * Utilizes the lexer component
                             * Cache integration
-                        </script>
 
-                        <aside class="notes">
-                            <p>Used by Symfony, Zend Framework, etc.</p>
-                            <p>A de facto standard for PHP annotation parsing.</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Used by Symfony, Zend Framework, etc.</p>
+                                <p>A de facto standard for PHP annotation parsing.</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -1038,11 +1038,11 @@
                             * ArrayCollection implementation
                             * ORM/ODM persistent collections
                             * Java-inspired Criteria API
-                        </script>
 
-                        <aside class="notes">
-                            <p>Persistent collections allow change-tracking of reference/embed-many relationships.</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Persistent collections allow change-tracking of reference/embed-many relationships.</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -1053,13 +1053,13 @@
                             * SQL database abstraction
                             * Type mapping
                             * Query builder
-                        </script>
 
-                        <aside class="notes">
-                            <p>The underlying database abstraction of ORM, which can be used on its own.</p>
-                            <p>Also accessible through ORM for low-level operations.</p>
-                            <p>Abstracts Data-Definition Language (DDL) for databases.</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>The underlying database abstraction of ORM, which can be used on its own.</p>
+                                <p>Also accessible through ORM for low-level operations.</p>
+                                <p>Abstracts Data-Definition Language (DDL) for databases.</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
@@ -1081,13 +1081,13 @@
                             * PHP Content Repository ODM
                             * OrientDB ODM
                             * Database migrations
-                        </script>
 
-                        <aside class="notes">
-                            <p>Symfony and ZF integrations for ORM/ODM libraries.</p>
-                            <p>Community integrations for other frameworks.</p>
-                            <p>Java joke: OXM (Object to XML).</p>
-                        </aside>
+                            <aside class="notes">
+                                <p>Symfony and ZF integrations for ORM/ODM libraries.</p>
+                                <p>Community integrations for other frameworks.</p>
+                                <p>Java joke: OXM (Object to XML).</p>
+                            </aside>
+                        </script>
                     </section>
                 </section>
 
@@ -1103,12 +1103,13 @@
                             > Essentially the ORM can handle about 80-90% of the mapping problems, but that last chunk always needs careful work by somebody who really understands how a relational database works.
 
                             &mdash; Martin Fowler in [OrmHate](http://martinfowler.com/bliki/OrmHate.html)
-                        </script>
 
-                        <aside class="notes">
-                            <p>ORMs (and ODMs) are not an excuse for ignorance.</p>
-                            <p>Guilherme Blanco: "ORMs don't kill your database, developers do".</p>
-                        </aside>
+                            <p class="fragment" style="margin-top:3em;"><a href="http://symfony.com/video/1/orms-don-t-kill-your-database-developers-do/English">ORMs don&rsquo;t kill your database, developers do!</a><br>&mdash; Guilherme Blanco</p>
+
+                            <aside class="notes">
+                                <p>ORMs (and ODMs) are not an excuse for ignorance.</p>
+                            </aside>
+                        </script>
                     </section>
 
                     <section data-markdown>
