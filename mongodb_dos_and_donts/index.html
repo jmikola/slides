@@ -419,7 +419,7 @@
                             ### Use Atomic Operators
 
                             ```javascript
-                            document = db.users.find({ _id: "jmikola" });
+                            document = db.users.findOne({ _id: "jmikola" });
                             document["friends"].push("pgodel");
                             db.users.save(document);
                             ```
