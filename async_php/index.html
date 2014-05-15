@@ -36,6 +36,10 @@
                     <br>
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+
+                    <br>
+
+                    <img src="img/mongodb_ondark_pixelated.png" class="transparent fragment" alt="MongoDB" width="50%" style="display: inline-block;">
                 </section>
 
                 <section>
@@ -206,7 +210,7 @@
                         <p><small><a href="http://www.kegel.com/c10k.html">http://www.kegel.com/c10k.html</a></small></p>
 
                         <aside class="notes">
-                            Quote from 2001.
+                            Quote from Dan Kegel in 2001.
                         </aside>
                     </section>
 
@@ -723,8 +727,8 @@
                             ```
 
                             ```no-highlight
-                            $ php dns.php warsaw2013.symfony.com
-                            Host: 79.125.119.210
+                            $ php dns.php conference.laravel.com
+                            Host: 50.116.25.185
                             ```
 
                             <aside class="notes">
@@ -736,18 +740,9 @@
                     </section>
 
                     <section>
-                        <h2>Spoiler Alert</h2>
-
-                        <pre style="font-size: 1em;"><code class="no-highlight" data-trim>
-$ php dns.php warsaw2014.symfony.com
-Host: 79.125.119.210
-                        </code></pre>
-                    </section>
-
-                    <section>
                         <h3>Suggested Reading</h3>
 
-                        <p style="margin-top: 1.5em"><a href="http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/">&ldquo;You&rsquo;re missing the point of promises&rdquo;</a></p>
+                        <p style="margin-top: 1.5em"><a href="http://domenic.me/2012/10/14/youre-missing-the-point-of-promises/">&ldquo;You&rsquo;re missing the point of promises&rdquo;</a><br>&mdash; Domenic Denicola</p>
 
                         <p class="fragment" style="margin-top: 1.5em">Now back to the stack&hellip;</p>
                     </section>
@@ -844,8 +839,25 @@ Host: 79.125.119.210
                                 });
                             });
 
-                            $socket->listen(4000);
+                            $socket->listen(2014, '0.0.0.0');
                             $loop->run();
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## TCP Chat
+
+                            ```no-highlight
+                            $ telnet laracon.jmikola.net 2014
+                            Trying 10.10.217.202...
+                            Connected to laracon.jmikola.net.
+                            Escape character is '^]'.
+
+                            Is this thing on?
+
+                            10.10.217.202: Hello!
                             ```
                         </script>
                     </section>
@@ -928,7 +940,7 @@ Host: 79.125.119.210
                     <img src="img/composer.png" class="transparent" width="40%">
 
                     <pre style="font-size: 0.95em;"><code class="no-highlight" data-trim>
-$ composer require "react/react=0.4.*@dev"
+$ composer require "react/react=~0.4"
                     </code></pre>
                 </section>
 
@@ -958,7 +970,7 @@ $ composer require "react/react=0.4.*@dev"
                     <script type="text/template">
                         ## Thanks! <!-- .element: style="margin: 2em 0;" -->
 
-                        * [`joind.in/10377`](https://joind.in/10377)
+                        * [`joind.in/11331`](https://joind.in/11331)
                         * [`reactphp.org`](http://reactphp.org)
 
                         ### Questions? <!-- .element: style="margin-top: 3.5em;" -->
