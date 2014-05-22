@@ -727,8 +727,8 @@
                             ```
 
                             ```no-highlight
-                            $ php dns.php conference.laravel.com
-                            Host: 50.116.25.185
+                            $ php dns.php jmikola.net
+                            Host: 97.107.131.54
                             ```
 
                             <aside class="notes">
@@ -839,7 +839,7 @@
                                 });
                             });
 
-                            $socket->listen(2014, '0.0.0.0');
+                            $socket->listen(8888, '0.0.0.0');
                             $loop->run();
                             ```
                         </script>
@@ -850,9 +850,9 @@
                             ## TCP Chat
 
                             ```no-highlight
-                            $ telnet laracon.jmikola.net 2014
-                            Trying 10.10.217.202...
-                            Connected to laracon.jmikola.net.
+                            $ telnet jmikola.net 8888
+                            Trying 97.107.131.54...
+                            Connected to jmikola.net.
                             Escape character is '^]'.
 
                             Is this thing on?
