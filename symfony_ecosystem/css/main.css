@@ -1,0 +1,134 @@
+section[data-state="composer-title"] h2 {
+    font-family: 'Ruthie', cursive;
+    font-size: 6em;
+    text-shadow:  10px  10px 50px #000,
+                 -10px -10px 50px #000,
+                  10px -10px 50px #000,
+                 -10px  10px 50px #000,
+                  20px  20px 50px #000,
+                 -20px -20px 50px #000,
+                  20px -20px 50px #000,
+                 -20px  20px 50px #000,
+                  30px  30px 50px #000,
+                 -30px -30px 50px #000,
+                  30px -30px 50px #000,
+                 -30px  30px 50px #000,
+                  40px  40px 50px #000,
+                 -40px -40px 50px #000,
+                  40px -40px 50px #000,
+                 -40px  40px 50px #000;
+}
+
+div.vertical-brace:before {
+    content: "{";
+    font-size: 3em;
+}
+
+div.vertical-brace {
+    display: inline-block;
+    transform: rotate(90deg) translate(0px,0px) scale(1,1) skew(0deg,0deg);
+    -webkit-transform: rotate(90deg) translate(0px,0px) scale(1,1) skew(0deg,0deg);
+    -moz-transform: rotate(90deg) translate(0px,0px) scale(1,1) skew(0deg,0deg);
+    -o-transform: rotate(90deg) translate(0px,0px) scale(1,1) skew(0deg,0deg);
+    -ms-transform: rotate(90deg) translate(0px,0px) scale(1,1) skew(0deg,0deg);
+}
+
+section[data-state="twig-title"] h2,
+section[data-state="silex-title"] h2 {
+    font-size: 5em;
+}
+
+section[data-state="twig-title"] h3 small {
+    color: #fff;
+}
+
+section [data-state="silex-nutshell"] li li {
+    font-size: 0.75em;
+    opacity: 0.66;
+}
+
+section[data-state="good-company"] h2 {
+  color: #333;
+}
+
+section[data-state="good-company"] img {
+  margin: 1em;
+}
+
+.reveal pre code {
+    max-height: inherit;
+}
+
+.reveal div.code-marker {
+    position: absolute;
+    margin-top: 0.18em;
+    font-family: monospace;
+    font-size: 0.55em;
+    font-weight: bold;
+    line-height: 1.2em;
+}
+
+@media print {
+    .reveal div.code-marker { display: none; }
+}
+
+.reveal section img.transparent {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+    text-transform: none;
+    margin-bottom: 1em;
+}
+
+section[data-state="title"] h1 {
+    display: block;
+    font-size: 2em;
+}
+
+section[data-state="title"] p.bio {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../../common/img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="title"] p.bio a[href*="twitter"] {
+    background-image: url("../../common/img/twitter-bird-light-bgs.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding-left: 50px;
+}
+
+section[data-state="thanks"] h1 + h3 {
+  margin-top: 1em;
+}
+
+section[data-state="thanks"] hr {
+  margin: 2em 4em;
+}
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
+
+.reveal h3 a,
+.reveal h4 a {
+    line-height: inherit !important;
+}
+
+.reveal h3 small,
+.reveal h4 small {
+    color: #999;
+    vertical-align: bottom;
+}

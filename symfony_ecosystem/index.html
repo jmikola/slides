@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>A Tour Through the Symfony Ecosystem</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/night.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link href='http://fonts.googleapis.com/css?family=Ruthie' rel='stylesheet' type='text/css'>
+
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '../vendor/reveal.js/css/print/pdf.css';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title" data-background="img/symfony-circle.png" data-background-position="-15% center" data-background-repeat="no-repeat" data-background-size="50%">
+                    <h1>A Tour Through the<br>Symfony Ecosystem</h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+                <section>
+                    <section data-state="composer-title" data-background="img/arizona_symphony.jpg">
+                        <h2>Composer</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## [Composer](https://getcomposer.org/)
+
+                            * PHP&rsquo;s package manager
+                            * Pull external libraries into any project
+                            * Handles downloading and autoloading
+                            * Works well with [semantic versioning](http://semver.org/)
+                            * Package repositories
+                                * [Packagist](https://packagist.org/), [Satis](https://getcomposer.org/doc/articles/handling-private-packages-with-satis.md), [Toran Proxy](https://toranproxy.com/)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```no-highlight
+                            [honeydew: new-project] $ composer
+                            Composer version 28c65b5425f7f8722c260e3787b74c1ea6b37e3b 2014-06-22 18:24:28
+
+                            Usage:
+                              [options] command [arguments]
+
+                            Options:
+                              --help           -h Display this help message.
+                              --quiet          -q Do not output any message.
+                              --verbose        -v|vv|vvv Increase the verbosity of messages
+                              --version        -V Display this application version.
+                              --ansi              Force ANSI output.
+                              --no-ansi           Disable ANSI output.
+                              --no-interaction -n Do not ask any interactive question.
+                              --profile           Display timing and memory usage information
+                              --working-dir    -d If specified, use the given directory as working directory.
+
+                            Available commands:
+                              about            Short information about Composer
+                              archive          Create an archive of this composer package
+                              config           Set config options
+                              create-project   Create new project from a package into given directory.
+                              depends          Shows which packages depend on the given package
+                              diagnose         Diagnoses the system to identify common errors.
+                              dump-autoload    Dumps the autoloader
+                              global           Allows running commands in the global composer dir ($COMPOSER_HOME).
+                              help             Displays help for a command
+                              init             Creates a basic composer.json file in current directory.
+                              install          Installs the project dependencies
+                              licenses         Show information about licenses of dependencies
+                              list             Lists commands
+                              require          Adds required packages to your composer.json and installs them
+                              run-script       Run the scripts defined in composer.json.
+                              search           Search for packages
+                              self-update      Updates composer.phar to the latest version.
+                              show             Show information about packages
+                              status           Show a list of locally modified packages
+                              update           Updates your dependencies to the latest version
+                              validate         Validates a composer.json
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```no-highlight
+                            [honeydew: new-project] $ composer require doctrine/mongodb=~1.1
+                            ./composer.json has been updated
+                            Loading composer repositories with package information
+                            Updating dependencies (including require-dev)
+                              - Installing doctrine/lexer (v1.0)
+                                Downloading: 100%
+
+                              - Installing doctrine/annotations (v1.1.2)
+                                Downloading: 100%
+
+                              - Installing doctrine/collections (v1.2)
+                                Downloading: 100%
+
+                              - Installing doctrine/cache (v1.3.0)
+                                Downloading: 100%
+
+                              - Installing doctrine/inflector (v1.0)
+                                Downloading: 100%
+
+                              - Installing doctrine/common (v2.4.2)
+                                Downloading: 100%
+
+                              - Installing doctrine/mongodb (1.1.6)
+                                Downloading: 100%
+
+                            doctrine/mongodb suggests installing jmikola/geojson (Support GeoJSON in 2dsphere queries)
+                            Writing lock file
+                            Generating autoload files
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ```no-highlight
+                            [honeydew: new-project] $ tree -L 3
+                            .
+                            ├── composer.json
+                            ├── composer.lock
+                            └── vendor
+                                ├── autoload.php
+                                ├── composer
+                                │   ├── autoload_classmap.php
+                                │   ├── autoload_namespaces.php
+                                │   ├── autoload_psr4.php
+                                │   ├── autoload_real.php
+                                │   ├── ClassLoader.php
+                                │   └── installed.json
+                                └── doctrine
+                                    ├── annotations
+                                    ├── cache
+                                    ├── collections
+                                    ├── common
+                                    ├── inflector
+                                    ├── lexer
+                                    └── mongodb
+                            ```
+
+                            ```no-highlight
+                            [honeydew: new-project] $ cat composer.json 
+                            {
+                                "require": {
+                                    "doctrine/mongodb": "~1.1"
+                                }
+                            }
+                            ```
+                            <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Doctrine MongoDB](https://github.com/doctrine/mongodb)
+
+                            ```json
+                            {
+                                "name": "doctrine/mongodb",
+                                "type": "library",
+                                "require": {
+                                    "php": ">=5.3.2",
+                                    "ext-mongo": ">=1.2.12,<1.6-dev",
+                                    "doctrine/common": ">=2.1.0,<2.5-dev"
+                                },
+                                "suggest": {
+                                    "jmikola/geojson": "Support GeoJSON in 2dsphere queries"
+                                },
+                                "autoload": {
+                                    "psr-0": { "Doctrine\\MongoDB": "lib/" }
+                                },
+                                "extra": {
+                                    "branch-alias": {
+                                        "dev-master": "1.2.x-dev"
+                                    }
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <img src="img/symfony.png" class="transparent">
+
+                        <h3 class="fragment">Components First<span class="fragment">, Framework Second</span></h3>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Components](http://symfony.com/components) <small class="fragment">(just a few)</small>
+
+                            * DependencyInjection
+                            * EventDispatcher
+                            * HttpFoundation, HttpKernel
+                            * Routing, Security, Templating
+                            * Console, Form, Validator
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### HttpKernel
+
+                            Request &rarr; Kernel &rarr; Response
+
+                            <div class="fragment">
+                                <div class="vertical-brace"></div>
+                                <br>Security<br>Routing<br>Controller<br>Templating
+                            </div>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Routing Configuration
+
+                            * URL patterns with path params
+                            * Optional param requirements
+                            * Controller logical name or service
+                            * First match wins
+
+                            ```
+                            blog_show:
+                              path:     /blog/{slug}
+                              defaults: { _controller: DemoBundle:Blog:show }
+                              methods:  [GET]
+
+                            article_show:
+                                path:     /articles/{culture}/{year}/{title}.{_format}
+                                defaults: { _controller: DemoBundle:Article:show, _format: html }
+                                requirements:
+                                    culture:  en|fr
+                                    _format:  html|rss
+                                    year:     \d+
+                            ```
+                            <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Controllers
+
+                            * Receive params or a Request
+                            * Process a form or page logic
+                            * Use services for heavy lifting
+                            * Optionally render a template
+                            * Return a Response (or content)
+
+                            <p style="margin-top:1em" class="fragment">Thinner controllers with services and events</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [FrameworkBundle](http://symfony.com/doc/current/reference/configuration/framework.html)
+
+                            ```json
+                            {
+                                "name": "symfony/framework-bundle",
+                                "type": "symfony-bundle",
+                                "require": {
+                                    "php": ">=5.3.3",
+                                    "symfony/dependency-injection" : "~2.2",
+                                    "symfony/config" : "~2.4",
+                                    "symfony/event-dispatcher": "~2.5",
+                                    "symfony/http-foundation": "~2.4",
+                                    "symfony/http-kernel": "~2.6",
+                                    "symfony/filesystem": "~2.3",
+                                    "symfony/routing": "~2.2",
+                                    "symfony/security-core": "~2.4",
+                                    "symfony/security-csrf": "~2.4",
+                                    "symfony/stopwatch": "~2.3",
+                                    "symfony/templating": "~2.1",
+                                    "symfony/translation": "~2.3",
+                                    "doctrine/annotations": "~1.0"
+                                },
+                                "suggest": {
+                                    "symfony/console": "For using the console commands",
+                                    "symfony/finder": "For using the translation loader and cache warmer",
+                                    "symfony/form": "For using forms",
+                                    "symfony/validator": "For using validation",
+                                    "doctrine/cache": "For using alternative cache drivers"
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What&rsquo;s in a Bundle?
+
+                            * Configuration
+                            * Service definitions
+                            * Controllers
+                            * Templates and resources
+                            * Console commands
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Bundles + Components = Applications</h3>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-state="twig-title" data-background-color="#727F3C" data-background-image="img/twig.png" data-background-size="contain">
+                        <h2>Twig</h2>
+
+                        <h3 class="fragment">You&rsquo;ll love it.<br><small class="fragment">Your frontend devs will, too!</small></h3>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Twig Templates
+
+                            * Flexible property access
+                            * Intuitive control structures
+                            * Expression, filters, macros
+                            * Totally extensible
+
+                            ```django
+                            <!DOCTYPE html>
+                            <html>
+                                <head>
+                                    <title>My Webpage</title>
+                                </head>
+                                <body>
+                                    <ul id="navigation">
+                                    {% for item in navigation %}
+                                        <li><a href="{{ item.href }}">{{ item.caption }}</a></li>
+                                    {% else %}
+                                        <li>Nothing to see here!</li>
+                                    {% endfor %}
+                                    </ul>
+
+                                    <p>The current time is {{ "now"|date("d/m/Y H:i") }}.</p>
+                                </body>
+                            </html>
+                            ```
+                            <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-state="silex-title" data-background-color="#3e3a6f" data-background-image="img/silex.png" data-background-size="contain">
+                        <h2>Silex</h2>
+
+                        <h3 class="fragment">A micro-framework<br>from components.</h3>
+                    </section>
+
+                    <section data-state="silex-nutshell" data-markdown>
+                        <script type="text/template">
+                            ### Silex in a Nutshell
+
+                            * Service container
+                            * Just a few components
+                                * HttpFoundation, HttpKernel
+                                * EventDispatcher, Routing
+                            * Extensions up the wazoo
+                                * Cache, Doctrine, Session, Security
+                                * Form, Logging, Serializer, Twig
+
+                            ```php
+                            require_once __DIR__.'/../vendor/autoload.php'; 
+
+                            $app = new Silex\Application(); 
+
+                            $app->get('/hello/{name}', function ($name) use ($app) { 
+                                return 'Hello, ' . $app->escape($name); 
+                            });
+
+                            $app->run();
+                            ```
+                            <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+                </section>
+
+                <section data-state="good-company" data-background="#f7f2d3">
+                    <h2>You&rsquo;re in Good Company</h2>
+
+                    <img src="img/ezpublish.png" class="transparent">
+                    <img src="img/laravel.png" class="transparent">
+                    <img src="img/piwik.png" class="transparent">
+                    <br>
+                    <img src="img/drupal.png" class="transparent">
+                    <img src="img/composer.png" class="transparent">
+                    <img src="img/phpbb.png" class="transparent">
+                </section>
+
+                <section data-state="thanks" data-markdown>
+                    <script type="text/template">
+                        # Thanks!
+
+                        ### Any Questions?
+
+                        ----
+
+                        * [Ryan Weaver](https://twitter.com/weaverryan) assembled most of this content
+                        * The [Symfony Book](http://symfony.com/doc/current/index.html) is chock full of good stuff
+                        * [KnpUniversity](http://knpuniversity.com/) has PHP and Symfony tutorials
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * http://www.cfa.arizona.edu/symphony/images/ArizonaSymphony2011aerialSerrano_000.jpg
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>
