@@ -33,6 +33,13 @@ div.vertical-brace {
     -ms-transform: rotate(90deg) translate(0px,0px) scale(1,1) skew(0deg,0deg);
 }
 
+section[data-state="http-title"] h2,
+section[data-state="bundle-title"] h2 {
+    text-align: right;
+    font-size: 3.5em;
+    line-height: 1.5em;
+}
+
 section[data-state="twig-title"] h2,
 section[data-state="silex-title"] h2 {
     font-size: 5em;

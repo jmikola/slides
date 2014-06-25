@@ -103,6 +103,8 @@
 
                     <section data-markdown>
                         <script type="text/template">
+                            ### Installing a Library
+
                             ```no-highlight
                             [honeydew: new-project] $ composer require doctrine/mongodb=~1.1
                             ./composer.json has been updated
@@ -138,6 +140,8 @@
 
                     <section data-markdown>
                         <script type="text/template">
+                            ### Directory Structure
+
                             ```no-highlight
                             [honeydew: new-project] $ tree -L 3
                             .
@@ -213,14 +217,83 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ### [Components](http://symfony.com/components) <small class="fragment">(just a few)</small>
+                            ### [Components](http://symfony.com/components)
 
                             * DependencyInjection
                             * EventDispatcher
                             * HttpFoundation, HttpKernel
                             * Routing, Security, Templating
                             * Console, Form, Validator
+
+                            <p style="margin-top:1em;" class="fragment">There are <em>many</em> more!</p>
                         </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Components Are…
+
+                            * Single-purpose
+                            * Decoupled libraries
+                            * Well-tested
+                            * Full of interfaces
+                            * Framework-agnostic
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Finder](https://github.com/symfony/finder) Component
+
+                            ```php
+                            $finder = new Symfony\Component\Finder\Finder();
+
+                            $finder->files()
+                                ->name('*.php')
+                                ->depth(0)
+                                ->size('>= 1K')
+                                ->in(__DIR__);
+
+                            foreach ($finder as $file) {
+                                printf("%s\n", $file->getRealpath());
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Finder](https://github.com/symfony/finder) Component
+
+                            ```php
+                            $s3 = new Zend_Service_Amazon_S3($key, $secret);
+                            $s3->registerStreamWrapper('s3');
+
+                            $finder = new Symfony\Component\Finder\Finder();
+                            
+                            $finder->files()
+                                ->name('photos*')
+                                ->size('< 100K')
+                                ->date('since 1 hour ago')
+                                ->in('s3://bucket-name');
+
+                            foreach ($finder as $file) {
+                                printf("%s\n", $file->getFilename());
+                            }
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-state="http-title" data-background="img/symfony-circle.png" data-background-position="-15% center" data-background-repeat="no-repeat" data-background-size="50%">
+                        <h2>Serving an<br>HTTP<br>Request</h2>
+                    </section>
+
+                    <section>
+                        <h3>HTTP Request Flow<br><small>Component Teamwork</small></h3>
+
+                        <img src="img/request_flow.png" class="transparent" width="100%">
                     </section>
 
                     <section data-markdown>
@@ -245,7 +318,7 @@
                             * Controller logical name or service
                             * First match wins
 
-                            ```
+                            ```no-highlight
                             blog_show:
                               path:     /blog/{slug}
                               defaults: { _controller: DemoBundle:Blog:show }
@@ -255,9 +328,9 @@
                                 path:     /articles/{culture}/{year}/{title}.{_format}
                                 defaults: { _controller: DemoBundle:Article:show, _format: html }
                                 requirements:
-                                    culture:  en|fr
-                                    _format:  html|rss
-                                    year:     \d+
+                                    _format: html|rss
+                                    culture: en|fr
+                                    year:    \d+
                             ```
                             <!-- .element class="fragment" -->
                         </script>
@@ -272,8 +345,35 @@
                             * Use services for heavy lifting
                             * Optionally render a template
                             * Return a Response (or content)
+                        </script>
+                    </section>
+                </section>
 
-                            <p style="margin-top:1em" class="fragment">Thinner controllers with services and events</p>
+                <section>
+                    <section data-state="bundle-title" data-background="img/symfony-circle.png" data-background-position="-15% center" data-background-repeat="no-repeat" data-background-size="50%">
+                        <h2>Components<br>to Bundles<br>to Full Stack</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What&rsquo;s in a Bundle?
+
+                            * Configuration
+                            * Service definitions
+                            * Controllers
+                            * Templates and resources
+                            * Console commands
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Core Bundles
+
+                            * FrameworkBundle
+                            * SecurityBundle
+                            * TwigBundle
+                            * WebProfilerBundle
                         </script>
                     </section>
 
@@ -313,20 +413,10 @@
                         </script>
                     </section>
 
-                    <section data-markdown>
-                        <script type="text/template">
-                            ### What&rsquo;s in a Bundle?
-
-                            * Configuration
-                            * Service definitions
-                            * Controllers
-                            * Templates and resources
-                            * Console commands
-                        </script>
-                    </section>
-
                     <section>
                         <h3>Bundles + Components = Applications</h3>
+
+                        <h4 class="fragment" style="margin-top: 4em">Don&rsquo;t reinvent the wheel: <a href="http://knpbundles.com/">KnpBundles.com</a></h4>
                     </section>
                 </section>
 
@@ -343,7 +433,7 @@
 
                             * Flexible property access
                             * Intuitive control structures
-                            * Expression, filters, macros
+                            * Expressions, filters, macros
                             * Totally extensible
 
                             ```django
@@ -390,12 +480,12 @@
                                 * Form, Logging, Serializer, Twig
 
                             ```php
-                            require_once __DIR__.'/../vendor/autoload.php'; 
+                            require_once __DIR__.'/../vendor/autoload.php';
 
-                            $app = new Silex\Application(); 
+                            $app = new Silex\Application();
 
-                            $app->get('/hello/{name}', function ($name) use ($app) { 
-                                return 'Hello, ' . $app->escape($name); 
+                            $app->get('/hello/{name}', function ($name) use ($app) {
+                                return 'Hello, ' . $app->escape($name);
                             });
 
                             $app->run();
