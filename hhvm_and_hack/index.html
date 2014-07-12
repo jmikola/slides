@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>A New Type of PHP: HHVM and Hack</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '../vendor/reveal.js/css/print/pdf.css';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title" data-background-color="#111" data-background-image="img/hhvm-logo.png" data-background-position="2em" data-background-repeat="no-repeat" data-background-size="12em">
+                    <h1 class="shadow"><small>A New Type of PHP:</small><br>HHVM and Hack</h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+                <section>
+                    <section data-markdown data-background-image="img/timeline-start.png" data-background-position="center 100%" data-background-repeat="no-repeat" data-background-size="99px auto">
+                        <script type="text/template">
+                            ## A Brief History of Time
+                        </script>
+                    </section>
+
+                    <section data-state="year" data-markdown data-background-image="img/timeline-bg.png" data-background-position="center" data-background-repeat="repeat-y" data-background-size="99px auto">
+                        <script type="text/template">
+                            ### 2008
+
+                            * HipHop PHP compiler (HPHPc)
+                              * PHP &rarr; AST &rarr; C++ &rarr; x64
+                            * Developer tools
+                              * Interpreter (HPHPi)
+                              * Debugger (HPHPd)
+
+                            <aside class="notes">
+                                6x faster than Zend PHP.
+                                <br>Limited PHP syntax, 1GB+ binaries
+                                <br>HPHPc and HPHPi not unified
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-state="year" data-markdown data-background-image="img/timeline-bg.png" data-background-position="center" data-background-repeat="repeat-y" data-background-size="99px auto">
+                        <script type="text/template">
+                            ### 2010
+
+                            * Facebook open-sources HPHPc
+                            * HipHop Virtual Machine (HHVM)
+                              * PHP &rarr; AST &rarr; HHBC
+                              * HHBC &rarr; x64 (JIT)
+
+                            <aside class="notes">
+                                HHVM aimed for full PHP compatibility
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-state="year" data-markdown data-background-image="img/timeline-bg.png" data-background-position="center" data-background-repeat="repeat-y" data-background-size="99px auto">
+                        <script type="text/template">
+                            ### 2011
+
+                            * Facebook open-sources HHVM
+                            * HHVM replaces HPHPi for development
+                        </script>
+                    </section>
+
+                    <section data-state="year" data-markdown data-background-image="img/timeline-bg.png" data-background-position="center" data-background-repeat="repeat-y" data-background-size="99px auto">
+                        <script type="text/template">
+                            ### 2012
+
+                            <img src="img/hhvm-vs-hphpc.png" class="transparent">
+                        </script>
+                    </section>
+
+                    <section data-state="year" data-markdown data-background-image="img/timeline-bg.png" data-background-position="center" data-background-repeat="repeat-y" data-background-size="99px auto">
+                        <script type="text/template">
+                            ### 2013
+
+                            * HHVM replaces HPHPc in production
+                            * HHVM 2.3.0 adds support for FastCGI
+                            * Travis CI adds HHVM runtime
+                            * Performance and parity lockdowns
+
+                            <aside class="notes">
+                                FastCGI replaces built-in libevent web server
+                                <br>Nov 2013 lockdown: 90 &rarr; 98.5% project compat, 15% perf improvement, beards
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-state="year" data-markdown data-background-image="img/timeline-bg.png" data-background-position="center" data-background-repeat="repeat-y" data-background-size="99px auto">
+                        <script type="text/template">
+                            ### 2014
+
+                            * Facebook open-sources Hack language
+                            * HHVM 3.0.0 adds support for Hack
+                            * 27 PHP framework test suites at 100%
+                            * Tracking PHP HEAD
+
+                            <aside class="notes">
+                                Tracking PHP means reimplementing its bugs and quirks (until they can be fixed upstream)
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-background-image="img/hhvm-logo.png" data-background-position="2em" data-background-repeat="no-repeat" data-background-size="12em">
+                        <h1>HHVM</h1>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Lifetime of a Request</h2>
+                    </section>
+
+                    <section>
+                        <h3>Bytecode Interpreter</h3>
+
+                        <img src="img/flowchart-bytecode.svg" class="transparent" style="height: 13em">
+
+                        <aside class="notes">
+                            Comparable to APC, Zend OpCache
+                            <br>Disk cache (SQLite)
+                            <br>Interpreter mode
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Native Code JIT</h3>
+
+                        <img src="img/flowchart-jit.svg" class="transparent" style="height: 13em">
+
+                        <aside class="notes">
+                            Hot paths detected after running HHBC
+                            <br>Major performance improvement
+                            <br>For server modes; not CLI, debugger
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h3>Repo Authoritative</h3>
+
+                        <img src="img/flowchart-jit-prod.svg" class="transparent" style="height: 9em">
+
+                        <p class="fragment">Pre-compile HHBC:&nbsp;&nbsp;<code>hhvm --hphp -t analyze</code></p>
+
+                        <aside class="notes">
+                            Reduce disk IO (like apc.stat=0)
+                            <br>Missing HHBC is a 404
+                            <br>Ideal for production deploys
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Benchmarking HHVM</h2>
+                    </section>
+
+                    <section data-state="benchmark" data-markdown>
+                        <script type="text/template">
+                            ### Test Environment
+
+                            * Symfony2, ElasticSearch (HTTP API)
+                            * JSON &rarr; PHP serialization
+                            * PHP 5.3 (APC), PHP 5.5 (OpCache), HHVM 2.3.0
+                            * nginx web server with FastCGI
+                            * ApacheBench for load testing
+
+                            <p class="fragment" style="margin-top: 1em">Results from: <a href="https://twitter.com/chregu">Christian Stocker</a>, <a href="http://www.liip.ch/en">Liip AG</a></p>
+
+                            <aside class="notes">
+                                JMSSerializer transformed ES results
+                                <br>HHVM was a drop-in replacement for FPM
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-state="benchmark">
+                        <h3>Small Responses (7 KB)</h3>
+
+                        <table>
+                            <tr>
+                                <td>
+                                    Requests / Second<br>
+                                    <img src="img/liip-rps-small.png">
+                                </td>
+                                <td>
+                                    Response Time (ms)<br>
+                                    <img src="img/liip-mst-small.png">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <small><a href="https://blog.liip.ch/archive/2013/10/29/hhvm-and-symfony2.html">https://blog.liip.ch/archive/2013/10/29/hhvm-and-symfony2.html</a></small>
+
+                        <aside class="notes">
+                            PHP 5.5 gains 1.5x performance over 5.3
+                            <br>HHVM gains increase at high load
+                            <br>5.3 missing high concurrency stats
+                        </aside>
+                    </section>
+
+                    <section data-state="benchmark">
+                        <h3>Medium Responses (80 KB)</h3>
+
+                        <table>
+                            <tr>
+                                <td>
+                                    Requests / Second<br>
+                                    <img src="img/liip-rps-medium.png">
+                                </td>
+                                <td>
+                                    Response Time (ms)<br>
+                                    <img src="img/liip-mst-medium.png">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <small><a href="https://blog.liip.ch/archive/2013/10/29/hhvm-and-symfony2.html">https://blog.liip.ch/archive/2013/10/29/hhvm-and-symfony2.html</a></small>
+                    </section>
+
+                    <section data-state="benchmark">
+                        <h3>Large Responses (220 KB)</h3>
+
+                        <table>
+                            <tr>
+                                <td>
+                                    Requests / Second<br>
+                                    <img src="img/liip-rps-large.png">
+                                </td>
+                                <td>
+                                    Response Time (ms)<br>
+                                    <img src="img/liip-mst-large.png">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <small><a href="https://blog.liip.ch/archive/2013/10/29/hhvm-and-symfony2.html">https://blog.liip.ch/archive/2013/10/29/hhvm-and-symfony2.html</a></small>
+
+                        <aside class="notes">
+                            HHVM rps peaks at 2x gain over 5.5, 3.5x over 5.3
+                            <br>Half the response time of 5.5, a third of 5.3
+                        </aside>
+                    </section>
+
+                    <section data-state="benchmark" data-markdown>
+                        <script type="text/template">
+                            ### Some Conclusions
+
+                            * PHP 5.5 is up to 1.5 times faster than PHP 5.3
+                            * HHVM is up to 3.5 times faster than PHP 5.3 <!-- .element class="fragment" -->
+                            * HHVM is up to twice as fast as PHP 5.5 <!-- .element class="fragment" -->
+                            * HHVM shines under high load, larger requests <!-- .element class="fragment" -->
+                            * Stop using PHP 5.3 <!-- .element class="fragment" -->
+
+                            <aside class="notes">
+                                Magento benchmarks from 2013 conference had even higher gains
+                                <br>HHVM blog FastCGI benchmarks: 40x for Wordpress, 80x for Fibonacci
+                                <br>php-fpm faster for tiny requests, when not CPU bound
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>PHP Is Getting a JIT, Too</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [PHPNG (Next Generation)](https://wiki.php.net/phpng)
+
+                            * JIT based on [LLVM](http://en.wikipedia.org/wiki/LLVM)
+                            * Behavioral and API changes
+                            * Targetting PHP 5.7 (TBD)
+                            * Progress since January 2014
+                                * 1.5x execution speed-up
+                                * 30&ndash;60% less CPU instructions
+
+                            <aside class="notes">
+                                Wordpress benchmark: 9.4m to 3.9m CPU, 27 to 16 sec
+                                <br>LLVM is general purpose. HHVM&rsquo;s JIT tailored to PHP, benefits from type hinting/inference, customized data structures (vs. zvals)
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Installing HHVM</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Platform Support
+
+                            * 64-bit Linux: It just works&#8482;
+                            * Mac OS X limited to interpreter mode
+                            * Windows and ARM in development
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Linux Binaries](https://github.com/facebook/hhvm/wiki/Prebuilt%20Packages%20for%20HHVM)
+
+                            * Ubuntu (LTS, recent releases)
+                            * Debian 8
+                            * Fedora 20
+                            * Mint 16
+                            * CentOS (community supported)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Building from Source](https://github.com/facebook/hhvm/wiki/Building-and-Installing-HHVM)
+
+                            * Fair amount of dependencies
+                            * Needed for extension development
+
+                            ```bash
+                            $ git clone git://github.com/facebook/hhvm.git
+                            $ cd hhvm
+                            $ git checkout HHVM-3.1.0
+                            $ git submodule update --init --recursive
+                            $ cmake .
+                            $ make -j [num_cores]
+                            $ sudo make install
+                            ```
+                            <!-- .element style="margin-top: 2em" -->
+
+                            <aside class="notes">
+                                <code>make -j #</code> is your friend
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Grab a Snickers&hellip;</h3>
+
+                        <img src="img/xkcd-303.png" class="transparent" width="60%">
+                    </section>
+                </section>
+
+                <section data-background-image="img/hack-logo.png" data-background-position="2em" data-background-repeat="no-repeat" data-background-size="12em">
+                    <h1>Hack</h1>
+
+                    <p style="margin-top: 1em; font-size: 2em;"><code>&lt;?hh</code></p>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Wonderful World of Types</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Type Hinting
+
+                            * Scalars
+                                * bool, int, float, num, string
+                            * Array elements (and keys)
+                                * `array<int>`, `array<string, int>`
+                            * Properties and return types
+                            * Nullable and `mixed` types
+                            * Generics lend to code reuse
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Type Hinting
+
+                            ```php
+                            class Adder {
+                                private int $x;
+
+                                public function __construct(int $x): void {
+                                    $this->x = $x;
+                                }
+
+                                public function add(int $y): void {
+                                    $this->x += $y;
+                                }
+
+                                public function get(): int {
+                                    return $this->x;
+                                }
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Scalar type hints
+                                <br>Type hinting for properties and return values
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Constructor Arg Promotion
+
+                            ```php
+                            class Adder {
+                                public function __construct(private int $x): void {}
+
+                                public function add(int $y): void {
+                                    $this->x += $y;
+                                }
+
+                                public function get(): int {
+                                    return $this->x;
+                                }
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Declares and initializes the property
+                                <br>Supports public, protected, and private
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Generics
+
+                            ```php
+                            class Adder<T> {
+                                public function __construct(private T $x): void {}
+
+                                public function add(T $y): void {
+                                    $this->x += $y;
+                                }
+
+                                public function get(): T {
+                                    return $this->x;
+                                }
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Parameterize classes/methods
+                                <br>Type T replaced with specialized type at instantiation
+                                <br>Constraints (T as A) can restrict classes for T
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Type Aliasing
+
+                            * Declared outside of classes, functions
+                            * Opaque aliasing abstracts underlying type
+
+                            ```php
+                            // types.php
+
+                            type MyInt = int;
+                            newtype MyOpaqueInt = int;
+                            ```
+
+                            ```php
+                            require 'types.php';
+
+                            function foo(MyInt $x): MyInt {
+                                return $x + 1;
+                            }
+                            
+                            function bar(MyOpaqueInt $x): MyOpaqueInt {
+                                // Error: cannot assume integer behavior outside of types.php
+                                return $x + 1;
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Akin to typedef in C
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Type Checking is Configurable
+
+                            * Modes: strict, partial, decl
+                                * <code>&lt;?hh // mode</code>
+                            * Partial is most flexible, the default
+                                * Classes and functions can be partially typed
+                                * Allows calling into untyped code (i.e. PHP)
+                            * Decl useful for calling into legacy code from strict
+                                * Type checker looks at signatures, but not code
+
+                            <p class="fragment" style="margin-top: 1em">
+                                <img src="img/doom-decl.png" class="transparent" style="width: 4em; margin-right: 1em">
+                                <img src="img/doom-partial.png" class="transparent" style="width: 4em; margin-right: 1em">
+                                <img src="img/doom-strict.png" class="transparent" style="width: 4em">
+                            </p>
+
+                            <aside class="notes">
+                                Facebook has utilities to migrate PHP projects to Hack (e.g. hackificator); see docs
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Stop <span style="opacity: 0.5">(ab)</span>Using PHP Arrays</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Tuples
+
+                            * Typed, fixed-length arrays
+                            * Size and types are immutable
+                            * Useful for custom types, multiple return values
+
+                            ```php
+                            type Point2D = (int, int);
+
+                            function createPoint(int $x, int $y): Point2D {
+                                return tuple($x, $y);
+                            }
+
+                            function getDateAndTimestamp(): (string, int) {
+                                return tuple(date('c'), time());
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Currently implemented as PHP arrays.
+                                <br>Mutable at runtime, but type checker should catch that
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Shapes
+
+                            * Typed, structured arrays
+                            * Alternative to classes with public properties
+                            * Useful for simple data structures, argument bags
+
+                            ```php
+                            type PageView = shape(
+                                'url' => string,
+                                'count' => int,
+                            );
+
+                            function createPageView(string $url, int $count): PageView {
+                                return shape('url' => $url, 'count' => $count);
+                            }
+                            ```
+
+                            <aside class="notes">
+                                <br>Shapes can also be used with generics
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Collections
+
+                            * Specialized array objects
+                                * Vector, Map, Set, Pair
+                            * Ordered, immutable or mutable
+                            * Accessible, iterable like PHP arrays
+                            * Literal syntax, familiar collection API
+
+                            <aside class="notes">
+                                Set supports int and string for now
+                                <br>Pair type is an immutable tuple
+                                <br>Previous attempts in PHP (e.g. Doctrine Common)
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Collections vs. PHP Arrays
+
+                            ```php
+                            $vector = Vector { 5, 10, 15, 20 };
+                            $vector->removeKey(2);
+
+                            foreach ($vector as $key => $value) {
+                                printf("%d => %d\n", $key, $value);
+                            }
+                            ```
+
+                            ```php
+                            $array = [ 5, 10, 15, 20 ];
+                            unset($array[2]);
+
+                            foreach ($array as $key => $value) {
+                                printf("%d => %d\n", $key, $value);
+                            }
+                            ```
+                            <!-- .element class="fragment" -->
+
+                            <p class="fragment" style="margin-top:1em">`[5,10,20]` &nbsp;vs.&nbsp; `{"0":5,"1":10,"3":20}`</p>
+
+                            <aside class="notes">
+                                Leads to functions that scan keys to detect "real" arrays
+                                <br>Can be a real problem for JSON or BSON encoding 
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>These May Be Useful, Too</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Lambda Expressions
+
+                            * PHP has closures, but&hellip;
+                                * Parent scope is not implicitly inherited
+                                * Can be verbose for simple expressions
+
+                            ```php
+                            $inc = function($x) { return $x + 1; }
+                            $inc(11); // returns 12
+                            ```
+
+                            ```php
+                            $f = function($x) {
+                                return function($y) use ($x) { return $x + $y; };
+                            };
+                            $g = $f(4);
+                            $g(5); // returns 9
+                            ```
+
+                            <aside class="notes">
+                                Manually inherit parent scope variables with use statement
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Lambda Expressions
+
+                            * Parent scope is inherited automatically
+                            * Concise syntax well-suited to callback APIs
+
+                            ```php
+                            $inc = $x ==> $x + 1;
+                            $inc(11); // returns 12
+                            ```
+
+                            ```php
+                            $f = $x ==> $y ==> $x + $y;
+                            $g = $f(4);
+                            $g(5); // returns 9
+                            ```
+
+                            <aside class="notes">
+                                Operator is right-associative, can chain expressions
+                                <br>Not supported: hints for type checker, references
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Lambdas and Collections
+
+                            ```php
+                            $a = [ 2, 4, 6, 8 ];
+                            $y = 3;
+
+                            array_filter(
+                                array_map(
+                                    function($x) use ($y) { return $x + $y; },
+                                    $a
+                                ),
+                                function($x) { return $x > 10; }
+                            );
+                            ```
+
+                            vs.
+
+                            ```php
+                            $a = Vector { 2, 4, 6, 8 };
+                            $y = 3;
+
+                            $a->map($x ==> $x + $y)
+                              ->filter($x ==> $x > 10);
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Continuations
+
+                            * Like generators in PHP 5.5, slight differences
+                                * Must be primed with `next()`
+                                * `yield` must always return a value
+
+                            ```php
+                            function infinite(): Continuation<int> {
+                                $i = 0;
+                                while (true) {
+                                    yield $i++;
+                                }
+                            }
+
+                            foreach (infinite() as $i) {
+                                printf("%d\n", $i);
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Differences due to Continuations pre-dating PHP generators
+                                <br>send() can still be used to inject values
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Async Functions
+
+                            * Functions use `async` modifier, return Awaitables
+                            * Callers opt in with `await` keyword
+
+                            ```php
+                            async function complexCalculation(…): Awaitable<Result> {
+                                // query databases, call services, etc.
+                                return new Result(…);
+                            }
+
+                            async function fetchUser(int $id): Awaitable<User> {
+                                $args = ['id' => $id, 'type' => 'user'];
+
+                                $a = complexCalculation($args);
+                                // $a represents unstarted state of a computation
+
+                                $result = await $a; // block until $a is resolved
+                                return convertResultToUser($result);
+                            }
+                            ```
+
+                            <aside class="notes">
+                                Awaitable wraps what would normally be returned
+                                <br>Caller does not block until await
+                                <br>No event loop exposed
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Async Functions
+
+                            * Parallelism by awaiting multiple things at once
+                            * Top-level context can `join()` (block on results)
+
+                            ```php
+                            async function generateResponse(): Awaitable<Response> {
+                                list($a, $b, $c) = await GenArrayWaitHandle::create([
+                                    fetchUser(…),
+                                    queryCache(…),
+                                    callService(…),
+                                ]);
+
+                                return new Response($a, $b, $c);
+                            }
+
+                            async function fetchUser(…): Awaitable<…> {}
+                            async function queryCache(…): Awaitable<…> {}
+                            async function callService(…): Awaitable<…> {}
+
+                            $response = generateResponse()->join();
+                            ```
+
+                            <aside class="notes">
+                                Currently limited to batching/rescheduling (coalesced fetching)
+                                <br>APIs for async IO (e.g. DB queries) coming soon
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Additional Features
+
+                            * User attributes (accessible via Reflection)
+                            * Trait requirements (support static analysis) <!-- .element class="fragment" -->
+                            * Override attribute (child counterpart to abstract) <!-- .element class="fragment" -->
+                            * Variadic arguments (not type-checked) <!-- .element class="fragment" -->
+                            * XHP (templated XML fragments in PHP) <!-- .element class="fragment" -->
+
+                            <aside class="notes">
+                                Variadic syntax limited vs. PHP 5.6 (e.g. splat, typing)
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Extending HHVM</h2>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Creating an Extension
+
+                            * Bootstrap PHP in SystemLib
+                            * HHVM Native Interface (HNI)
+                            * Dynamically Loaded Objects
+
+                            <aside class="notes">
+                                Deprecated IDL in favor of HNI
+                                <br>Some extensions can be pure PHP (e.g. Redis)
+                                <br>Most common PHP core extensions ported to HHVM
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### HHVM Native Interface (PHP)
+
+                            * Implement as much as possible in PHP
+                            * Annotated methods point to C++ implementations
+
+                            ```php
+                            class MongoClient {
+                                <<__Native>>
+                                public function __construct (
+                                    string $server = 'mongodb://localhost:27017',
+                                    array $options = ['connect' => true]
+                                ): void;
+
+                                public function selectDB(string $name): MongoDB {
+                                    return new MongoDB($this, $name);
+                                }
+
+                                // …
+                            }
+                            ```
+
+                            <small><a href="https://github.com/10gen-labs/mongo-hhvm-driver/">https://github.com/10gen-labs/mongo-hhvm-driver/</a></small>
+
+                            <aside class="notes">
+                                More pleasant than PHP C API
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### HHVM Native Interface (C++)
+
+                            * Method macros similar to PHP extension API
+                            * 1:1 mapping between PHP and C++ types
+
+                            ```cpp
+                            static void HHVM_METHOD(
+                                MongoClient, __construct,
+                                const String& uri, Array options
+                            ) {
+                                mongoc_client_t *client = mongoc_client_new(uri.c_str());
+
+                                // wrap mongoc_client_t in an HHVM resource object
+
+                                this_->o_set("_resource", clientResource, "ClientResource");
+                            }
+                            ```
+
+                            <small><a href="https://github.com/10gen-labs/mongo-hhvm-driver/">https://github.com/10gen-labs/mongo-hhvm-driver/</a></small>
+
+                            <aside class="notes">
+                                Encapsulate C types in resource objects, assigned to PHP properties
+                                <br>SweepableResourceData base class hooks into garbage collection
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Undocumented Territory
+
+                            * Learn by example, consult prior art
+                            * Core extensions (`hphp/runtime/ext/`)
+                            * Community extensions (about a dozen)
+                            * Become an IRC regular
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Looking Ahead
+
+                            * PHP iterating faster than ever
+                            * Multiple implementations is a plus <!-- .element class="fragment" -->
+                            * Competition drives progress <!-- .element class="fragment" -->
+                            * Hack features and overlapping PHP RFCs <!-- .element class="fragment" -->
+                            * Facebook still active on php-internals  <!-- .element class="fragment" -->
+
+                            <aside class="notes">
+                                PHP 5.3 lifecycle ended March 2013, 5.6 incoming
+                                <br>No risk to try HHVM, may be locked in to Hack
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>Getting the Community on Board</h3>
+
+                        <img src="img/project-support.png" class="transparent">
+
+                        <p><small><a href="http://hhvm.h4cc.de/">http://hhvm.h4cc.de/</a></small></p>
+
+                        <aside class="notes">
+                            Initiatives to submit PRs adding HHVM to Travis CI configs.
+                        </aside>
+                    </section>
+                </section>
+
+                </section>
+                <section data-state="thanks" data-markdown>
+                    <script type="text/template">
+                        # Thanks!
+
+                        ### Any Questions?
+
+                        ----
+
+                        * [jmikola.net/blog/hack-dev-day/](http://jmikola.net/blog/hack-dev-day/)
+                        * [github.com/facebook/hhvm](https://github.com/facebook/hhvm) and [wiki](https://github.com/facebook/hhvm/wiki)
+                        * [hhvm.com](http://hhvm.com/) and [hacklang.org](http://hacklang.org/)
+                        * `#hhvm` on Freenode
+
+                        <p style="margin-top:1em"><small>Thanks to: [Elizabeth Smith](https://twitter.com/auroraeosrose), [Sara Golemon](https://twitter.com/SaraMG), [Christian Stocker](https://twitter.com/chregu), and [Chris Heng](https://twitter.com/gigablah)</small></p>
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * http://xkcd.com/303/
+                        * id Software (Doom character sprites)
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>
