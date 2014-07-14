@@ -288,30 +288,6 @@
 
                 <section>
                     <section>
-                        <h2>PHP Is Getting a JIT, Too</h2>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            ### [PHPNG (Next Generation)](https://wiki.php.net/phpng)
-
-                            * JIT based on [LLVM](http://en.wikipedia.org/wiki/LLVM)
-                            * Behavioral and API changes
-                            * Targetting PHP 5.7 (TBD)
-                            * Progress since January 2014
-                                * 1.5x execution speed-up
-                                * 30&ndash;60% less CPU instructions
-
-                            <aside class="notes">
-                                Wordpress benchmark: 9.4m to 3.9m CPU, 27 to 16 sec
-                                <br>LLVM is general purpose. HHVM&rsquo;s JIT tailored to PHP, benefits from type hinting/inference, customized data structures (vs. zvals)
-                            </aside>
-                        </script>
-                    </section>
-                </section>
-
-                <section>
-                    <section>
                         <h2>Installing HHVM</h2>
                     </section>
 
@@ -320,7 +296,7 @@
                             ### Platform Support
 
                             * 64-bit Linux: It just works&#8482;
-                            * Mac OS X limited to interpreter mode
+                            * Mac OS X: interpreter only
                             * Windows and ARM in development
                         </script>
                     </section>
@@ -342,7 +318,7 @@
                             ### [Building from Source](https://github.com/facebook/hhvm/wiki/Building-and-Installing-HHVM)
 
                             * Fair amount of dependencies
-                            * Needed for extension development
+                            * A must for extension development
 
                             ```bash
                             $ git clone git://github.com/facebook/hhvm.git
@@ -368,10 +344,31 @@
                     </section>
                 </section>
 
-                <section data-background-image="img/hack-logo.png" data-background-position="2em" data-background-repeat="no-repeat" data-background-size="12em">
-                    <h1>Hack</h1>
+                <section>
+                    <section data-background-image="img/hack-logo.png" data-background-position="2em" data-background-repeat="no-repeat" data-background-size="12em">
+                        <h1>Hack</h1>
 
-                    <p style="margin-top: 1em; font-size: 2em;"><code>&lt;?hh</code></p>
+                        <p style="margin-top: 1em; font-size: 2em;"><code>&lt;?hh</code></p>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## In a Nutshell
+
+                            * Static type analysis
+                                * Local type inference, meaningful errors
+                                * Tight feedback loop (<code>hh_client</code>, <code>hh_server</code>)
+                                * Checked before runtime
+                            * New language features, core classes
+                            * Some PHP features removed (in strict mode)
+
+                            <aside class="notes">
+                                Errors: the actual error, what we saw, what we expected.
+                                <br>Types not enforced at runtime like true static-typed languages
+                                <br>Not supported: eval, globals, variable variables, references (complicates type checking)
+                            </aside>
+                        </script>
+                    </section>
                 </section>
 
                 <section>
@@ -418,6 +415,7 @@
                             <aside class="notes">
                                 Scalar type hints
                                 <br>Type hinting for properties and return values
+                                <br>Appears similar to PHP RFCs, but errors are stricter (no primitive casting)
                             </aside>
                         </script>
                     </section>
@@ -583,7 +581,7 @@
                             ```
 
                             <aside class="notes">
-                                <br>Shapes can also be used with generics
+                                Shapes can also be used with generics
                             </aside>
                         </script>
                     </section>
@@ -608,7 +606,7 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ### Collections vs. PHP Arrays
+                            ### Vectors vs. PHP Arrays
 
                             ```php
                             $vector = Vector { 5, 10, 15, 20 };
@@ -632,7 +630,7 @@
                             <p class="fragment" style="margin-top:1em">`[5,10,20]` &nbsp;vs.&nbsp; `{"0":5,"1":10,"3":20}`</p>
 
                             <aside class="notes">
-                                Leads to functions that scan keys to detect "real" arrays
+                                PHP needs functions that scan keys to detect "real" arrays
                                 <br>Can be a real problem for JSON or BSON encoding 
                             </aside>
                         </script>
@@ -666,7 +664,7 @@
                             ```
 
                             <aside class="notes">
-                                Manually inherit parent scope variables with use statement
+                                Manually inherit vars in parent scope with use statement
                             </aside>
                         </script>
                     </section>
@@ -701,13 +699,13 @@
                             ### Lambdas and Collections
 
                             ```php
-                            $a = [ 2, 4, 6, 8 ];
-                            $y = 3;
+                            $array = [ 2, 4, 6, 8 ];
+                            $inc = 3;
 
                             array_filter(
                                 array_map(
-                                    function($x) use ($y) { return $x + $y; },
-                                    $a
+                                    function($x) use ($inc) { return $x + $inc; },
+                                    $array
                                 ),
                                 function($x) { return $x > 10; }
                             );
@@ -716,11 +714,11 @@
                             vs.
 
                             ```php
-                            $a = Vector { 2, 4, 6, 8 };
-                            $y = 3;
+                            $vector = Vector { 2, 4, 6, 8 };
+                            $inc = 3;
 
-                            $a->map($x ==> $x + $y)
-                              ->filter($x ==> $x > 10);
+                            $vector->map($x ==> $x + $inc)
+                                   ->filter($x ==> $x > 10);
                             ```
                         </script>
                     </section>
@@ -778,8 +776,8 @@
                             ```
 
                             <aside class="notes">
-                                Awaitable wraps what would normally be returned
-                                <br>Caller does not block until await
+                                Awaitable wraps what would normally be returned (e.g. deferred)
+                                <br>Caller does not block until await. Chaining async methods means top-level can decide when to block
                                 <br>No event loop exposed
                             </aside>
                         </script>
@@ -940,7 +938,7 @@
 
                             <aside class="notes">
                                 PHP 5.3 lifecycle ended March 2013, 5.6 incoming
-                                <br>No risk to try HHVM, may be locked in to Hack
+                                <br>Little risk in trying HHVM, but using Hack is more all-in
                             </aside>
                         </script>
                     </section>
@@ -955,6 +953,24 @@
                         <aside class="notes">
                             Initiatives to submit PRs adding HHVM to Travis CI configs.
                         </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [PHPNG (Next Generation)](https://wiki.php.net/phpng)
+
+                            * JIT based on [LLVM](http://en.wikipedia.org/wiki/LLVM)
+                            * Fair amount of internal refactoring
+                            * Some behavioral changes, BC breaks
+                            * Progress since January 2014
+                                * 1.5x execution speed-up
+                                * 30&ndash;60% less CPU instructions
+
+                            <aside class="notes">
+                                Wordpress benchmark: 9.4m to 3.9m CPU, 27 to 16 sec
+                                <br>LLVM is general purpose. HHVM&rsquo;s JIT tailored to PHP, benefits from type hinting/inference, customized data structures (vs. zvals)
+                            </aside>
+                        </script>
                     </section>
                 </section>
 
