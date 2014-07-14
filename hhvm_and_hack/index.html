@@ -34,6 +34,11 @@
                     <h1 class="shadow"><small>A New Type of PHP:</small><br>HHVM and Hack</h1>
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+
+                    <div class="company fragment">
+                        <img src="img/dr-arrow.svg" class="transparent" style="width:4em; opacity: 0.7">
+                        <img src="../common/img/mongodb_ondark.png" class="transparent" style="width: 13em; opacity: 0.7">
+                    </div>
                 </section>
 
                 <section>
@@ -128,6 +133,46 @@
                 <section>
                     <section data-background-image="img/hhvm-logo.png" data-background-position="2em" data-background-repeat="no-repeat" data-background-size="12em">
                         <h1>HHVM</h1>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Why Are We Still Using PHP?
+
+                            * [PHP: A Fractal of Bad Design](http://eev.ee/blog/2012/04/09/php-a-fractal-of-bad-design/)
+                            * [PHP Sadness](http://phpsadness.com/): &ldquo;objective issues&hellip; which make me sad&rdquo;
+
+                            <img src="img/double-claw.jpg" class="fragment" style="margin-top: 1em">
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>The Elephant in the Room</h3>
+
+                        <ul>
+                            <li>
+                                It&rsquo;s had a role in significant projects
+                                <ul>
+                                    <li>Wikipedia, Drupal, Wordpress</li>
+                                    <li>Facebook: x * 10⁵ files, y * 10⁷ LOC</li>
+                                </ul>
+                            </li>
+                            <li class="fragment">
+                                It gets some things right
+                                <ul>
+                                    <li>Developer workflow: tight feedback loop</li>
+                                    <li>State: each request is a blank slate</li>
+                                    <li>Concurrency: share nothing</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <p class="fragment" style="margin-top:1em"><a href="https://github.com/strangeloop/StrangeLoop2013/raw/master/slides/sessions/Adams-TakingPHPSeriously.pdf">Taking PHP Seriously &ndash; Keith Adams, Facebook</a></p>
+
+                        <aside class="notes">
+                            Does PHP make projects more/less successful?
+                            <br>Engineers can still be productive.
+                        </aside>
                     </section>
                 </section>
 
@@ -360,7 +405,8 @@
                                 * Tight feedback loop (<code>hh_client</code>, <code>hh_server</code>)
                                 * Checked before runtime
                             * New language features, core classes
-                            * Some PHP features removed (in strict mode)
+                            * Some PHP &lsquo;features&rsquo; removed
+                            * Catch bugs early, develop faster
 
                             <aside class="notes">
                                 Errors: the actual error, what we saw, what we expected.
@@ -538,7 +584,7 @@
                         <script type="text/template">
                             ### Tuples
 
-                            * Typed, fixed-length arrays
+                            * Typed, fixed-length lists
                             * Size and types are immutable
                             * Useful for custom types, multiple return values
 
@@ -565,7 +611,7 @@
                         <script type="text/template">
                             ### Shapes
 
-                            * Typed, structured arrays
+                            * Typed, structured dictionaries
                             * Alternative to classes with public properties
                             * Useful for simple data structures, argument bags
 

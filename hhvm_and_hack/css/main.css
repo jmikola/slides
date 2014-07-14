@@ -76,6 +76,14 @@ section[data-state="title"] p.bio a[href*="twitter"] {
     padding-left: 50px;
 }
 
+section[data-state="title"] div.company {
+    text-align: right;
+}
+
+section[data-state="title"] div.company > img {
+    vertical-align: top;
+}
+
 section[data-state="year"] {
     border: 1px solid white;
     background-color: rgba(255, 255, 255, 0.8);
