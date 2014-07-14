@@ -1,6 +1,6 @@
 [submodule "vendor/reveal.js"]
 	path = vendor/reveal.js
-	url = git://github.com/hakimel/reveal.js.git
+	url = https://github.com/hakimel/reveal.js.git
 [submodule "vendor/highlight.js"]
 	path = vendor/highlight.js
-	url = git://github.com/isagalaev/highlight.js.git
+	url = https://github.com/isagalaev/highlight.js.git
