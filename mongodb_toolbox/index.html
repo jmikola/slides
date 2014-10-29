@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Raiding the MongoDB Toolbox</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '../vendor/reveal.js/css/print/pdf.css';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <h1>Raiding the<br>MongoDB<br>Toolbox</h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+<!--
+Beyond your standard CRUD operations, MongoDB offers a potpourri of special features. Looking for a quick search API? Full text indexes have you covered. Churning through large amounts of data? Consider map/reduce or the aggregation framework. Querying geospatial data? Create a 2dsphere index and go to town. Digging a bit deeper, we'll look at a few techniques for creating backend services, such as event long-polling and job queue processing.
+
+This session explores advanced features of MongoDB, which aren't immediately obvious to users of the PHP driver. While the majority of the talk looks at specific features, the latter bit will walk through creating a backend application that uses the driver and existing libraries (e.g. console command and event dispatcher libraries).
+-->
+                <section>
+                    <h2>Agenda</h2>
+
+                    <ul>
+                        <li>Full-text Indexing</li>
+                        <li>Data Aggregation</li>
+                        <li>Geospatial Queries</li>
+                        <li>Creating a Job Queue</li>
+                        <li>Tailable Cursors</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/icon_37271.svg" class="transparent" width="30%">
+
+                            ## Full-text<br>Indexing
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### You have an awesome PHP blog
+
+                            ```no-highlight
+                            {
+                                "_id": ObjectId("544fd63860dab3b12521379b"),
+                                "title": "Ten Secrets About PSR-7 You Won't Believe!",
+                                "content": "Phil Sturgeon caused quite a stir on the PHP-FIG
+                                            mailing list this morning when he unanimously
+                                            passed Matthew Weier O'Phinney's controversial
+                                            PSR-7 specification. PHP-FIG members were outraged
+                                            as the self-proclaimed Gordon Ramsay of PHP…",
+                                "published": true,
+                                "created_at": ISODate("2014-10-28T17:46:36.065Z")
+                            }
+                            ```
+                        </script>
+                    </section>
+
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### We&rsquo;d like to search the content
+
+                            * Store arrays of keyword strings
+                            * Query with regular expressions
+                            * Sync data to Solr, Elasticsearch, etc.
+                            * Create a full-text index
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Creating a full-text index](http://docs.mongodb.org/manual/core/index-text/)
+
+                            ```php
+                            $collection->createIndex(
+                                ['content' => 'text']
+                            );
+                            ```
+
+                            <br>
+                            Compound indexing with other fields
+
+                            ```php
+                            $collection->createIndex(
+                                ['content' => 'text', 'created_at' => 1]
+                            );
+                            ```
+
+                            <br>
+                            Indexing multiple string fields
+
+                            ```php
+                            $collection->createIndex(
+                                ['content' => 'text', 'title' => 'text']
+                            );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Step 1: Tokenization
+
+                            ```
+                            [
+                                Phil, Sturgeon, caused, quite, a, stir,
+                                on, the, PHP-FIG, mailing, list, this,
+                                morning, when, he, unanimously, passed,
+                                …
+                            ]
+                            ```
+                            <!-- .element style="font-size: 0.9em;" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Step 2: Trim stop-words
+
+                            ```
+                            [
+                                Phil, Sturgeon, caused, quite, stir,
+                                PHP-FIG, mailing, list,
+                                morning, unanimously, passed,
+                                …
+                            ]
+                            ```
+                            <!-- .element style="font-size: 0.9em;" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Step 3: Stemming
+
+                            ```
+                            [
+                                Phil, Sturgeon, cause, quite, stir,
+                                PHP-FIG, mail, list,
+                                morning, unanimous, pass,
+                                …
+                            ]
+                            ```
+                            <!-- .element style="font-size: 0.9em;" -->
+
+                            <aside class="notes">
+                                <p>Index entry created for each unique, stemmed token.</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Step 4: Profit?
+
+                            <img src="img/gnomes.png" class="transparent" style="width: 75%">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Querying a text index
+
+                            ```php
+                            $cursor = $collection->find(
+                                ['$text' => ['$search' => 'Phil Sturgeon']]
+                            );
+
+                            foreach ($cursor as $document) {
+                                echo $document['content'] . "\n\n";
+                            }
+                            ```
+
+                            &darr;
+
+                            ```no-highlight
+                            Phil Sturgeon caused quite a stir on the PHP-FIG…
+
+                            Phil Jerkson, better known as @phpjerk on Twitter…
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Phrases](http://docs.mongodb.org/manual/reference/operator/query/text/#phrases) and [negations](http://docs.mongodb.org/manual/reference/operator/query/text/#negations)
+
+                            ```php
+                            $cursor = $collection->find(
+                                ['$text' => ['$search' => 'PHP -"Phil Sturgeon"']]
+                            );
+
+                            foreach ($cursor as $document) {
+                                echo $document['content'] . "\n\n";
+                            }
+                            ```
+
+                            &darr;
+
+                            ```no-highlight
+                            Be prepared for the latest and greatest version of PHP with…
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Sorting by the match score](http://docs.mongodb.org/manual/reference/operator/query/text/#text-operator-text-score)
+
+                            ```php
+                            $cursor = $collection->find(
+                                ['$text' => ['$search' => 'Phil Sturgeon']],
+                                ['score' => ['$meta' => 'textScore']]
+                            );
+
+                            $cursor->sort(['score' => ['$meta' => 'textScore']]);
+
+                            foreach ($cursor as $document) {
+                                printf("%.6f: %s\n\n", $document['score'], $document['content']);
+                            }
+                            ```
+
+                            &darr;
+
+                            ```no-highlight
+                            1.035714: Phil Sturgeon caused quite a stir on the PHP-FIG…
+
+                            0.555556: Phil Jerkson, better known as @phpjerk on Twitter…
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Supporting multiple languages](http://docs.mongodb.org/manual/tutorial/specify-language-for-text-index/)
+
+                            ```php
+                            $collection->createIndex(
+                                ['content' => 'text'],
+                                ['default_language' => 'en']
+                            );
+
+                            $collection->insert([
+                                'content' => 'We are planning a hot dog conference',
+                            ]);
+
+                            $collection->insert([
+                                'content' => 'Die Konferenz wird WurstCon benannt werden',
+                                'language' => 'de',
+                            ]);
+
+                            $collection->find(
+                                ['$text' => ['$search' => 'saucisse', '$language' => 'fr']],
+                            );
+                            ```
+
+                            <aside class="notes">
+                                <p>Index entry created for each unique, stemmed token.</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/icon_79730.svg" class="transparent" width="30%">
+
+                            ## Data Aggregation
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/icon_15801.svg" class="transparent" width="30%">
+
+                            ## Geospatial Queries
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/icon_36291.svg" class="transparent" width="30%">
+
+                            ## Creating a Job Queue
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/icon_8605.svg" class="transparent" width="30%">
+
+                            ## Tailable Cursors
+                        </script>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    <script type="text/template">
+                        # Thanks!
+
+                        ----
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * Books designed by <a href="http://www.thenounproject.com/CatherinePlease">Catherine Please</a> from the <a href="http://www.thenounproject.com">Noun Project</a>
+                        * Aggregator designed by <a href="http://www.thenounproject.com/lyinglow">stuart mcmorris</a> from the <a href="http://www.thenounproject.com">Noun Project</a>
+                        * Register designed by <a href="http://www.thenounproject.com/wilsonjoseph">Wilson Joseph</a> from the <a href="http://www.thenounproject.com">Noun Project</a>
+                        * Ouroboros designed by <a href="http://www.thenounproject.com/silas.reeves">Silas Reeves</a> from the <a href="http://www.thenounproject.com">Noun Project</a>
+                        * http://mariompittore.com/wp-content/uploads/2013/08/Social-Gnomes1.png
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>
