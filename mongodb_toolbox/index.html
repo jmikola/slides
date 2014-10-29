@@ -45,8 +45,8 @@ This session explores advanced features of MongoDB, which aren't immediately obv
 
                     <ul>
                         <li>Full-text Indexing</li>
-                        <li>Data Aggregation</li>
                         <li>Geospatial Queries</li>
+                        <li>Data Aggregation</li>
                         <li>Creating a Job Queue</li>
                         <li>Tailable Cursors</li>
                     </ul>
@@ -127,7 +127,7 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                         <script type="text/template">
                             ### Step 1: Tokenization
 
-                            ```
+                            ```no-highlight
                             [
                                 Phil, Sturgeon, caused, quite, a, stir,
                                 on, the, PHP-FIG, mailing, list, this,
@@ -143,7 +143,7 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                         <script type="text/template">
                             ### Step 2: Trim stop-words
 
-                            ```
+                            ```no-highlight
                             [
                                 Phil, Sturgeon, caused, quite, stir,
                                 PHP-FIG, mailing, list,
@@ -159,7 +159,7 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                         <script type="text/template">
                             ### Step 3: Stemming
 
-                            ```
+                            ```no-highlight
                             [
                                 Phil, Sturgeon, cause, quite, stir,
                                 PHP-FIG, mail, list,
@@ -279,20 +279,6 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                                 ['$text' => ['$search' => 'saucisse', '$language' => 'fr']],
                             );
                             ```
-
-                            <aside class="notes">
-                                <p>Index entry created for each unique, stemmed token.</p>
-                            </aside>
-                        </script>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            <img src="img/icon_79730.svg" class="transparent" width="30%">
-
-                            ## Data Aggregation
                         </script>
                     </section>
                 </section>
@@ -305,6 +291,395 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                             ## Geospatial Queries
                         </script>
                     </section>
+
+                    <section data-markdown>
+                        <!-- lighter heart symbol: &#9829; -->
+                        <script type="text/template">
+                            ### Because some of us &#10084; maps
+
+                            <img src="img/derickr.jpg">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Geospatial indexes](http://docs.mongodb.org/manual/core/geospatial-indexes/)
+
+                            * [Inclusion](http://docs.mongodb.org/manual/applications/geospatial-indexes/#inclusion), [proximity](http://docs.mongodb.org/manual/applications/geospatial-indexes/#proximity), and [intersection](http://docs.mongodb.org/manual/applications/geospatial-indexes/#intersection)
+                            * `2dsphere` for earth-like geometry
+                                * Supports [GeoJSON](http://geojson.org/geojson-spec.html) objects
+                            * `2d` for flat geometry
+                                * Legacy point format: `[x,y]`
+
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [GeoJSON](http://geojson.org/geojson-spec.html) in a nutshell
+
+                            ```javascript
+                            { "type": "Point", "coordinates": [100.0, 0.0] }
+
+                            { "type": "LineString", "coordinates": [[100.0, 0.0], [101.0, 1.0]] }
+
+                            { "type": "Polygon",
+                              "coordinates": [
+                                 [[100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0]],
+                                 [[100.2, 0.2], [100.8, 0.2], [100.8, 0.8], [100.2, 0.8], [100.2, 0.2]]
+                              ]
+                            }
+
+                            { "type": "MultiPolygon",
+                              "coordinates": [
+                                  [[[102, 2], [103, 2], [103, 3], [102, 3], [102, 2]]],
+                                  [[[100, 0], [101, 0], [101, 1], [100, 1], [100, 0.0]]]
+                              ]
+                            }
+
+                            { "type": "GeometryCollection",
+                              "geometries": [ { … }, { … } ]
+                            }
+                            ```
+                            <!-- .element style="font-size: 0.5em;" -->
+                        </script>
+                    </section>
+
+                    <section>
+                        <h1 class="meme">Arrays</h1>
+
+                        <img src="img/x_y_everywhere.jpg">
+
+                        <h2 class="meme">Arrays Everywhere</h2>
+                    </section>
+
+                    <section>
+                        <a href="http://github.com/jmikola/geojson">
+                            <img src="img/geojson.png">
+                        </a>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Indexing some places of interest
+
+                            ```php
+                            $collection->insert([
+                                'name' => 'Hyatt Regency Santa Clara',
+                                'type' => 'hotel',
+                                'loc'  => [
+                                    'type' => 'Point',
+                                    'coordinates' => [-121.976557, 37.404977],
+                                ],
+                            ]);
+
+                            $collection->insert([
+                                'name' => 'In-N-Out Burger',
+                                'type' => 'restaurant',
+                                'loc'  => [
+                                    'type' => 'Point',
+                                    'coordinates' => [-121.982102, 37.387993],
+                                ]
+                            ]);
+
+                            $collection->ensureIndex(['loc' => '2dsphere']);
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Inclusion queries
+
+                            ```php
+                            // Define a GeoJSON polgyon
+                            $polygon = [
+                                'type' => 'Polygon',
+                                'coordinates' => [
+                                    [
+                                        [-121.976557, 37.404977], // Hyatt Regency
+                                        [-121.982102, 37.387993], // In-N-Out Burger
+                                        [-121.992311, 37.404385], // Rabbit's Foot Meadery
+                                        [-121.976557, 37.404977],
+                                    ],
+                                ],
+                            ];
+
+                            // Find documents within the polygon's bounds
+                            $collection->find(['loc' => ['$geoWithin' => $polygon]]);
+
+                            // Find documents within circular bounds
+                            $collection->find(['loc' => ['$geoWithin' => ['$centerSphere' => [
+                                [-121.976557, 37.404977], // Center coordinate
+                                5 / 3959,                 // Convert miles to radians
+                            ]]]]);
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Sorted proximity queries
+
+                            ```php
+                            $point = [
+                                'type' => 'Point',
+                                'coordinates' => [-121.976557, 37.404977]
+                            ];
+
+                            // Find locations nearest a point
+                            $collection->find(['loc' => ['$near' => $point]]);
+
+                            // Find the nearest 50 restaurants within 5km
+                            $collection->find([
+                                'loc' => ['$near' => $point, '$maxDistance' => 5000],
+                                'type' => 'restuarant',
+                            ])->limit(50);
+                            ```
+                        </script>
+                    </section>
+
+                    <section>
+                        <img src="img/foursquare.png">
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/icon_79730.svg" class="transparent" width="30%">
+
+                            ## Data Aggregation
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### We have some commands for this
+
+                            * [aggregate](http://docs.mongodb.org/manual/reference/command/aggregate/)
+                            * [count](http://docs.mongodb.org/manual/reference/command/count/)
+                            * [distinct](http://docs.mongodb.org/manual/reference/command/distinct/)
+                            * [group](http://docs.mongodb.org/manual/reference/command/group/)
+                            * [mapReduce](http://docs.mongodb.org/manual/reference/command/mapReduce/)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Count](http://docs.mongodb.org/manual/reference/command/count/)
+
+                            ```php
+                            $collection->insert(['code' => 'A123', 'num' => 500 ]);
+                            $collection->insert(['code' => 'A123', 'num' => 250 ]);
+                            $collection->insert(['code' => 'B212', 'num' => 200 ]);
+                            $collection->insert(['code' => 'A123', 'num' => 300 ]);
+
+                            $collection->count(); // Returns 4
+
+                            $collection->count(['num' => ['$gte' => 250]]); // Returns 3
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Distinct](http://docs.mongodb.org/manual/reference/command/distinct/)
+
+                            ```php
+                            $collection->insert(['code' => 'A123', 'num' => 500 ]);
+                            $collection->insert(['code' => 'A123', 'num' => 250 ]);
+                            $collection->insert(['code' => 'B212', 'num' => 200 ]);
+                            $collection->insert(['code' => 'A123', 'num' => 300 ]);
+
+                            $collection->distinct('code'); // Returns ["A123", "B212"]
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Group](http://docs.mongodb.org/manual/reference/command/group/)
+
+                            ```php
+                            $collection->insert(['code' => 'A123', 'num' => 500 ]);
+                            $collection->insert(['code' => 'A123', 'num' => 250 ]);
+                            $collection->insert(['code' => 'B212', 'num' => 200 ]);
+                            $collection->insert(['code' => 'A123', 'num' => 300 ]);
+
+                            $result = $collection->group(
+                                ['code' => 1], // field(s) on which to group
+                                ['sum' => 0], // initial aggregate value
+                                new MongoCode('function(cur, agg) { agg.sum += cur.num }')
+                            );
+
+                            foreach ($result['retval'] as $grouped) {
+                                printf("%s: %d\n", $grouped['code'], $grouped['sum']);
+                            }
+                            ```
+
+                            &darr;
+
+                            ```no-highlight
+                            A123: 1050
+                            B212: 200
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [MapReduce](http://docs.mongodb.org/manual/reference/command/mapReduce/)
+
+                            * Extremely versatile, powerful
+                            * Intended for complex data analysis
+                            * Overkill for simple aggregation tasks
+                                * e.g. averages, summation, grouping
+                            * [Incremental data processing](http://docs.mongodb.org/manual/tutorial/perform-incremental-map-reduce/)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Aggregating [query profiler output](http://docs.mongodb.org/manual/reference/database-profiler/)
+
+                            ```javascript
+                            {
+                                "op" : "query",
+                                "ns" : "db.collection",
+                                "query" : {
+                                    "code" : "A123",
+                                    "num" : {
+                                        "$gt" : 225
+                                    }
+                                },
+                                "ntoreturn" : 0,
+                                "ntoskip" : 0,
+                                "nscanned" : 11426,
+                                "lockStats" : { … },
+                                "nreturned" : 0,
+                                "responseLength" : 20,
+                                "millis" : 12,
+                                "ts" : ISODate("2013-05-23T21:24:39.327Z"),
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Constructing a query skeleton
+
+                            ```javascript
+                            {
+                                "code" : "A123",
+                                "num" : {
+                                    "$gt" : 225
+                                }
+                            }
+                            ```
+
+                            &darr;
+
+                            ```javascript
+                            {
+                                "code" : <string>,
+                                "num" : {
+                                    "$gt" : <number>
+                                }
+                            }
+                            ```
+
+                            Aggregate stats for similar queries<br><small>(e.g. execution time, index performance)</small>
+                        </script>
+                    </section>
+
+                    <section>
+                        <a href="http://github.com/jmikola/mongoqp">
+                            <img src="img/mongoqp.png" class="transparent">
+                        </a>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Aggregation framework](http://docs.mongodb.org/manual/core/aggregation-pipeline/)
+
+                            * Process a stream of documents
+                                * Original input is a collection
+                                * Outputs one or more result documents
+                            * Series of operators
+                                * Filter or transform data
+                                * Input/output chain
+
+                            ```no-highlight
+                            ps ax | grep mongod | head -n 1
+                            ```
+                            <!-- .element style="font-size: 1em; margin-top: 1em; text-align: center;" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Executing an aggregation pipeline
+
+                            ```php
+                            $collection->aggregateCursor([
+                                ['$match' => ['status' => 'A']],
+                                ['$group' => ['_id' => '$cust_id', 'total' => ['$sum' => '$amount']]]
+                            ]);
+                            ```
+
+                            <img src="img/pipeline.png" class="transparent">
+                        </script>
+
+                        <aside class="notes">
+                            <p>aggregate() returns result as a single document. Cursor is preferred for 2.6+.</p>
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Pipeline operators</h2>
+
+                        <div class="col-left">
+                            <ul>
+                                <li><code>$match</code></li>
+                                <li><code>$geoNear</code></li>
+                                <li><code>$project</code></li>
+                                <li><code>$group</code></li>
+                                <li><code>$unwind</code></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-right">
+                            <ul>
+                                <li><code>$sort</code></li>
+                                <li><code>$limit</code></li>
+                                <li><code>$skip</code></li>
+                                <li><code>$redact</code></li>
+                                <li><code>$out</code></li>
+                            </ul>
+                        </div>
+
+                        <aside class="notes">
+                            <p>Also: expressions and accumulators.</p>
+                        </aside>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Aggregating fractals](http://ilearnasigoalong.blogspot.com/2013/12/mongo-aggregating-fractals.html)
+
+                            <img src="img/agg-fractals.png" class="transparent">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Solving symbolic equations and calculus](https://github.com/friedo/agg-symbolic)
+
+                            <img src="img/agg-calculus.png" class="transparent">
+                        </script>
+                    </section>
                 </section>
 
                 <section>
@@ -313,6 +688,168 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                             <img src="img/icon_36291.svg" class="transparent" width="30%">
 
                             ## Creating a Job Queue
+                        </script>
+                    </section>
+
+                    <section data-markdown data-background="img/dogecoin.png" data-background-repeat="no-repeat" data-background-position="bottom right" data-background-size="66%">
+                        <script type="text/template">
+                            ### Things not to do in your controllers
+
+                            * Send email messages
+                            * Upload files to S3
+                            * Blocking API calls
+                            * Heavy data processing
+                            * Mining cryptocurrency
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Creating a job
+
+                            ```php
+                            $collection->insert([
+                                'data' => [ … ],
+                                'processed' => false,
+                                'createdAt' => new MongoDate,
+                            ]);
+
+                            $collection->createIndex(
+                                ['processed' => 1, 'createdAt' => 1]
+                            );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Selecting a job
+
+                            ```php
+                            $job = $collection->findAndModify(
+                                ['processed' => false],
+                                ['$set' => ['processed' => true, 'receivedAt' => new MongoDate]],
+                                null, // field projection (if any)
+                                [
+                                    'sort' => ['createdAt' => 1],
+                                    'new' => true,
+                                ]
+                            );
+                            ```
+
+                            &darr;
+
+                            ```javascript
+                            {
+                                "_id" : ObjectId("54515e16ba5a4da1b15a1766"),
+                                "data" : { … },
+                                "processed" : true,
+                                "createdAt" : ISODate("2014-10-29T21:37:26.405Z"),
+                                "receivedAt" : ISODate("2014-10-29T21:37:33.118Z")
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Schedule jobs in the future
+
+                            ```php
+                            $collection->insert([
+                                'data' => [ … ],
+                                'processed' => false,
+                                'createdAt' => new MongoDate,
+                                'scheduledAt' => new MongoDate(strtotime('1 hour')),
+                            ]);
+                            ```
+
+                            &darr;
+
+                            ```php
+                            $now = new MongoDate;
+
+                            $job = $collection->findAndModify(
+                                ['processed' => false, 'scheduledAt' => ['$lt' => $now]],
+                                ['$set' => ['processed' => true, 'receivedAt' => $now]],
+                                null,
+                                [
+                                    'sort' => ['createdAt' => 1],
+                                    'new' => true,
+                                ]
+                            );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Prioritize job selection
+
+                            ```php
+                            $collection->insert([
+                                'data' => [ … ],
+                                'processed' => false,
+                                'createdAt' => new MongoDate,
+                                'priority' => 0,
+                            ]);
+
+                            // Index: { "processed": 1, "priority": -1, "createdAt": 1 }
+                            ```
+
+                            &darr;
+
+                            ```php
+                            $now = new MongoDate;
+
+                            $job = $collection->findAndModify(
+                                ['processed' => false],
+                                ['$set' => ['processed' => true, 'receivedAt' => $now]],
+                                null,
+                                [
+                                    'sort' => ['priority' => -1, 'createdAt' => 1],
+                                    'new' => true,
+                                ]
+                            );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Gracefully handle failed jobs
+
+                            ```php
+                            $collection->insert([
+                                'data' => [ … ],
+                                'processed' => false,
+                                'createdAt' => new MongoDate,
+                                'attempts' => 0,
+                            ]);
+                            ```
+
+                            &darr;
+
+                            ```php
+                            $now = new MongoDate;
+
+                            $job = $collection->findAndModify(
+                                ['processed' => false],
+                                [
+                                    '$set' => ['processed' => true, 'receivedAt' => $now],
+                                    '$inc' => ['attempts' => 1],
+                                ],
+                                null,
+                                [
+                                    'sort' => ['createdAt' => 1],
+                                    'new' => true,
+                                ]
+                            );
+                            ```
+
+                            <aside class="notes">
+                                <p>If a job fails, we can revert "processed" to false; "attempts" is useful for bookkeeping.</p>
+                            </aside>
                         </script>
                     </section>
                 </section>
@@ -325,13 +862,164 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                             ## Tailable Cursors
                         </script>
                     </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Capped collections
+
+                            ```php
+                            $database->createCollection(
+                                'tailme',
+                                [
+                                    'capped' => true,
+                                    'size' => 16777216, // 16 MiB
+                                    'max' => 1000,
+                                ]
+                            );
+                            ```
+
+                            <aside class="notes">
+                                <p>Collection will have a hard limit at 16MB and a soft limit of 1000 documents.</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Producer
+
+                            ```php
+                            for ($i = 0; ++$i; ) {
+                                $collection->insert(['x' => $i]);
+                                printf("Inserted: %d\n", $i);
+                                sleep(1);
+                            }
+                            ```
+
+                            &darr;
+
+                            ```no-highlight
+                            Inserted: 1
+                            Inserted: 2
+                            Inserted: 3
+                            Inserted: 4
+                            Inserted: 5
+                            …
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Consumer
+
+                            ```php
+                            $cursor = $collection->find();
+                            $cursor->tailable(true);
+                            $cursor->awaitData(true);
+
+                            while (true) {
+                                if ($cursor->dead()) {
+                                    break;
+                                }
+
+                                if ( ! $cursor->hasNext()) {
+                                    continue;
+                                }
+
+                                printf("Consumed: %d\n", $cursor->getNext()['x']);
+                            }
+                            ```
+
+                            &darr;
+
+                            ```no-highlight
+                            Consumed: 1
+                            Consumed: 2
+                            …
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Replica set oplog](http://docs.mongodb.org/manual/core/replica-set-oplog/)
+
+                            ```php
+                            $collection->insert([
+                                'x' => 1,
+                            ]);
+                            ```
+
+                            &darr;
+
+                            ```javascript
+                            {
+                                "ts" : Timestamp(1414624929, 1),
+                                "h" : NumberLong("2631382894387434484"),
+                                "v" : 2,
+                                "op" : "i",
+                                "ns" : "test.foo",
+                                "o" : {
+                                    "_id" : ObjectId("545176a14ab5c0c999da70f0"),
+                                    "x" : 1
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Replica set oplog](http://docs.mongodb.org/manual/core/replica-set-oplog/)
+
+                            ```php
+                            $collection->update(
+                                ['x' => 1],
+                                ['$inc' => ['x' => 1]]
+                            );
+                            ```
+
+                            &darr;
+
+                            ```javascript
+                            {
+                                "ts" : Timestamp(1414624962, 1),
+                                "h" : NumberLong("5079425106850550701"),
+                                "v" : 2,
+                                "op" : "u",
+                                "ns" : "test.foo",
+                                "o2" : {
+                                    "_id" : ObjectId("545176a14ab5c0c999da70f0")
+                                },
+                                "o" : {
+                                    "$set" : {
+                                        "x" : 2
+                                    }
+                                }
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Fun with MongoDB&rsquo;s oplog
+
+                            * [Syncing MongoDB to Solr with PHP](http://derickrethans.nl/mongodb-and-solr.html)
+                            * [MongoDB river plugin for Elasticsearch](https://github.com/richardwilly98/elasticsearch-river-mongodb)
+                            * [Building real-time systems @ Stripe](http://www.mongodb.com/presentations/building-real-time-systems-mongodb-using-oplog-stripe)
+                            * [Scalable oplog tailing @ Meteor](https://www.meteor.com/blog/2013/12/18/david-glasser-on-scaling-meteor-with-the-mongodb-oplog)
+                        </script>
+                    </section>
                 </section>
 
-                <section data-markdown>
+                <section data-markdown data-background="img/dogecoin.png" data-background-repeat="no-repeat" data-background-position="bottom right" data-background-size="66%">
                     <script type="text/template">
                         # Thanks!
 
-                        ----
+                        ## [joind.in/12092](https://joind.in/12092)
+                        <!-- .element style="margin-top: 2em;" -->
                     </script>
                 </section>
 
