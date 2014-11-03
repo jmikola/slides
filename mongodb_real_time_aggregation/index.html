@@ -139,7 +139,7 @@
                             db.orders.insert({ customer: "B212", amount: 200, status: "A" });
                             db.orders.insert({ customer: "A123", amount: 300, status: "D" });
 
-                            db.records.distinct(); // Returns ["A123", "B212"]
+                            db.records.distinct("customer"); // Returns ["A123", "B212"]
                             ```
                         </script>
                     </section>
