@@ -123,23 +123,37 @@
                             #### Only one level of indentation per method
 
                             ```php
-                            class Board
+                            function migrateSuppliers(\MongoCollection $supplierCollection)
                             {
-                                public function representation()
-                                {
-                                    $buffer = new Buffer();
+                                $typeMap = [
+                                    1 => 'billingAddress',
+                                    2 => 'returnsAddress',
+                                    3 => 'shippingAddress',
+                                ];
 
-                                    for ($i = 0; $i < 10; $i++) {
-                                        for ($j = 0; $j < 10; $j++) {
-                                            $buffer->append($this->data[$i][$j]);
+                                foreach ($supplierCollection->find()->snapshot() as $supplier) {
+                                    $newObj = ['$unset' => ['addresses' => 1]];
+
+                                    // $set other fields…
+
+                                    if (isset($supplier['addresses'])) {
+                                        foreach ($supplier['addresses'] as $address) {
+                                            $newObj['$set'][$typeMap[$address['subtype']]] = [
+                                                'name' => isset($address['name']) ? $address['name'] : null,
+                                                'address1' => isset($address['address1']) ? $address['address1'] : null,
+                                                'address2' => isset($address['address2']) ? $address['address2'] : null,
+                                                'city' => isset($address['city']) ? $address['city'] : null,
+                                                'state' => isset($address['state']) ? $address['state'] : null,
+                                                'zip' => isset($address['postalCode']) ? $address['postalCode'] : null,
+                                            ];
                                         }
-                                        $buffer->append("\n");
                                     }
 
-                                    return (string) $buffer;
+                                    $suppliers->update(['_id' => $supplier['_id']], $newObj);
                                 }
                             }
                             ```
+                            <!-- .element style="font-size: 0.47em;" -->
                         </script>
                     </section>
 
@@ -160,26 +174,96 @@
                             #### Only one level of indentation per method
 
                             ```php
-                            class Board
+                            function createSupplierAddressSet($addresses)
                             {
-                                public function representation()
-                                {
-                                    $buffer = new Buffer();
+                                $typeMap = [
+                                    1 => 'billingAddress',
+                                    2 => 'returnsAddress',
+                                    3 => 'shippingAddress',
+                                ];
 
-                                    for ($i = 0; $i < 10; $i++) {
-                                        $this->collectRow($buffer, $i);
-                                    }
+                                $set = [];
 
-                                    return (string) $buffer;
+                                foreach ($addresses as $address) {
+                                    $set[$typeMap[$address['subtype']]] = [
+                                        'name' => isset($address['name']) ? $address['name'] : null,
+                                        'address1' => isset($address['address1']) ? $address['address1'] : null,
+                                        'address2' => isset($address['address2']) ? $address['address2'] : null,
+                                        'city' => isset($address['city']) ? $address['city'] : null,
+                                        'state' => isset($address['state']) ? $address['state'] : null,
+                                        'zip' => isset($address['postalCode']) ? $address['postalCode'] : null,
+                                    ];
                                 }
 
-                                public function collectRow(Buffer $buffer, $row)
-                                {
-                                    for ($i = 0; $i < 10; $i++) {
-                                        $buffer->append($this->data[$row][$i]);
+                                return $set;
+                            }
+                            ```
+                            <!-- .element style="font-size: 0.48em;" -->
+
+                            <aside class="notes">
+                                <p>Consider moving $typeMap to a class constant (PHP 5.6+) or property.</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Only one level of indentation per method
+
+                            ```php
+                            function migrateSuppliers(\MongoCollection $supplierCollection)
+                            {
+                                foreach ($supplierCollection->find()->snapshot() as $supplier) {
+                                    $newObj = [
+                                        '$set' => [],
+                                        '$unset' => ['addresses' => 1],
+                                    ];
+
+                                    // $set other fields…
+
+                                    if (isset($supplier['addresses'])) {
+                                        $newObj['$set'] = array_merge(
+                                            $newObj['$set'],
+                                            createSupplierAddressSet($supplier['addresses'])
+                                        );
                                     }
 
-                                    $buffer->append("\n");
+                                    $suppliers->update(['_id' => $supplier['_id']], $newObj);
+                                }
+                            }
+                            ```
+
+                            <aside class="notes">
+                                <p>Use PHP to merge/join arrays when possible.</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Only one level of indentation per method
+
+                            ```php
+                            function migrateSuppliers(\MongoCollection $supplierCollection)
+                            {
+                                $cursor = $supplierCollection
+                                    ->find(['$exists' => ['addresses' => 1]])
+                                    ->snapshot;
+
+                                foreach ($cursor as $supplier) {
+                                    $newObj = [
+                                        '$set' => [],
+                                        '$unset' => ['addresses' => 1],
+                                    ];
+
+                                    // $set other fields…
+
+                                    $newObj['$set'] = array_merge(
+                                        $newObj['$set'],
+                                        createSupplierAddressSet($supplier['addresses'])
+                                    );
+
+                                    $suppliers->update(['_id' => $supplier['_id']], $newObj);
                                 }
                             }
                             ```
@@ -201,16 +285,36 @@
                             #### Avoid using `else`
 
                             ```php
-                            function login($username, $password)
+                            public function addProduct($slug, Request $request)
                             {
-                                if ($this->userRepository->isValid($username, $password)) {
-                                    $this->redirect('homepage');
+                                $product = $this->productRepository->findOneBySlug($slug);
+
+                                if ($product !== null) {
+                                    $form = $this->formFactory->create('add_product');
+                                    $form->handleRequest($request);
+
+                                    if ($form->isValid()) {
+                                        if ($request->get('wishlist', false)) {
+                                            $controller = 'wishlist.controller:addProduct';
+                                        } else {
+                                            $controller = 'cart.controller:addProduct';
+                                        }
+
+                                        return $this->forward($controller, [
+                                            'id' => $product->getId(),
+                                        ]);
+                                    } else {
+                                        return $this->render('product/add.html.twig', [
+                                            'form' => $form->createView(),
+                                            'product' => $product,
+                                        ]);
+                                    }
                                 } else {
-                                    $this->session->addFlash('error', 'Invalid credentials');
-                                    $this->redirect('login');
+                                    throw new NotFoundHttpException();
                                 }
                             }
                             ```
+                            <!-- .element style="font-size: 0.48em;" -->
                         </script>
                     </section>
 
@@ -219,22 +323,37 @@
                             #### Avoid using `else`
 
                             ```php
-                            function login($username, $password)
+                            public function addProduct($slug, Request $request)
                             {
-                                if ($this->userRepository->isValid($username, $password)) {
-                                    return $this->redirect('homepage');
+                                $product = $this->productRepository->findOneBySlug($slug);
+
+                                if ($product === null) {
+                                    throw new NotFoundHttpException();
                                 }
 
-                                $this->session->addFlash('error', 'Invalid credentials');
-                                $this->redirect('login');
+                                $form = $this->formFactory->create('add_product');
+                                $form->handleRequest($request);
+
+                                if ( ! $form->isValid()) {
+                                    return $this->render('product/add.html.twig', [
+                                        'form' => $form->createView(),
+                                        'product' => $product,
+                                    ]);
+                                }
+
+                                $controller = $request->get('wishlist', false)
+                                    ? 'wishlist.controller:addProduct'
+                                    : 'cart.controller:addProduct'
+
+                                return $this->forward($controller, [
+                                    'id' => $product->getId(),
+                                ]);
                             }
                             ```
-
-                            <p class="fragment">Optimistic vs. Defensive Programming</p>
+                            <!-- .element style="font-size: 0.48em;" -->
 
                             <aside class="notes">
-                                <p>Optimistic checks for errors up front, defaults to valid case.</p>
-                                <p>Defensive is the opposite; code is less likely to allow unexpected errors.</p>
+                                <p>Return early when possible. Keep code flow vertical (vs. tree shape).</p>
                             </aside>
                         </script>
                     </section>
@@ -272,6 +391,146 @@
                         <script type="text/template">
                             <img src="img/four_fingers-512.png" class="transparent" width="30%">
 
+                            ### One <strike>dot</strike> per line
+
+                            T_OBJECT_OPERATOR
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### One dot per line
+
+                            ### Law of Demeter<br><small>(Principle of Least Knowledge)</small>
+
+                            <p class="fragment">Only talk to friends</p>
+
+                            <p class="fragment">Don&rsquo;t circumvent encapsulation</p>
+
+                            <p class="fragment"><a href="http://en.wikipedia.org/wiki/Method_chaining">Method chaining</a> and <a href="http://en.wikipedia.org/wiki/Fluent_interface">fluent APIs</a> are still OK</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### One dot per line
+
+                            ```php
+                            $user = $this->container->get('security.context')->getToken()->getUser();
+
+                            $image = $user->getProfile()->getAvatar()->getUrl();
+                            ```
+
+                            vs.
+
+                            ```php
+                            $user = $this->getUser();
+
+                            $image = $user->getAvatarUrl();
+                            ```
+
+                            <aside class="notes">
+                                <p>Decoupled from SecurityContext and entity structures. New methods can implement safeguards and are easier to mock.</p>
+                                <p>Can of worms: injecting a container, controllers as services.</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+
+                            ### <strike>Don&rsquo;t</strike> Do not abbreviate
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Do not abbreviate
+
+                            Why do you want to abbreviate?
+
+                            <p class="fragment">Repeating a name too frequently<br>hints at code duplication.</p>
+
+                            <p class="fragment">Method names being too long<br>hints at misplaced responsibility.</p>
+
+                            <aside class="notes">
+                                <p>Order::shipOrder() can simply be ship()</p>
+                                <p>Single Responsibility Principle; self-documenting, maintainable code.</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+                            <img src="img/one_finger-512.png" class="transparent" width="30%">
+
+                            ### Keep your entities small
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### Keep your entities small
+
+                            &lt;100 LOC per class
+
+                            10 methods per class
+
+                            15 classes per package
+
+                            <p class="fragment" style="margin-top:1.5em">The goal is readability and maintainability</p>
+
+                            <aside class="notes">
+                                <p>Rafael and Guilherme doubled 50 from Java.</p>
+                                <p>Have some goal to limit responsibility per class</p>
+                                <p>Packages should collect classes that work together (e.g. components)</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+                            <img src="img/two_fingers-512.png" class="transparent" width="30%">
+
+                            ### Limit classes to five<br>member variables
+
+                            <aside class="notes">
+                                <p>Rafael and Guilherme increased 2 from Java.</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### Limit classes to five member variables
+
+                            Decompose objects with many attributes<br>into a hierarchy of collaborating objects
+
+                            <p class="fragment">Higher cohesion and better encapsulation</p>
+
+                            <aside class="notes">
+                                <p>Involves primitive wrapping and small entities</p>
+                                <p>Not a rule for data models (i.e. reference objects)</p>
+                            </aside>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
+                            <img src="img/three_fingers-512.png" class="transparent" width="30%">
+
                             ### First class collections
                         </script>
                     </section>
@@ -280,7 +539,7 @@
                         <script type="text/template">
                             #### First class collections
 
-                            If a class contains a collection, it<br>should have no other member variables
+                            If a class contains a collection,<br>it should not be doing much else.
 
                             <p class="fragment">Behaviors for the collection have a home<br><small>(e.g. combining, filtering, mapping)</small></p>
                         </script>
@@ -325,237 +584,6 @@
                     <section data-markdown>
                         <script type="text/template">
                             <img src="img/whole_hand-512.png" class="transparent" width="30%">
-
-                            ### One <strike>dot</strike> per line
-
-                            T_OBJECT_OPERATOR
-                        </script>
-                    </section>
-
-                    <section data-markdown class="spaced-out">
-                        <script type="text/template">
-                            #### One dot per line
-
-                            ### Law of Demeter<br><small>(Principle of Least Knowledge)</small>
-
-                            <p class="fragment">Only talk to friends</p>
-
-                            <p class="fragment">Don&rsquo;t circumvent encapsulation</p>
-
-                            <p class="fragment"><a href="http://en.wikipedia.org/wiki/Method_chaining">Method chaining</a> and <a href="http://en.wikipedia.org/wiki/Fluent_interface">fluent APIs</a> are still OK</p>
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            #### One dot per line
-
-                            ```php
-                            class Piece
-                            {
-                                /** @var string */
-                                public $representation;
-                            }
-
-                            class Location
-                            {
-                                /** @var Piece */
-                                public $current;
-                            }
-                            ```
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            #### One dot per line
-
-                            ```php
-                            class Board
-                            {
-                                /** @var Location[] */
-                                private $squares;
-
-                                public function representation()
-                                {
-                                    $buffer = new Buffer();
-
-                                    foreach ($this->squares as $location) {
-                                        $char = substr($location->current->representation, 0, 1);
-                                        $buffer->append($char);
-                                    }
-
-                                    return (string) $buffer;
-                                }
-                            }
-                            ```
-
-                            <p class="fragment">Board should only deal with its Locations.<br>Why is it formatting Piece representations?</p>
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            #### One dot per line
-
-                            ```php
-                            class Piece
-                            {
-                                /** @var string */
-                                private $representation;
-
-                                function addTo(Buffer $buffer)
-                                {
-                                    $buffer->append(substr($this->representation, 0, 1));
-                                }
-                            }
-
-                            class Location
-                            {
-                                /** @var Piece */
-                                private $current;
-
-                                function addTo(Buffer $buffer)
-                                {
-                                    $this->current->addTo($buffer);
-                                }
-                            }
-                            ```
-
-                            <p class="fragment">Applying the <a href="http://en.wikipedia.org/wiki/Open/closed_principle">open/closed principle</a></p>
-
-                            <aside class="notes">
-                                <p>Entities should be "open for extension, but closed for modification"</p>
-                                <p>Default to private member variables</p>
-                                <p>Break substr() into a separate method as needed</p>
-                            </aside>
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            #### One dot per line
-
-                            ```php
-                            class Board {
-                                /** @var Location[] */
-                                private $squares;
-
-                                function representation() {
-                                    $buffer = new Buffer();
-
-                                    foreach ($this->squares as $location) {
-                                        $location->addTo($buffer);
-                                    }
-
-                                    return (string) $buffer;
-                                }
-                            }
-                            ```
-                        </script>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
-                            <img src="img/one_finger-512.png" class="transparent" width="30%">
-
-                            ### <strike>Don&rsquo;t</strike> Do not abbreviate
-                        </script>
-                    </section>
-
-                    <section data-markdown class="spaced-out">
-                        <script type="text/template">
-                            #### Do not abbreviate
-
-                            Why do you want to abbreviate?
-
-                            <p class="fragment">Repeating a name too frequently<br>hints at code duplication.</p>
-
-                            <p class="fragment">Method names being too long<br>hints at misplaced responsibility.</p>
-
-                            <aside class="notes">
-                                <p>Order::shipOrder() can simply be ship()</p>
-                                <p>Single Responsibility Principle</p>
-                            </aside>
-                        </script>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
-                            <img src="img/two_fingers-512.png" class="transparent" width="30%">
-
-                            ### Keep your entities small
-                        </script>
-                    </section>
-
-                    <section data-markdown class="spaced-out">
-                        <script type="text/template">
-                            #### Keep your entities small
-
-                            50 LOC per class and 10 files per package
-
-                            <p class="fragment">The goal is readability and maintainability</p>
-
-                            <aside class="notes">
-                                <p>This limits responsibility per class</p>
-                                <p>Packages should collect classes that work together towards a common goal</p>
-                            </aside>
-                        </script>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
-                            <img src="img/three_fingers-512.png" class="transparent" width="30%">
-
-                            ### Limit classes to two<br>member variables
-
-                            <aside class="notes">
-                                <p>Rafael and Guilherme suggest 5 for PHP</p>
-                            </aside>
-                        </script>
-                    </section>
-
-                    <section data-markdown class="spaced-out">
-                        <script type="text/template">
-                            #### Limit classes to two member variables
-
-                            Decompose objects with many attributes<br>into a hierarchy of collaborating objects
-
-                            <p class="fragment">Higher cohesion and better encapsulation</p>
-
-                            <aside class="notes">
-                                <p>Involves primitive wrapping and small entities</p>
-                                <p>Not a rule for data models (i.e. reference objects)</p>
-                            </aside>
-                        </script>
-                    </section>
-
-                    <section data-markdown class="spaced-out">
-                        <script type="text/template">
-                            #### Limit classes to two member variables
-
-                            Leaves us with two types of classes
-
-                            <p class="fragment">Those that maintain state of a single variable</p>
-
-                            <p class="fragment">Those that coordinate two separate variables</p>
-                        </script>
-                    </section>
-                </section>
-
-                <section>
-                    <section data-markdown>
-                        <script type="text/template">
-                            <img src="img/whole_hand-512.png" class="transparent" width="30%">
                             <img src="img/four_fingers-512.png" class="transparent" width="30%">
 
                             ### No getters and setters<br>for class properties
@@ -586,6 +614,22 @@
                             > Procedural code gets information then makes decisions. Object-oriented code tells objects to do things.
 
                             &mdash; Alec Sharp in [Smalltalk by Example](http://pragprog.com/articles/tell-dont-ask)
+                        </script>
+                    </section>
+
+                    <section data-markdown class="spaced-out">
+                        <script type="text/template">
+                            #### **Use** getters and setters for class properties
+
+                            Dependency injection<br><small>Post-constructor (e.g. interface injection)</small>
+
+                            Encapsulating transformations
+
+                            Decorator pattern<br><small>(e.g. Doctrine Proxy objects)</small>
+
+                            <aside class="notes">
+                                <p>PHP&rsquo;s limitations mean we sometimes need to break this rule.</p>
+                            </aside>
                         </script>
                     </section>
                 </section>
