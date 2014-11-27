@@ -1,0 +1,36 @@
+Two Peas in a Podcast
+100: [img]podcast-itstheboozetalking.jpg ## Voices of the ElePHPant / It's the Booze Talking: Cal and Kathy Evans ##
+200: [img]podcast-soundofsymfony.jpg ## Sound of Symfony: Magnus Nordlander and Tobias Nyholm ##
+300: [img]podcast-devhell.jpg ## dev/hell: Ed Finkler and Chris Hartjes ##
+400: [img]podcast-thatpodcast.jpg ## That Podcast: Beau Simensen and Dave Marshall ##
+500: [img]podcast-looselycoupled.jpg ## Loosely Coupled: Jeff Carouth and Matt Frost ##
+¡Madrid, yo estoy en ti!
+100: Order a cerveza at a local taberna and a small plate of this may accompany your drink. ## Tapas ##
+200: This busy town center is also kilometer zero on Spain's radial highway system. ## Puerta del Sol ##
+300: This central street, known for its shopping and nightlife, is said to never sleep and has been compared to New York City's Broadway. ## Gran Vía ##
+400: Famous works of art from Velázquez and Goya, among many others, adorn the walls of this world-renowned museum. ## Prado ##
+500: Head to the Chamartín district and you may find La Liga football club Real Madrid playing a game here. ## Santiago Bernabéu ##
+@FabPotFacts
+100: That one time Fabien wrote a working dependency injection container in less than 140 characters. ## Twittee ##
+200: This past Monday was a special occasion. ## Birthday ##
+300: Fabien and Grégory founded Sensio in this year, well before the Symfony project was created in 2004. ## 1998 ##
+400: Ever the sweet tooth, Fabien has been known to eat as many as five of these over lunch. ## Cake ##
+500: During a few keynote presentations in 2013, Fabien shared that he got his start programming on this, his first personal computer. ## Amstrad ##
+Los Patrocinadores
+100: Burying the framework hatchet, SensioLabs and this household name in the PHP world have sponsored each other's conferences this year. ## Zend ##
+200: David Zuelke's new gig at this company aims to make PHP application deployments as easy as a git push. ## Heroku ##
+300: For the second year in a row and without the slightest concern for bus factor, this Paris-based consultancy flew nearly all of their development staff to SymfonyCon. ## Theodo ##
+400: This cloud hosting company from Commerce Guys was made with Drupal and Symfony applications in mind. ## Platform.sh ##
+500: You'll TIRE from trying to figure out how to pronounce the name of this gold sponsor, and it's not because they're from Switzerland. ## 07ZR.com ##
+Dude, Where's my Class? (hard mode)
+100: GetAttrNode ## ExpressionLanguage ##
+200: TextareaFormField ## DomCrawler ##
+300: ResolvedTypeFactoryDataCollectorProxy ## Form ##
+400: GlobalExecutionContextInterface ## Validator ##
+500: MethodArgumentValueNotImplementedException ## Intl or Locale ##
+RTFM
+100: [img]rtfm-xkcd.png ## XKCD ##
+200: The docs for Symfony and countless other projects are written with this markup language. ## reStructuredText ##
+300: This young Dutchman is trailing right behind Ryan Weaver in contributions to the Symfony documentation. ## WouterJ ##
+400: This author of "A Year with Symfony" has been working with the framework since 2007. ## Matthias Noback ##
+500: The Symfony documentation is filled with more than 2,000 of these. ## Code blocks ##

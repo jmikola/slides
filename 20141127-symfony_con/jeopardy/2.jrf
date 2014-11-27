@@ -1,0 +1,36 @@
+Backwards Compatibility
+100: Thanks to a sordid history of half-baked Unicode support and premature books, PHP internals voted to use this as their next major version. ## 7 ##
+200: Silex 2.0 will see its dependency on this lightweight DI container jump from 1.0 to 3.0. ## Pimple ##
+300: After soliciting feedback from the community, Fabien proposed this as the minimum PHP version required for Symfony 3.0. ## 5.5 ##
+400: This Composer operator may be used as shorthand to require a minimum version up to the next significant release (e.g. >=1.2,&lt;2.0). ## Tilde ##
+500: While 2.7 will be the final LTS release for Symfony's 2.x series, this version, expected in May 2017, will be the first for 3.x. ## 3.3 ##
+La Comunidad
+100: Over a dozen PHP developers traveled to Chicago and waited in line for nine hours to eat a couple of hot dogs at this conference. ## WurstCon ##
+200: Pablo Godel helps organize this North American conference, which gave yellow ElePHPants to attendees last year. ## Sunshine PHP ##
+300: This community leader helps run PHP Benelux along with the unconference track at ZendCon. ## Michelangelo van Dam ##
+400: Earlier this month, php[architect] launched this conference in Washington DC, aimed at bringing all segments of the PHP community together. ## PHP World ##
+500: Earlier this year, this group ran a fundraiser selling purple ElePHPants through Kickstarter. ## PHP Women ##
+Parody Accounts
+100: A cat photo tweeted by @phpdrama was enough to confirm that this angry Canadian is at least one of the folks behind the account. ## Chris Hartjes ##
+200: Many have wrongfully accused this Bristolian with dubious immigration status of being the voice behind @phpjerk. ## Phil Sturgeon ##
+300: This executive would like to remind you: FTP.GITHUB.COM IS DOWN! ## @PHP_CEO ## 
+400: ♫ Guessing this identity shouldn't be hard ♫[b]♫ He's the lyricist behind @phpbard ♫ ## Jeremy Lindblom ##
+500: Some Twitter API sleuthing hinted that this Dutchman moonlights as "Developer Symfony from Kazakstan", @SymfonyBorat. ## Stefan Koopmanschap ##
+A Picture's Worth a Thousand Words
+100: [img]ps-jeopardy ## PHP Jeopardy ##
+200: [img]ps-skoop.jpg ## Stefan Koopmanschap ##
+300: [img]ps-goto.jpg ## Goto statement ##
+400: [img]ps-auravel.jpg ## Paul Jones and Taylor Otwell ##
+500: [img]ps-dcousineau.jpg ## Daniel Cousineau ##
+#SymfonyCon
+100: This officially unofficial Symfony conference tradition will take place Friday evening at Brindis in downtown Madrid. ## Karaoke ##
+200: A handful of attendees are skipping turkey and this quintessentially American holiday to attend SymfonyCon this year. ## Thanksgiving ##
+300: Thursday's happy hour event is sponsored by this PHP profiler tool, which was created by SensioLabs. ## Blackfire ##
+400: SymfonyCon could not happen without this SensioLabs employee, who also coordinates the lightning talk track at each conference. ## Anne-Sophie ##
+500: SymfonyCon 2015 will be held in this city. ## TODO ##
+Whose Best Practices?!
+100: This is the example application used throughout the Symfony Best Practices book. ## Blog ##
+200: One controversial recommendation is to use this format when defining services because it is friendly for newcomers. ## YAML ##
+300: Although Symfony 2.5 now allows you to define these in your form classes, the book advises adding them in the view layer. ## Buttons ##
+400: The book advises calling the render() method explicitly instead of using this Controller annotation. ## @Template ##
+500: Much to Anthony Ferrara's delight, the book recommends configuring the Security component to use this instead of the traditional SHA-512 password encoder. ## bcrypt ##
