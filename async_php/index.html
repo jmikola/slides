@@ -285,6 +285,7 @@
                             * `stream_select()`
                             * `stream_set_blocking()`
                             * `curl_multi_select()`
+                            * `mysqli_poll()`
 
                             <aside class="notes">
                                 Not the easiest APIs to use.
@@ -360,24 +361,6 @@
                                 Null timeout blocks. Zero timeout polls instantaneously (bad within loop).
                             </aside>
                         </script>
-                    </section>
-
-                    <section>
-                        <h2>Event Loop</h2>
-
-                        <ul>
-                            <li>Tracks timers and streams</li>
-                            <li class="fragment">Each loop iteration is a "tick"</li>
-                            <li class="fragment">Ticks execute timers and poll IO</li>
-                            <li class="fragment">Polling timeout can be calculated</li>
-                            <li class="fragment">No timers/streams ends loop</li>
-                        </ul>
-
-                        <aside class="notes">
-                            Timers: run once, periodically, cancel.
-                            <br>
-                            Blocking on stream_select() is OK if waiting for IO is the only thing to do.
-                        </aside>
                     </section>
                 </section>
 
@@ -480,6 +463,24 @@
                 </section>
 
                 <section>
+                    <section>
+                        <h2>Event Loop</h2>
+
+                        <ul>
+                            <li>Tracks timers and streams</li>
+                            <li class="fragment">Each loop iteration is a "tick"</li>
+                            <li class="fragment">Ticks execute timers and poll IO</li>
+                            <li class="fragment">Polling timeout can be calculated</li>
+                            <li class="fragment">No timers/streams ends loop</li>
+                        </ul>
+
+                        <aside class="notes">
+                            Timers: run once, periodically, cancel.
+                            <br>
+                            Blocking on stream_select() is OK if waiting for IO is the only thing to do.
+                        </aside>
+                    </section>
+
                     <section>
                         <h2>Event Loop</h2>
 
@@ -650,13 +651,15 @@
                 </section>
 
                 <section>
+<!--
                     <section>
-                        <img src="img/mlp_segway.png" height="80%" class="transparent">
+                        <img src="img/mlp_segway.png" width="40%" class="transparent">
 
                         <aside class="notes">
                             Segue!
                         </aside>
                     </section>
+-->
 
                     <section>
                         <h2>Promises</h2>
@@ -735,6 +738,8 @@
                                 resolve() creates a Deferred internally and returns a Promise, which we can use immediately.
                                 <br>
                                 Uncaught exceptions result in a RejectedPromise.
+                                <br>
+                                ConnectionFactory->create()->then()
                             </aside>
                         </script>
                     </section>
@@ -864,7 +869,7 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## MongoDB Shell
+                            ## Child Process
 
                             ```php
                             $loop = React\EventLoop\Factory::create();
@@ -891,6 +896,43 @@
 
                             $loop->run();
                             ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## MongoDB Driver
+
+                            ```php
+                            use Jmikola\React\MongoDB\Connection;
+                            use Jmikola\React\MongoDB\ConnectionFactory;
+                            use Jmikola\React\MongoDB\Protocol\Query;
+                            use Jmikola\React\MongoDB\Protocol\Reply;
+
+                            $loop = React\EventLoop\Factory::create();
+                            $factory = new ConnectionFactory($loop);
+
+                            $factory->create('127.0.0.1', 27017)->then(
+                                function (Connection $connection) {
+                                    $message = new Query('test.foo', ['x' => 1]);
+
+                                    $connection->send($message)->then(
+                                        function(Reply $reply) {
+                                            foreach ($reply as $document) {
+                                                printf("Document id: %s\n", $document['_id']);
+                                            }
+                                        },
+                                        function (Exception $e) { /* Error! */ }
+                                    );
+
+                                    $connection->end();
+                                },
+                                function (Exception $e) { /* Error! */ }
+                            );
+
+                            $loop->run();
+                            ```
+                            <!-- .element: style="font-size: 0.5em;" -->
                         </script>
                     </section>
                 </section>
@@ -932,7 +974,7 @@
                             nextTick() can divide computations across event loop iterations.
                         </aside>
                     </section>
-
+<!--
                     <section>
                         <h2>Async MySQL</h2>
 
@@ -967,7 +1009,7 @@
                         Quite possibly the future of PHP /s
                     </aside>
                 </section>
-
+-->
                 <section>
                     <img src="img/composer.png" class="transparent" width="40%">
 
