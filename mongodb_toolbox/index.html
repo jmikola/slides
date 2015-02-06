@@ -382,7 +382,7 @@ This session explores advanced features of MongoDB, which aren't immediately obv
                                 ]
                             ]);
 
-                            $collection->ensureIndex(['loc' => '2dsphere']);
+                            $collection->createIndex(['loc' => '2dsphere']);
                             ```
                         </script>
                     </section>
