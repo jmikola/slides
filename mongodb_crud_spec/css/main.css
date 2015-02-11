@@ -1,0 +1,171 @@
+.reveal h1.meme,
+.reveal h2.meme {
+    font-family: "Impact";
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: white;
+    text-shadow:  2px  2px 1px #000,
+                 -2px -2px 1px #000,
+                  2px -2px 1px #000,
+                 -2px  2px 1px #000;
+}
+
+div.col-left {
+    float: left;
+    width: 50%;
+}
+
+div.col-right {
+    float: right;
+    width: 50%;
+}
+
+.reveal blockquote p {
+    line-height: 1.5em;
+}
+
+.reveal blockquote {
+    position: relative;
+    margin-bottom: 1em;
+}
+
+.reveal blockquote:before {
+    display: block;
+    content: "\201C";
+    font-family: Georgia, serif;
+    font-size: 6em;
+    font-weight: bold;
+    position: absolute;
+    left: -0.5em;
+    top: 0.2em;
+    color: #aaa;
+}
+
+.reveal sup {
+    font-size: 0.6em;
+}
+
+.reveal pre code {
+    max-height: inherit;
+}
+
+.reveal div.code-marker {
+    position: absolute;
+    margin-top: 0.18em;
+    font-family: monospace;
+    font-size: 0.55em;
+    font-weight: bold;
+    line-height: 1.2em;
+}
+
+@media print {
+    .reveal div.code-marker { display: none; }
+}
+
+.reveal section.spaced-out p {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+}
+
+.reveal section img.transparent {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.reveal table {
+    border-collapse: collapse;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.reveal table th {
+    padding: 10px 8px;
+    border-bottom: 3px solid #999;
+}
+
+.reveal table td {
+    padding: 9px 8px 0px 8px;
+}
+
+.reveal ul pre {
+    width: 100%;
+}
+
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+    text-transform: none;
+    margin-bottom: 1em;
+}
+
+.reveal h4 ~ h3 {
+    margin-bottom: 0.5em;
+}
+
+.reveal h1.outline,
+.reveal h2.outline {
+    color: white;
+    text-shadow:  2px  2px 2px #000,
+                 -2px -2px 2px #000,
+                  2px -2px 2px #000,
+                 -2px  2px 2px #000,
+                  0px  0px 10px #000;
+}
+
+section[data-state="title"] h1 {
+    display: block;
+    font-size: 2em;
+    text-align: left;
+}
+
+section[data-state="title"] p.bio {
+    display: inline-block;
+    margin-top: 1.5em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../../common/img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+section[data-state="title"] p.bio a[href*="twitter"] {
+    background-image: url("../../common/img/twitter-bird-light-bgs.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding-left: 50px;
+}
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}
+
+.reveal h3 a,
+.reveal h4 a {
+    line-height: inherit !important;
+}
+
+.reveal h3 small,
+.reveal h4 small {
+    color: #999;
+    vertical-align: bottom;
+}
+
+.reveal li small {
+    color: #999;
+    vertical-align: baseline;
+}
+
+section.li-spaced li {
+    margin-top: 0.25em;
+}
+
+span.arg { color: #008080; }
+
+span.fragment.emoticon {
+    margin-left: 1em;
+    color: #888;
+}

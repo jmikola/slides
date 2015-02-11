@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>MongoDB CRUD Specification</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '../vendor/reveal.js/css/print/pdf.css';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <h1>An Exciting<br>New CRUD API for<br>MongoDB Drivers</h1>
+
+                    <h6 style="font-size: 0.75em; text-align: left">Opening Wednesday, February 11<br>in select conference rooms.</h6>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                </section>
+
+                <section>
+                    <section>
+                        <h3>But First&hellip;<br>Coming Attractions</h3>
+
+                        <img src="img/excited.gif">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            It all started back on May 21, 2012&hellip;
+
+                            <br>
+
+                            <p class="fragment" style="font-size: 0.7em">(a Monday, in case you forgot)</p>
+
+                            <br>
+
+                            <p class="fragment">&hellip;with this email:</p>
+
+                            <br>
+
+                            ```no-highlight
+                            From: Jeremy Mikola <jmikola@10gen.com>
+                            To: New York City Employees <nyc@10gen.com>
+                            Subject: Egg Creams @ 3pm
+
+                            I have a bottle of this at my desk and plan
+                            to make some egg creams around 3pm. Let me
+                            know if you would like one.
+                            ```
+                            <!-- .element class="fragment" -->
+
+                            <img src="img/ubet.png" class="transparent fragment" style="position: absolute;top:0;right:0">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### I&rsquo;ve received a lot of responses over the years:
+
+                            <p class="fragment">&ldquo;Are there eggs involved in egg cream??&rdquo;</p>
+
+                            <br>
+
+                            <p class="fragment">&ldquo;I don&rsquo;t know what those are, but they sound good!&rdquo;</p>
+
+                            <br>
+
+                            <p class="fragment">&ldquo;Is it like a cream egg?&rdquo;</p>
+
+                            <br>
+
+                            <p class="fragment">&ldquo;Calling them egg creams should be a<br>floggable offense. They have neither in them.&rdquo;</p>
+
+                            <br>
+
+                            <p class="fragment">&ldquo;None for me, thanks. I&rsquo;m driving.&rdquo;</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            #### So, what&rsquo;s in this thing, exactly?
+
+                            <img src="img/egg_cream-1.jpg" width="70%">
+                        </script>
+                    </section>
+
+                    <section data-background="img/jira_syrup.png" data-background-color="#ffffff" data-background-repeat="no-repeat" data-background-position="top left" data-background-size="cover">
+                    </section>
+
+                    <section data-background="img/jira_seltzer.png" data-background-color="#ffffff" data-background-repeat="no-repeat" data-background-position="top left" data-background-size="cover">
+                    </section>
+
+                    <section>
+                        <img src="img/egg_cream-2.jpg" width="60%">
+                    </section>
+
+                    <section>
+                        <img src="img/egg_cream-3.jpg" width="80%">
+                    </section>
+
+                    <section>
+                        <img src="img/egg_cream-4.jpg" width="70%">
+                    </section>
+
+                    <section>
+                        <img src="img/egg_cream-5.jpg" width="60%">
+                    </section>
+
+                    <section>
+                        <img src="img/egg_cream-6.jpg" width="60%">
+                    </section>
+
+                    <section>
+                        <img src="img/egg_cream-7.jpg" width="60%">
+                    </section>
+
+                    <section>
+                        <img src="img/egg_cream-8.jpg" width="60%">
+                    </section>
+
+                    <section>
+                        <img src="img/more_you_know.gif" width="80%">
+                    </section>
+
+                    <section>
+                        <img src="img/friends_clap.gif" width="80%">
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h3>And now for our feature presentation&hellip;</h3>
+
+                        <img src="img/feature_presentation.gif" width="90%">
+                    </section>
+
+
+                    <section data-markdown data-background="img/seinfeld.png" data-background-repeat="no-repeat" data-background-position="bottom left" data-background-size="33%">
+                        <script type="text/template">
+                            ## What&rsquo;s the deal with specs?
+                        </script>
+                    </section>
+
+                    <section>
+                        <h2 style="margin-bottom: 0.25em;">A Cursory Introduction</h2>
+
+                        <h6>Shamelessly borrowed from&hellip;</h6>
+
+                        <img src="img/dgolden.png" class="transparent" width="50%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Drivers Today
+
+                            * APIs evolved over many years
+                            * Idiomatic for their language
+                            * Inconsistent with each other
+                            * Subtle behavioral differences
+                                * Support team loves this! <!-- .element: class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Specifications
+
+                            * Authentication
+                            * SDAM, server selection
+                            * Wire protocol, write commands
+                            * User-facing APIs
+                                * CRUD, enumeration, `$out`
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## End Goals
+
+                            * Consistency across drivers
+                                * Behavior *and* public API
+                            * Guidance for third-party drivers
+                            * [Parkinson&rsquo;s law of triviality](http://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality)
+                        </script>
+                    </section>
+
+                    <section data-markdown data-background="img/waldocat.png" data-background-repeat="no-repeat" data-background-position="bottom right" data-background-size="33%">
+                        <script type="text/template">
+                            ## Available on GitHub
+
+                            Released specs: [mongodb/specifications](https://github.com/mongodb/specifications)
+
+                            Internal WIPs: [10gen/specifications](https://github.com/10gen/specifications)
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## CRUD Specification
+                        </script>
+                    </section>
+
+                    <section data-background="img/credits.png" data-background-color="#f5f8fa" data-background-repeat="no-repeat" data-background-position="top center" data-background-size="contain">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What are we addressing?
+
+                            Collection-level read/write methods.
+
+                            <br>
+
+                            Drivers currently vary in naming and semantics.
+
+                            <br>
+
+                            Functionality and APIs are inconsistent.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## CRUD
+
+                            * Create<span class="fragment" style="position: absolute; right: 5em;">`insert()`</span>
+                            * Read<span class="fragment" style="position: absolute; right: 5em;">`find()`</span>
+                            * Update<span class="fragment" style="position: absolute; right: 5em;">`update()`</span>
+                            * Delete<span class="fragment" style="position: absolute; right: 5em;">`remove()`</span>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h2>But Wait&hellip; There&rsquo;s More!</h2>
+
+                        <img src="img/but_wait_theres_more.jpg" width="80%">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## CRUDCRADBOoMFaM
+
+                            * Create
+                            * Read
+                            * Update
+                            * Delete
+                            * Count
+                            * Replace
+                            * Aggregate
+                            * Distinct
+                            * Bulk, One or Many
+                            * Find and Modify
+                        </script>
+                    </section>
+
+                    <section data-background="img/jira_sink.png" data-background-color="#ffffff" data-background-repeat="no-repeat" data-background-position="top left" data-background-size="cover">
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Our entirely reasonable and level-headed approach&hellip;
+
+                            ###### Bear with me. <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Terminology
+
+                            ***Collection***: class or interface representing a collection.<br>Spec defines methods to be implemented on this object.
+
+                            <br>
+
+                            ***Iterable***: some iterable object or structure.<br>Cursor or cursor-like abstraction for reads.<br>Vector or array for write method arguments.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Operations
+
+                            Methods to be implemented on the Collection object.
+
+                            <br>
+
+                            These have *required* and *optional* parameters.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Deviations
+
+                            Spec is flexible with naming and option handling.
+
+                            <br>
+
+                            This permits idiomaticity. <span class="fragment emoticon"><span style="font-family: FreeSerif; font-size: 2em; position: relative; top: 0.15em">&#9756;</span> (real word)</span>
+                        </script>
+                    </section>
+
+                    <section data-markdown class="li-spaced">
+                        <script type="text/template">
+                            ### Naming Deviations
+
+                            &ldquo;Root&rdquo; words are non-negotiable.
+
+                            <br>
+
+                            * `batchSize`, `batch_size` <span class="fragment emoticon">ʕ•ᴥ•ʔ</span>
+                                * `batchCount` <span class="fragment emoticon">щ（ﾟДﾟщ）</span>
+                            * `maxTimeMS`, `maxTime` <span class="fragment emoticon">&nbsp;&nbsp;͡° ͜ʖ﻿ ͡°</span>
+                                * `maximumTime`? <span class="fragment emoticon">(╯°□°）╯︵ ┻━┻</span>
+                            * `FindOptions`, `FindArgs` <span class="fragment emoticon">ح(ﾟヮﾟ)ﾉ</span>
+                                * `QueryParams`? <span class="fragment emoticon">(ノಠ益ಠ)ノ彡┻━┻</span>
+                            * `ordered`, `isOrdered` <span class="fragment emoticon">ᕕ( ᐛ )ᕗ</span>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Option Handling
+
+                            Required options are positional arguments.
+
+                            <br>
+
+                            For optional options, you have some options:
+
+                            <br>
+
+                            * Named parameters
+                            * Dictionary or hash objects
+                            * Option classes (e.g. `UpdateOptions`)
+                                * May be consolidated, shared
+                            * Fluent builders for `find()`, `aggregate()`
+                                * Document when order of operations applies! <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### What we&rsquo;re not doing
+
+                            Method overloading.
+
+                            <br>
+
+                            &ldquo;Model&rdquo; classes encapsulating all arguments.
+
+                            <br>
+
+                            Prioritizing BC over standardization.
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Diving into the API
+
+                            ### Chapter 1: Reads
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Querying
+
+                            ```
+                            find(filter: Document, options: FindOptions):
+                                Iterable<Document>;
+                            ```
+
+                            <br>
+
+                            `filter` is criteria (i.e. `$query` meta operator).
+
+                            <br>
+
+                            Support other operators through options.
+
+                            <br>
+
+                            Iterable is obviously a cursor here.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## FindOptions
+
+                            * `allowPartialResults: Boolean` <!-- .element style="color: #aaa" -->
+                            * `batchSize: Int32`
+                            * `comment: String`
+                            * `cursorType: CursorType` <!-- .element style="color: #888" -->
+                            * `limit: Int32`
+                            * `maxTimeMS: Int64`
+                            * `modifiers: Document` <!-- .element style="color: #888" -->
+                            * `noCursorTimeout: Boolean` <!-- .element style="color: #aaa" -->
+                            * `oplogReplay: Boolean` <!-- .element style="color: #aaa" -->
+                            * `projection: Document`
+                            * `skip: Int32`
+                            * `sort: Document`
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Abstracting Internal Details
+
+                            `CursorType` enum may be normal,<br>tailable, or tailable and awaitable.
+
+                            <br>
+
+                            Today&rsquo;s wire protocol flags are<br>tomorrow&rsquo;s command options.
+
+                            <br>
+
+                            Users shouldn&rsquo;t care and<br>it&rsquo;s not worth future API breaks.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Other Read Methods
+
+                            ```
+                            aggregate(pipeline: Document[], options: AggregateOptions):
+                                Iterable<Document>;
+
+                            count(filter: Document, options: CountOptions):
+                                Int64;
+
+                            distinct(fieldName: string, filter: Document, options: DistinctOptions):
+                                Iterable<any>;
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## AggregateOptions
+
+                            * `allowDiskUse: Boolean`
+                            * `batchSize: Int32`
+                            * `maxTimeMS: Int64`
+                            * `useCursor: Boolean`
+
+                            <br>
+
+                            `useCursor` default varies by server version.
+
+                            <br>
+
+                            May affect the kind of Iterable returned.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## CountOptions
+
+                            * `hint: (String | Document)`
+                            * `limit: Int64`
+                            * `maxTimeMS: Int64`
+                            * `skip: Int64`
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## DistinctOptions
+
+                            * `maxTimeMS: Int64`
+
+                            <br>
+
+                            <img src="img/sleeping_computer.gif" width="50%" class="fragment">
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Diving into the API
+
+                            ### Chapter 2: Writes
+
+                            #### We&rsquo;re basically 50% done at this point&hellip; <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Write Methods
+
+                            ```
+                            insertOne(document: Document):
+                                InsertOneResult;
+
+                            insertMany(Iterable<Document> documents, options: InsertManyOptions):
+                                InsertManyResult;
+
+                            deleteOne(filter: Document):
+                                DeleteResult;
+
+                            deleteMany(filter: Document):
+                                DeleteResult;
+                            ```
+
+                            One or many behavior is explicit and<br>facilitates self-documenting code.
+
+                            <br>
+
+                            Eliminates inconsistency between `multi` and `justOne`<br>defaults for `update()` and `remove()`, respectively.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### `insertMany()`
+
+                            <img src="img/inigo.gif" width="70%" class="fragment">
+
+                            <p class="fragment">`insertMany` is syntactic sugar<br>for `bulkWrite()` with inserts.</p>
+
+                            <br>
+
+                            <p class="fragment">Spec doesn&rsquo;t address legacy<br>batch `OP_INSERT` operations.</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## InsertManyOptions
+
+                            * `ordered: Boolean`
+
+                            <br>
+
+                            <img src="img/rhps_bored.gif" width="60%" class="fragment">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Write Methods <span style="font-size: 0.7em">(Continued)</span>
+
+                            ```
+                            replaceOne(filter: Document, replacement: Document, options: UpdateOptions):
+                                UpdateResult;
+
+                            updateOne(filter: Document, update: Document, options: UpdateOptions):
+                                UpdateResult;
+
+                            updateMany(filter: Document, update: Document, options: UpdateOptions):
+                                UpdateResult;
+                            ```
+
+                            Same points about explicit,<br>self-documenting code apply.
+
+                            <br>
+
+                            Trivial to validate if replacement or<br>update documents contain operators.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## UpdateOptions
+
+                            * `upsert: Boolean`
+
+                            <br>
+
+                            <img src="img/brad_bored.gif" width="60%" class="fragment">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Bulk Writes
+
+                            ```
+                            bulkWrite(requests: WriteModel[], options: BulkWriteOptions):
+                                BulkWriteResult;
+                            ```
+
+                            <p class="fragment">Remember `initializeOrderedBulkOp()`,<br>or the really old fluent API from 2013?</p>
+
+                            <img src="img/mib_erase.gif" width="70%" class="fragment">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## WriteModel
+
+                            Also, remember when we said we were&rsquo;t doing<br>&ldquo;model&rdquo; classes that encapsulate all arguments?
+
+                            <img src="img/arnold_lied.gif" width="70%" class="fragment">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## WriteModel
+
+                            Models include required and optional (if any)<br>arguments from single write methods.
+
+                            <br>
+
+                            `bulkWrite()`&rsquo;s `request` argument<br>allows users to specify all of their writes<br>at once and in a single method call.
+
+                            <br>
+
+                            Trivial to make a fluent API atop this,<br>although it&rsquo;s not in the spec.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## UpdateManyModel <span style="font-size: 0.7em">(f.e.)</span>
+
+                            * `filter: Document required`
+                            * `update: Document required`
+                            * `upsert: Boolean optional`
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## BulkWriteOptions
+
+                            * `ordered: Boolean`
+
+                            <br>
+
+                            <img src="img/roll_eyes.gif" width="60%" class="fragment">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Result Classes
+
+                            * Insert results may report driver-generated IDs
+                            * Delete results include counts
+                            * Update results include counts and<br>server-generated IDs from upserts
+                            * Bulk results aggregate all of the above
+
+                            <br>
+
+                            Results are optional for unacknowledged writes.<br><span style="font-size:0.7em">(e.g. `Optional<BulkWriteResult>`, `isAcknowledged` boolean)</span>
+
+                            <br>
+
+                            <span class="fragment">Since all fields within insert results are optional,<br>`insertOne()` and `insertMany()` may be void!</span>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Write Errors
+
+                            * Spec is flexible on how errors are reported
+                            * Mainly concerned that info is accessible<br>under consistent fields and names.
+                            * Doesn&rsquo;t address merging errors
+                                * We have a bulk write spec for that
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Diving into the API
+
+                            ### Chapter 3: Find and Modify
+
+                            #### I&rsquo;ll keep this short&hellip; <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Find and Modify Methods
+
+                            ```
+                            findOneAndDelete(
+                                filter: Document,
+                                options: FindOneAndDeleteOptions
+                            ): Document;
+
+                            findOneAndReplace(
+                                filter: Document,
+                                replacement: Document,
+                                options: FindOneAndReplaceOptions
+                            ): Document;
+
+                            findOneAndUpdate(
+                                filter: Document,
+                                update: Document,
+                                options: FindOneAndUpdateOptions
+                            ): Document;
+                            ```
+
+                            Option classes contain only<br>the relevant command options.
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Preemptive Q&amp;A
+
+                            <img src="img/obama_podium.gif" width="70%">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Read Preferences?
+
+                            Generally, queries on same collection<br>will use the same read preference.
+
+                            <br>
+
+                            Spec assumes it&rsquo;s set on<br>client, database, or collection.
+
+                            <br>
+
+                            Per-operation read preferences are permitted;<br>the spec simply doesn&rsquo;t define it.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Write Concerns?
+
+                            Everything we *just* said about read preferences&hellip;
+
+                            <br>
+
+                            Throttling of unacknowledged writes<br>can be done with `bulkWrite()` on &ge;2.6,<br>or periodic `getLastError` commands for &lt;2.6
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## `findOne()`?
+
+                            Knock yourself out. The spec doesn&rsquo;t care.
+
+                            <br>
+
+                            Please keep its options consistent with `find()`,<br>removing the irrelevant bits (e.g. `limit`)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Query and Aggregation Merge
+
+                            Querying and aggregation may merge<br>into the same query engine down the line.
+
+                            <br>
+
+                            If `find()` is chosen as the common initiator,<br>our public API will change a bit and drivers<br>should bump major versions for the BC break.
+
+                            <br>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Where&rsquo;s `explain`?
+
+                            Supported via `find()`&rsquo;s `modifiers` option.<br>Generic command executor can be used<br>for `aggregate` or &ge;2.8&rsquo;s `explain` command.
+
+                            <br>
+
+                            More useful in JavaScript shell than regular drivers.
+
+                            <br>
+
+                            Also, bikeshed. <!-- .element class="fragment" -->
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Thanks!
+
+                            <img src="img/obama_exit.gif" width="70%">
+                        </script>
+                    </section>
+                </section>
+
+                <section data-markdown>
+                    <script type="text/template">
+                        # Fin.
+
+                        ## Questions?
+                        <!-- .element style="margin-top: 2em;" -->
+                    </script>
+                </section>
+
+                <section data-markdown data-state="photo-credits">
+                    <script type="text/template">
+                        ### Image Credits
+
+                        * http://www.instructables.com/id/Egg-Cream/
+                        * <a href="http://giphy.com/">Giphy</a> and <a href="http://reactiongifs.com/">Reaction Gifs</a>
+                        * https://octodex.github.com/wheres-waldocat/
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>
