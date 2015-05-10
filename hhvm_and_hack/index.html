@@ -103,7 +103,7 @@
                             ### 2013
 
                             * HHVM replaces HPHPc in production
-                            * HHVM 2.3.0 adds support for FastCGI
+                            * HHVM 2.3 adds support for FastCGI
                             * Travis CI adds HHVM runtime
                             * Performance and parity lockdowns
 
@@ -119,13 +119,23 @@
                             ### 2014
 
                             * Facebook open-sources Hack language
-                            * HHVM 3.0.0 adds support for Hack
-                            * 27 PHP framework test suites at 100%
+                            * HHVM 3.0 adds support for Hack
+                            * HHVM 3.3 is the first LTS release
                             * Tracking PHP HEAD
 
                             <aside class="notes">
                                 Tracking PHP means reimplementing its bugs and quirks (until they can be fixed upstream)
                             </aside>
+                        </script>
+                    </section>
+
+                    <section data-state="year" data-markdown data-background-image="img/timeline-bg.png" data-background-position="center" data-background-repeat="repeat-y" data-background-size="99px auto">
+                        <script type="text/template">
+                            ### 2015
+
+                            * HHVM 3.6 is the second LTS release
+                            * Hack Transpiler converts Hack &rarr; PHP
+                            * 26 PHP framework test suites at 100%
                         </script>
                     </section>
                 </section>
@@ -351,10 +361,11 @@
                             ### [Linux Binaries](https://github.com/facebook/hhvm/wiki/Prebuilt%20Packages%20for%20HHVM)
 
                             * Ubuntu (LTS, recent releases)
-                            * Debian 8
-                            * Fedora 20
-                            * Mint 16
-                            * CentOS (community supported)
+                            * Debian 8, 7
+                            * Community supported
+                              * Fedora, CentOS
+                              * Mint, Arch
+                              * Amazon
                         </script>
                     </section>
 
@@ -368,7 +379,6 @@
                             ```bash
                             $ git clone git://github.com/facebook/hhvm.git
                             $ cd hhvm
-                            $ git checkout HHVM-3.1.0
                             $ git submodule update --init --recursive
                             $ cmake .
                             $ make -j [num_cores]
@@ -992,12 +1002,13 @@
                     <section>
                         <h3>Getting the Community on Board</h3>
 
-                        <img src="img/project-support.png" class="transparent">
+                        <img src="img/project-support-20150508.png" class="transparent" width="90%">
 
                         <p><small><a href="http://hhvm.h4cc.de/">http://hhvm.h4cc.de/</a></small></p>
 
                         <aside class="notes">
                             Initiatives to submit PRs adding HHVM to Travis CI configs.
+                            <br>Change since last year: 1729/1222/9302/X
                         </aside>
                     </section>
 
@@ -1009,11 +1020,11 @@
                             * Fair amount of internal refactoring
                             * Some behavioral changes, BC breaks
                             * Progress since January 2014
-                                * 1.5x execution speed-up
-                                * 30&ndash;60% less CPU instructions
+                                * 2.7x execution speed-up
+                                * 52% less CPU instructions
 
                             <aside class="notes">
-                                Wordpress benchmark: 9.4m to 3.9m CPU, 27 to 16 sec
+                                Wordpress benchmark: 9.4b to 2.4b CPU, 27 to 11 sec
                                 <br>LLVM is general purpose. HHVM&rsquo;s JIT tailored to PHP, benefits from type hinting/inference, customized data structures (vs. zvals)
                             </aside>
                         </script>
