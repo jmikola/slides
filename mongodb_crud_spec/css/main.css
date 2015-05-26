@@ -73,6 +73,10 @@ div.col-right {
     box-shadow: none;
 }
 
+.reveal section img.va {
+    vertical-align: middle;
+}
+
 .reveal table {
     border-collapse: collapse;
     margin: 0 auto;

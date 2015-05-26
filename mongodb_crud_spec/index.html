@@ -31,13 +31,15 @@
         <div class="reveal">
             <div class="slides">
                 <section data-state="title">
-                    <h1>An Exciting<br>New CRUD API for<br>MongoDB Drivers</h1>
+                    <h1><small>Standardizing Our Drivers Through Specs:</small><br>A Look at the CRUD API</h1>
 
-                    <h6 style="font-size: 0.75em; text-align: left">Opening Wednesday, February 11<br>in select conference rooms.</h6>
+                    <br>
+
+                    <h6 style="font-size: 0.75em; text-align: left">Opening Tuesday, June 2<sup>nd</sup><br>in select conference rooms.</h6>
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
                 </section>
-
+<!--
                 <section>
                     <section>
                         <h3>But First&hellip;<br>Coming Attractions</h3>
@@ -68,7 +70,7 @@
                             to make some egg creams around 3pm. Let me
                             know if you would like one.
                             ```
-                            <!-- .element class="fragment" -->
+                            <!- - .element class="fragment" - ->
 
                             <img src="img/ubet.png" class="transparent fragment" style="position: absolute;top:0;right:0">
                         </script>
@@ -148,15 +150,15 @@
                         <img src="img/friends_clap.gif" width="80%">
                     </section>
                 </section>
-
+-->
                 <section>
+<!--
                     <section>
                         <h3>And now for our feature presentation&hellip;</h3>
 
                         <img src="img/feature_presentation.gif" width="90%">
                     </section>
-
-
+-->
                     <section data-markdown data-background="img/seinfeld.png" data-background-repeat="no-repeat" data-background-position="bottom left" data-background-size="33%">
                         <script type="text/template">
                             ## What&rsquo;s the deal with specs?
@@ -171,6 +173,39 @@
                         <img src="img/dgolden.png" class="transparent" width="50%">
                     </section>
 
+                    <section>
+                        <h3>MongoDB has a lot of drivers&hellip;</h3>
+
+                        <div>
+                            <img src="img/lang_scala.png" width="25%" class="transparent va">
+                            &nbsp;
+                            <img src="img/lang_nodejs.png" width="25%" class="transparent va">
+                            &nbsp;
+                            <img src="img/lang_python.png" width="25%" class="transparent va">
+                            <br>
+                            <img src="img/lang_ruby.png" width="10%" class="transparent va">
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                            <img src="img/lang_perl.png" width="20%" class="transparent va">
+                            &nbsp;
+                            &nbsp;
+                            &nbsp;
+                            <img src="img/lang_php.png" width="18%" class="transparent va">
+                            <br>
+                            <img src="img/lang_java.png" width="20%" class="transparent va">
+                            <img src="img/lang_c.png" width="20%" class="transparent va">
+                            &nbsp;
+                            <img src="img/lang_cpp.png" width="20%" class="transparent va">
+                            &nbsp;
+                            <img src="img/lang_csharp.png" width="20%" class="transparent va">
+                        </div>
+
+                        <aside class="notes">
+                            <p>These are just the ones we make. Also: Go, Erlang, etc.</p>
+                        </aside>
+                    </section>
+
                     <section data-markdown>
                         <script type="text/template">
                             ## Drivers Today
@@ -179,7 +214,7 @@
                             * Idiomatic for their language
                             * Inconsistent with each other
                             * Subtle behavioral differences
-                                * Support team loves this! <!-- .element: class="fragment" -->
+                                * Our support team loves this! <!-- .element: class="fragment" -->
                         </script>
                     </section>
 
@@ -200,9 +235,20 @@
                             ## End Goals
 
                             * Consistency across drivers
-                                * Behavior *and* public API
+                                * Behavior *and* API
+                            * More intuitive documentation
+                            * Increased developer productivity
                             * Guidance for third-party drivers
-                            * [Parkinson&rsquo;s law of triviality](http://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## End Goals <span style="font-size: 0.7em">(Continued)</span>
+
+                            Mitigate [Parkinson&rsquo;s law of triviality](http://en.wikipedia.org/wiki/Parkinson%27s_law_of_triviality)
+
+                            <img src="img/bike_shed.png" width="50%" class="transparent">
                         </script>
                     </section>
 
@@ -210,9 +256,15 @@
                         <script type="text/template">
                             ## Available on GitHub
 
-                            Released specs: [mongodb/specifications](https://github.com/mongodb/specifications)
+                            Internal WIPs &rarr; Released Specs
 
-                            Internal WIPs: [10gen/specifications](https://github.com/10gen/specifications)
+                            See: [mongodb/specifications](https://github.com/mongodb/specifications)
+
+                            <br>
+
+                            Mailing lists are still in vogue:
+
+                            [mongodb-drivers](https://groups.google.com/forum/#!forum/mongodb-drivers) and [mongodb-dev](https://groups.google.com/forum/#!forum/mongodb-dev)
                         </script>
                     </section>
                 </section>
@@ -235,11 +287,75 @@
 
                             <br>
 
-                            Drivers currently vary in naming and semantics.
+                            Variations in naming and semantics.
 
                             <br>
 
-                            Functionality and APIs are inconsistent.
+                            Inconsistent functionality and APIs.
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Default Behaviors <span style="font-size: 0.7em">(Exhibit A)</span>
+
+                            ```javascript
+                            // Updates one document
+                            db.things.update(
+                                { "type": "human" },
+                                { "$set": { "organic": true } }
+                            );
+
+                            // Removes all matching documents
+                            db.things.remove(
+                                { "type": "robot" }
+                            );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Option Names <span style="font-size: 0.7em">(Exhibit B)</span>
+
+                            ```javascript
+                            // Updates all documents
+                            db.things.update(
+                                { "type": "human" },
+                                { "$set": { "organic": true } }
+                                { "multi": true }
+                            );
+
+                            // Removes one matching document
+                            db.things.remove(
+                                { "type": "robot" },
+                                { "justOne": true }
+                            );
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Method Signatures <span style="font-size: 0.7em">(Exhibit C)</span>
+
+                            ```javascript
+                            // According to the documentation
+                            function (query, update, options) {
+                                // ...
+                            }
+
+                            // Actual implementation
+                            function (query, update, upsert, multi) {
+                                if ( typeof(upsert) === "object" ) {
+                                    // Unpack options...
+                                }
+
+                                // ...
+                            }
+                            ```
+
+                            Legacy baggage with `update()`
                         </script>
                     </section>
 
@@ -367,17 +483,17 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ### What we&rsquo;re not doing
+                            ### What we&rsquo;re **not** doing
 
                             Method overloading.
 
                             <br>
 
-                            &ldquo;Model&rdquo; classes encapsulating all arguments.
+                            Encapsulating params in &ldquo;Model&rdquo; classes.
 
                             <br>
 
-                            Prioritizing BC over standardization.
+                            Codifying inconsistent APIs for BC.
                         </script>
                     </section>
                 </section>
@@ -482,29 +598,10 @@
                             <br>
 
                             May affect the kind of Iterable returned.
-                        </script>
-                    </section>
 
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## CountOptions
-
-                            * `hint: (String | Document)`
-                            * `limit: Int64`
-                            * `maxTimeMS: Int64`
-                            * `skip: Int64`
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## DistinctOptions
-
-                            * `maxTimeMS: Int64`
-
-                            <br>
-
-                            <img src="img/sleeping_computer.gif" width="50%" class="fragment">
+                            <aside class="notes">
+                                <p>CountOptions and DistinctOptions should logically follow.</p>
+                            </aside>
                         </script>
                     </section>
                 </section>
@@ -565,10 +662,6 @@
                             ## InsertManyOptions
 
                             * `ordered: Boolean`
-
-                            <br>
-
-                            <img src="img/rhps_bored.gif" width="60%" class="fragment">
                         </script>
                     </section>
 
@@ -600,10 +693,6 @@
                             ## UpdateOptions
 
                             * `upsert: Boolean`
-
-                            <br>
-
-                            <img src="img/brad_bored.gif" width="60%" class="fragment">
                         </script>
                     </section>
 
@@ -640,11 +729,15 @@
 
                             <br>
 
-                            `bulkWrite()`&rsquo;s `request` argument<br>allows users to specify all of their writes<br>at once and in a single method call.
+                            `bulkWrite()`&rsquo;s `requests` argument<br>allows users to specify all of their writes<br>at once and in a single method call.
 
                             <br>
 
                             Trivial to make a fluent API atop this,<br>although it&rsquo;s not in the spec.
+
+                            <aside class="notes">
+                                <p>Requests list is performant and flexible. We did not want to impose inefficiency from the get-go.</p>
+                            </aside>
                         </script>
                     </section>
 
@@ -666,7 +759,7 @@
 
                             <br>
 
-                            <img src="img/roll_eyes.gif" width="60%" class="fragment">
+                            Basically the same thing as InsertManyOptions.
                         </script>
                     </section>
 
@@ -774,48 +867,6 @@
                             <br>
 
                             Throttling of unacknowledged writes<br>can be done with `bulkWrite()` on &ge;2.6,<br>or periodic `getLastError` commands for &lt;2.6
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## `findOne()`?
-
-                            Knock yourself out. The spec doesn&rsquo;t care.
-
-                            <br>
-
-                            Please keep its options consistent with `find()`,<br>removing the irrelevant bits (e.g. `limit`)
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            ### Query and Aggregation Merge
-
-                            Querying and aggregation may merge<br>into the same query engine down the line.
-
-                            <br>
-
-                            If `find()` is chosen as the common initiator,<br>our public API will change a bit and drivers<br>should bump major versions for the BC break.
-
-                            <br>
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            ### Where&rsquo;s `explain`?
-
-                            Supported via `find()`&rsquo;s `modifiers` option.<br>Generic command executor can be used<br>for `aggregate` or &ge;2.8&rsquo;s `explain` command.
-
-                            <br>
-
-                            More useful in JavaScript shell than regular drivers.
-
-                            <br>
-
-                            Also, bikeshed. <!-- .element class="fragment" -->
                         </script>
                     </section>
 
