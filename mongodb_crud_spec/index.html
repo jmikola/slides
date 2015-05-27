@@ -715,7 +715,7 @@
                         <script type="text/template">
                             ## WriteModel
 
-                            Also, remember when we said we were&rsquo;t doing<br>&ldquo;model&rdquo; classes that encapsulate all arguments?
+                            Also, remember when we said we weren&rsquo;t doing<br>&ldquo;model&rdquo; classes that encapsulate all arguments?
 
                             <img src="img/arnold_lied.gif" width="70%" class="fragment">
                         </script>
@@ -864,9 +864,21 @@
 
                             Everything we *just* said about read preferences&hellip;
 
+                            <aside class="notes">
+                                <p>Throttling of unacknowledged writes<br>can be done with bulkWrite() 2.6+ or periodic getLastError commands in pre-2.6</p>
+                            </aside>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## `findOne()` et al.
+
+                            Drivers are free to keep existing methods<br>and add new ones, too.
+
                             <br>
 
-                            Throttling of unacknowledged writes<br>can be done with `bulkWrite()` on &ge;2.6,<br>or periodic `getLastError` commands for &lt;2.6
+                            Please keep options and naming consistent.
                         </script>
                     </section>
 
