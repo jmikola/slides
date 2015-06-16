@@ -1,0 +1,36 @@
+Backwards Compatibility
+100: Thanks to a sordid history of half-baked Unicode support and premature books, PHP internals voted to use this as their next major version. ## 7 ##
+200: This HHVM-specific language offers "decl" and "partial" modes, which allow for interoperability with PHP code ## Hack ##
+300: According to this specification, backwards compatibility breaks require a new major version number. ## Semantic Versioning ## 
+400: This Composer operator may be used as shorthand to require a minimum version up to the next significant release (e.g. >=1.2,&lt;2.0). ## Tilde ##
+500: Silex 2.0 will see its dependency on this lightweight DI container jump from 1.0 to 3.0. ## Pimple ##
+Classes and Tokens
+100: You'll want this for type-hinting methods that expect an anonymous function, or after a rough break-up with your significant other. ## Closure ##
+200: Aside from inheriting these via genes, they're also great for horizontal code re-use. ## Traits ##
+300: Your only hope of implementing this interface is via Iterator or IteratorAggregate. ## Traversable ##
+400: SplStack and SplQueue both extend this common base class. ## SplDoublyLinkedList ##
+500: This language token is also known as T_DOUBLE_COLON ## T_PAAMAYIM_NEKUDOTAYIM ##
+Parody Accounts
+100: A cat photo tweeted by @phpdrama was enough to confirm that this angry Canadian is at least one of the folks behind the account. ## Chris Hartjes ##
+200: This C-level executive would like to remind you: "FTP.GITHUB.COM IS DOWN!" ## @PHP_CEO ## 
+300: Between song-writing and performing in concerts around the world, this pop star spends her spare time tweeting about computer security ## @SwiftOnSecurity ##
+400: ♫ Guessing this identity shouldn't be hard ♫[b]♫ He's the lyricist behind @phpbard ♫ ## Jeremy Lindblom ##
+500: Some Twitter API sleuthing hinted that this Dutchman moonlights as "Developer Symfony from Kazakstan", @SymfonyBorat. ## Stefan Koopmanschap ##
+A Picture's Worth a Thousand Words
+100: [img]ps-jeopardy ## PHP Jeopardy ##
+200: [img]ps-skoop.jpg ## Stefan Koopmanschap ##
+300: [img]ps-goto.jpg ## Goto statement ##
+400: [img]ps-auravel.jpg ## Paul Jones and Taylor Otwell ##
+500: [img]ps-dcousineau.jpg ## Daniel Cousineau ##
+Humble Beginnings
+100: This Danish programmer created PHP nearly 20 years ago. ## Rasmus Lerdorf ##
+200: This long-standing "feature" in PHP, responsible for countless security issues, has been disabled by default since version 4.2 and was finally removed in 5.4. ## register_globals ##
+300: Before "PHP Hypertext Preprocessor", this was the original meaning of the PHP acronym. ## Personal Home Page ##
+400: Many of PHP's global functions were named and adapted from this classic language ## C ##
+500: After rewriting the PHP parser for version 3, these fellows went on to create Zend Technologies. ## Andi Gutmans and Zeev Suraski ##
+Notable Mascots
+100: [img]mascot-octocat.png
+200: [img]mascot-composer.png
+300: [img]mascot-twig.png
+400: [img]mascot-silex.png
+500: [img]mascot-wurstcon.png

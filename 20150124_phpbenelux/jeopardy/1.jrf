@@ -1,0 +1,36 @@
+PHP-FIG Newtons
+100: PSR-0 tackled this subject back in 2010 after PHP 5.3 introduced namespaced classes. ## Autoloading ##
+200: The "FIG" in PHP-FIG stands for this. ## Framework Interoperability Group ##
+300: The spaces vs. tabs argument is addressed by this controversial PSR. ## PSR-2 ##
+400: This PHP-FIG member is the only community representative unaffiliated with any particular project ## Cal Evans ##
+500: Matthew Weier O'Phinney came back to PHP-FIG to tackle this subject in PSR-7 ## HTTP Message Interface ##
+Two Peas in a Podcast
+100: [img]podcast-itstheboozetalking.jpg ## Voices of the ElePHPant / It's the Booze Talking: Cal and Kathy Evans ##
+200: [img]podcast-phptownhall.jpg ## PHP Townhall: Phil Sturgeon and Ben Edmunds  ##
+300: [img]podcast-devhell.jpg ## dev/hell: Ed Finkler and Chris Hartjes ##
+400: [img]podcast-thatpodcast.jpg ## That Podcast: Beau Simensen and Dave Marshall ##
+500: [img]podcast-looselycoupled.jpg ## Loosely Coupled: Jeff Carouth and Matt Frost ##
+Lokale Cultuur
+100: Benelux is a union comprised of these three neighboring countries. ## Belgium, Netherlands, Luxembourg ##
+200: You don't need to know its ingredients to enjoy this deep-fried, sausage-shaped snack ## Frikandel ##
+300: Excluding the Brussels capital area, Belgium is divided into these two regions ## Flemish and  Walloon ##
+400: Georges Remi, using the pen name Hergé, created this lovable character in 1929 ## Tintin ##
+500: Although PHP Benelux is billed as taking place in Antwerp, we're actually in this tiny suburb ## Edegem ##
+Onze Sponsors Bedanken
+100: This VPS platform made waves throughout the expo hall yesterday with a surfing simulator at their booth ## Digital Ocean ##
+200: This platinum sponsor, which develops a customer service platform, kindly cleared away their booth for PHP Jeopardy ## Sparkcentral ##
+300: This Dutch company, which sponsored the unconference room, specializes in web and mobile development ## ibuildings ##
+400: This CI platform was giving away red ElePHPants to the best LEGO creations at their booth ## Continuous PHP ##
+500: This Dutch company, which specializes in web app, API, and enterprise search products, sponsored fries and frikandel during the Friday social. ## Enrise ##
+Parade of ElePHPants
+100: Last year, this community group ran a fundraiser selling purple ElePHPants through Kickstarter. ## PHP Women ##
+200: Rafael Dohms recently funded a Kickstarter campaign to produce black ElePHPants for this user group. ## AmsterdamPHP ##
+300: Pablo Godel and Adam Culp are hosting this conference next week in Florida, which gave yellow ElePHPants to its attendees last year. ## Sunshine PHP ##
+400: This community leader helps organize PHP Benelux and unconference tracks at PHP events around the world, and was gifted a rare, large red ElePHPant at ZendCon last year. ## Michelangelo van Dam ##
+500: This Frenchman created the original ElePHPant way back when. ## Vincent Pontier ##
+Testing, Testing
+100: Lest you forget, this test suite will kindly remind you that Sebastian Bergmann created it on each invocation. ## PHPUnit ##
+200: A YML file in the root directory of your respository may indicate that you also have a commit hook set for CI service. ## Travis CI ##
+300: It's not insulting to use this technique for creating test doubles of classes and interfaces and defining assertions on their methods. ## Mocking ## 
+400: Tests for PHP core and its extensions will typically have this extension. ## phpt ##
+500: This library will read your storified *.feature files with its Gherkin DSL parser and execute acceptance tests for your application. ## Behat ##
