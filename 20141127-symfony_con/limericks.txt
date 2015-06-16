@@ -1,0 +1,60 @@
+annotations everywhere
+MVC, HTML in the model
+sending email from templates
+writing your app in yaml
+indentation
+sfContext::container facade
+url shortener compression
+caching page as image with image maps
+
+
+
+
+(Ryan)
+In the rush to build the next snapchat
+My controllers got bloated and quite fat
+So I asked the great fabpot
+Who then told me to fear not
+Moving logic to Twig fixes all that
+
+(Jeremy)
+These service configs are like cancer
+There must be some DI enhancer
+But then a gift from God
+Taylor Otwell's facade
+sfContext::container()'s the answer
+
+(Jeremy)
+We outsourced to devs to Timbuktu
+But the code we neglected to review
+They used two tabs and a space
+Now our code's out of place
+We should have just stuck with PSR-2
+
+(Ryan)
+In Varnish you still have to process
+And that leads to performance losses
+To get the most of out of me
+The great PHP
+Cache a screenshot, it will be the fastest
+
+(Magnus)
+Finding controllers is a disaster
+Storing them elsewhere is surely faster
+In routing.yaml
+InTheCaseOfCamel
+Eval them and you'll be the master
+
+(Jeremy)
+I can seldom resist the temptations
+To write logic within annotations
+ExpressionLanguage is handy
+Oh its features are dandy
+Just perfect for Doctrine hydrations
+
+(Magnus)
+To set PHP apart from the rest
+Inlining some code's a request
+Visual Basic was chosen
+The change set was frozen
+Our inner vision can now be expressed
