@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Object Document Serialization - PHongo: The MongoDB Driver for PHP</title>
+        <link href="ods_files/bootstrap-custom.css" rel="stylesheet">
+        <link href="ods_files/font-awesome-4.css" rel="stylesheet">
+        <link href="ods_files/highlight.css" rel="stylesheet">
+        <link href="ods_files/base.css" rel="stylesheet">
+    </head>
+
+    <body style="padding: 10px">
+<h1 id="object-serialization">Object serialization</h1>
+<p>This driver includes four public interfaces to facilitate serializing PHP
+classes to and from BSON.</p>
+<ul>
+<li>MongoDB\BSON\Type<ul>
+<li>(no methods)</li>
+</ul>
+</li>
+<li>MongoDB\BSON\Serializable<ul>
+<li>abstract public method bsonSerialize();</li>
+</ul>
+</li>
+<li>MongoDB\BSON\Unserializable<ul>
+<li>abstract public method bsonUnserialize(array $data);</li>
+</ul>
+</li>
+<li>MongoDB\BSON\Persistable<ul>
+<li>extends both BSON\Serializable and BSON\Unserializable</li>
+</ul>
+</li>
+</ul>
+<p>Objects that implement the MongoDB\BSON\Type interface get special treatment by
+the BSON serializer. In general, these objects represent a BSON type that cannot
+be natively represented in PHP (e.g. MongoDB\BSON\UTCDatetime,
+MongoDB\BSON\ObjectID) and are explicitly checked for and handled by the driver.
+MongoDB\BSON\Type should not be implemented directly by userland classes.</p>
+<p>Userland classes that require custom BSON serialization should utilize the
+MongoDB\BSON\Serializable interface and implement the <code>bsonSerialize()</code>
+function, which should return a document (i.e. PHP array or stdClass object)
+representing the document that should be stored. Furthermore, if the object
+implements the MongoDB\BSON\Persistable interface, the driver will also inject a
+MongoDB\BSON\Binary value (with type 0x80 and an internal field name) into the
+document, which contains the userland object's fully qualified classname. This
+field can then be used during unserialization to ensure that the BSON document
+becomes an object of the same class on the way out of the database.</p>
+<p>During unserialization of a document, if a BSON Binary value (with type 0x80 and
+within the expected internal field name) is encountered, the driver will peek at
+the value and attempt to resolve it to a classname (triggering autoloaders if
+neccesary). If the class name cannot be resolved, nothing magical happens;
+however, if the class exists, the driver will create a new instance (without
+invoking the constructor) and invoke its <code>bsonUnserialize()</code> method, supplying
+the unserialized document data as a PHP array. Note that this happens
+depth-first, which means that embedded documents will be resolved before their
+parent.</p>
+<h2 id="examples">Examples</h2>
+<p>Consider the following two classes: Person and Address. A Person has name, age,
+friends (array of Person objects), and addresses (array of Address objects). A
+Person also has a secret, that we would rather not store in a database.</p>
+<pre class="prettyprint well"><code class="hljs vbscript-html"><span class="xml"><span class="php"><span class="hljs-preprocessor">&lt;?php</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">MongoDB</span>\<span class="hljs-title">BSON</span>\<span class="hljs-title">Persistable</span>
+</span>{
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$_id</span>;
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$name</span>;
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$age</span>;
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$address</span> = [];
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$friends</span> = [];
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$secret</span> = <span class="hljs-string">"none"</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">(<span class="hljs-variable">$name</span>, <span class="hljs-variable">$age</span>)</span>
+    </span>{
+        <span class="hljs-variable">$this</span>-&gt;name    = <span class="hljs-variable">$name</span>;
+        <span class="hljs-variable">$this</span>-&gt;age     = <span class="hljs-variable">$age</span>;
+        <span class="hljs-variable">$this</span>-&gt;address = [];
+        <span class="hljs-variable">$this</span>-&gt;secret  = <span class="hljs-string">"$name confidential info"</span>;
+        <span class="hljs-comment">/* Pregenerate our ObjectID */</span>
+        <span class="hljs-variable">$this</span>-&gt;_id     = <span class="hljs-keyword">new</span> MongoDB\BSON\ObjectID();
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addAddress</span><span class="hljs-params">(Address <span class="hljs-variable">$address</span>)</span>
+    </span>{
+        <span class="hljs-variable">$this</span>-&gt;address[] = <span class="hljs-variable">$address</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">addFriend</span><span class="hljs-params">(Person <span class="hljs-variable">$friend</span>)</span>
+    </span>{
+        <span class="hljs-variable">$this</span>-&gt;friends[] = <span class="hljs-variable">$friend</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bsonSerialize</span><span class="hljs-params">()</span>
+    </span>{
+        <span class="hljs-keyword">return</span> [
+            <span class="hljs-string">"_id"</span>     =&gt; <span class="hljs-variable">$this</span>-&gt;_id,
+            <span class="hljs-string">"name"</span>    =&gt; <span class="hljs-variable">$this</span>-&gt;name,
+            <span class="hljs-string">"age"</span>     =&gt; <span class="hljs-variable">$this</span>-&gt;age,
+            <span class="hljs-string">"address"</span> =&gt; <span class="hljs-variable">$this</span>-&gt;address,
+            <span class="hljs-string">"friends"</span> =&gt; <span class="hljs-variable">$this</span>-&gt;friends,
+        ];
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bsonUnserialize</span><span class="hljs-params">(array <span class="hljs-variable">$data</span>)</span>
+    </span>{
+        <span class="hljs-variable">$this</span>-&gt;_id     = <span class="hljs-variable">$data</span>[<span class="hljs-string">"_id"</span>];
+        <span class="hljs-variable">$this</span>-&gt;name    = <span class="hljs-variable">$data</span>[<span class="hljs-string">"name"</span>];
+        <span class="hljs-variable">$this</span>-&gt;age     = <span class="hljs-variable">$data</span>[<span class="hljs-string">"age"</span>];
+        <span class="hljs-variable">$this</span>-&gt;address = <span class="hljs-variable">$data</span>[<span class="hljs-string">"address"</span>];
+        <span class="hljs-variable">$this</span>-&gt;friends = <span class="hljs-variable">$data</span>[<span class="hljs-string">"friends"</span>];
+    }
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Address</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">MongoDB</span>\<span class="hljs-title">BSON</span>\<span class="hljs-title">Persistable</span>
+</span>{
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$zip</span>;
+    <span class="hljs-keyword">protected</span> <span class="hljs-variable">$country</span>;
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">(<span class="hljs-variable">$zip</span>, <span class="hljs-variable">$country</span>)</span>
+    </span>{
+        <span class="hljs-variable">$this</span>-&gt;zip = <span class="hljs-variable">$zip</span>;
+        <span class="hljs-variable">$this</span>-&gt;country = <span class="hljs-variable">$country</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bsonSerialize</span><span class="hljs-params">()</span>
+    </span>{
+        <span class="hljs-keyword">return</span> [
+            <span class="hljs-string">"zip"</span>     =&gt; <span class="hljs-variable">$this</span>-&gt;zip,
+            <span class="hljs-string">"country"</span> =&gt; <span class="hljs-variable">$this</span>-&gt;country,
+        ];
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bsonUnserialize</span><span class="hljs-params">(array <span class="hljs-variable">$data</span>)</span>
+    </span>{
+        <span class="hljs-variable">$this</span>-&gt;zip = <span class="hljs-variable">$data</span>[<span class="hljs-string">"zip"</span>];
+        <span class="hljs-variable">$this</span>-&gt;country = <span class="hljs-variable">$data</span>[<span class="hljs-string">"country"</span>];
+    }
+}
+
+<span class="hljs-preprocessor">?&gt;</span></span>
+</span></code></pre>
+
+<p>Hannes is 31 years old and has two addresses;</p>
+<ul>
+<li>Sunnyvale, USA</li>
+<li>Kopavogur, Iceland</li>
+</ul>
+<p>He is friends with young Jeremy, a 21 year old who lives in Michigan:</p>
+<pre class="prettyprint well"><code class="hljs vbscript-html"><span class="xml"><span class="php"><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-variable">$hannes</span> = <span class="hljs-keyword">new</span> Person(<span class="hljs-string">"Hannes"</span>, <span class="hljs-number">31</span>);
+<span class="hljs-variable">$sunnyvale</span> = <span class="hljs-keyword">new</span> Address(<span class="hljs-number">94086</span>, <span class="hljs-string">"USA"</span>);
+<span class="hljs-variable">$kopavogur</span> = <span class="hljs-keyword">new</span> Address(<span class="hljs-number">200</span>, <span class="hljs-string">"Iceland"</span>);
+<span class="hljs-variable">$hannes</span>-&gt;addAddress(<span class="hljs-variable">$sunnyvale</span>);
+<span class="hljs-variable">$hannes</span>-&gt;addAddress(<span class="hljs-variable">$kopavogur</span>);
+
+<span class="hljs-variable">$mikola</span> = <span class="hljs-keyword">new</span> Person(<span class="hljs-string">"Jeremy"</span>, <span class="hljs-number">21</span>);
+<span class="hljs-variable">$michigan</span> = <span class="hljs-keyword">new</span> Address(<span class="hljs-number">48169</span>, <span class="hljs-string">"USA"</span>);
+<span class="hljs-variable">$mikola</span>-&gt;addAddress(<span class="hljs-variable">$michigan</span>);
+
+<span class="hljs-variable">$hannes</span>-&gt;addFriend(<span class="hljs-variable">$mikola</span>);
+
+<span class="hljs-preprocessor">?&gt;</span></span>
+</span></code></pre>
+
+<p>To save this information, we can insert <code>$hannes</code> into the database like so:</p>
+<pre class="prettyprint well"><code class="hljs vbscript-html"><span class="xml"><span class="php"><span class="hljs-preprocessor">&lt;?php</span>
+<span class="hljs-keyword">try</span> {
+    <span class="hljs-variable">$wc</span> = <span class="hljs-keyword">new</span> MongoDB\Driver\WriteConcern(MongoDB\Driver\WriteConcern::MAJORITY);
+    <span class="hljs-variable">$manager</span> = <span class="hljs-keyword">new</span> MongoDB\Driver\Manager(<span class="hljs-string">"mongodb://192.168.112.10:2000"</span>);
+    <span class="hljs-variable">$result</span> = <span class="hljs-variable">$manager</span>-&gt;executeInsert(<span class="hljs-string">"congress.people"</span>, <span class="hljs-variable">$hannes</span>, <span class="hljs-variable">$wc</span>);
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">"Hannes has been inserted\n"</span>;
+} <span class="hljs-keyword">catch</span>(<span class="hljs-keyword">Exception</span> <span class="hljs-variable">$e</span>) {
+    <span class="hljs-keyword">echo</span> <span class="hljs-variable">$e</span>-&gt;getMessage(), <span class="hljs-string">"\n"</span>;
+    <span class="hljs-keyword">exit</span>;
+}
+<span class="hljs-preprocessor">?&gt;</span></span>
+</span></code></pre>
+
+<p>This will result in the following document stored (as shown by mongo shell):</p>
+<pre class="prettyprint well"><code class="hljs clojure"><span class="hljs-collection">{
+  <span class="hljs-string">"_id"</span> : ObjectId<span class="hljs-list">(<span class="hljs-string">"551f2004bd21b959de3c15b1"</span>)</span>,
+  <span class="hljs-string">"__pclass"</span> : BinData<span class="hljs-list">(<span class="hljs-number">128</span>,<span class="hljs-string">"UGVyc29u"</span>)</span>,
+  <span class="hljs-string">"name"</span> : <span class="hljs-string">"Hannes"</span>,
+  <span class="hljs-string">"age"</span> : <span class="hljs-number">31</span>,
+  <span class="hljs-string">"address"</span> : <span class="hljs-collection">[
+    <span class="hljs-collection">{
+      <span class="hljs-string">"__pclass"</span> : BinData<span class="hljs-list">(<span class="hljs-number">128</span>,<span class="hljs-string">"QWRkcmVzcw=="</span>)</span>,
+      <span class="hljs-string">"zip"</span> : <span class="hljs-number">94086</span>,
+      <span class="hljs-string">"country"</span> : <span class="hljs-string">"USA"</span>
+    }</span>,
+    <span class="hljs-collection">{
+      <span class="hljs-string">"__pclass"</span> : BinData<span class="hljs-list">(<span class="hljs-number">128</span>,<span class="hljs-string">"QWRkcmVzcw=="</span>)</span>,
+      <span class="hljs-string">"zip"</span> : <span class="hljs-number">200</span>,
+      <span class="hljs-string">"country"</span> : <span class="hljs-string">"Iceland"</span>
+    }</span>
+  ]</span>,
+  <span class="hljs-string">"friends"</span> : <span class="hljs-collection">[
+    <span class="hljs-collection">{
+      <span class="hljs-string">"__pclass"</span> : BinData<span class="hljs-list">(<span class="hljs-number">128</span>,<span class="hljs-string">"UGVyc29u"</span>)</span>,
+      <span class="hljs-string">"_id"</span> : ObjectId<span class="hljs-list">(<span class="hljs-string">"551f2004bd21b959de3c15b2"</span>)</span>,
+      <span class="hljs-string">"name"</span> : <span class="hljs-string">"Jeremy"</span>,
+      <span class="hljs-string">"age"</span> : <span class="hljs-number">21</span>,
+      <span class="hljs-string">"address"</span> : <span class="hljs-collection">[
+        <span class="hljs-collection">{
+          <span class="hljs-string">"__pclass"</span> : BinData<span class="hljs-list">(<span class="hljs-number">128</span>,<span class="hljs-string">"QWRkcmVzcw=="</span>)</span>,
+          <span class="hljs-string">"zip"</span> : <span class="hljs-number">48169</span>,
+          <span class="hljs-string">"country"</span> : <span class="hljs-string">"USA"</span>
+        }</span>
+      ]</span>,
+      <span class="hljs-string">"friends"</span> : <span class="hljs-collection">{
+
+      }</span>
+    }</span>
+  ]</span>
+}</span>
+</code></pre>
+
+<p>When we read this document back, the driver will convert the individual
+sub-documents back into their original classes, as we have full type information
+for them now:</p>
+<pre class="prettyprint well"><code class="hljs vbscript-html"><span class="xml"><span class="php"><span class="hljs-preprocessor">&lt;?php</span>
+
+<span class="hljs-variable">$rp</span> = <span class="hljs-keyword">new</span> MongoDB\Driver\ReadPreference(MongoDB\Driver\ReadPreference::RP_PRIMARY_PREFERRED);
+<span class="hljs-variable">$query</span> = <span class="hljs-keyword">new</span> MongoDB\Driver\Query([]);
+<span class="hljs-variable">$cursor</span> = <span class="hljs-variable">$manager</span>-&gt;executeQuery(<span class="hljs-string">"congress.people"</span>, <span class="hljs-variable">$query</span>, <span class="hljs-variable">$rp</span>);
+
+<span class="hljs-keyword">foreach</span>(<span class="hljs-variable">$cursor</span> <span class="hljs-keyword">as</span> <span class="hljs-variable">$person</span>) {
+    var_dump(<span class="hljs-variable">$person</span>);
+}
+
+<span class="hljs-preprocessor">?&gt;</span></span>
+</span></code></pre>
+
+<p>This results in:</p>
+<pre class="prettyprint well"><code class="hljs php">object(Person)<span class="hljs-comment">#22 (6) {</span>
+  [<span class="hljs-string">"_id"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+  object(BSON\ObjectID)<span class="hljs-comment">#15 (0) {</span>
+  }
+  [<span class="hljs-string">"name"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+  string(<span class="hljs-number">6</span>) <span class="hljs-string">"Hannes"</span>
+  [<span class="hljs-string">"age"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+  int(<span class="hljs-number">31</span>)
+  [<span class="hljs-string">"address"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+  <span class="hljs-keyword">array</span>(<span class="hljs-number">2</span>) {
+    [<span class="hljs-number">0</span>]=&gt;
+    object(Address)<span class="hljs-comment">#16 (2) {</span>
+      [<span class="hljs-string">"zip"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      int(<span class="hljs-number">94086</span>)
+      [<span class="hljs-string">"country"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      string(<span class="hljs-number">3</span>) <span class="hljs-string">"USA"</span>
+    }
+    [<span class="hljs-number">1</span>]=&gt;
+    object(Address)<span class="hljs-comment">#17 (2) {</span>
+      [<span class="hljs-string">"zip"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      int(<span class="hljs-number">200</span>)
+      [<span class="hljs-string">"country"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      string(<span class="hljs-number">7</span>) <span class="hljs-string">"Iceland"</span>
+    }
+  }
+  [<span class="hljs-string">"friends"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+  <span class="hljs-keyword">array</span>(<span class="hljs-number">1</span>) {
+    [<span class="hljs-number">0</span>]=&gt;
+    object(Person)<span class="hljs-comment">#21 (6) {</span>
+      [<span class="hljs-string">"_id"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      object(BSON\ObjectID)<span class="hljs-comment">#18 (0) {</span>
+      }
+      [<span class="hljs-string">"name"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      string(<span class="hljs-number">6</span>) <span class="hljs-string">"Jeremy"</span>
+      [<span class="hljs-string">"age"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      int(<span class="hljs-number">21</span>)
+      [<span class="hljs-string">"address"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      <span class="hljs-keyword">array</span>(<span class="hljs-number">1</span>) {
+        [<span class="hljs-number">0</span>]=&gt;
+        object(Address)<span class="hljs-comment">#19 (2) {</span>
+          [<span class="hljs-string">"zip"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+          int(<span class="hljs-number">48169</span>)
+          [<span class="hljs-string">"country"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+          string(<span class="hljs-number">3</span>) <span class="hljs-string">"USA"</span>
+        }
+      }
+      [<span class="hljs-string">"friends"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      object(stdClass)<span class="hljs-comment">#20 (0) {</span>
+      }
+      [<span class="hljs-string">"secret"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+      string(<span class="hljs-number">4</span>) <span class="hljs-string">"none"</span>
+    }
+  }
+  [<span class="hljs-string">"secret"</span>:<span class="hljs-keyword">protected</span>]=&gt;
+  string(<span class="hljs-number">4</span>) <span class="hljs-string">"none"</span>
+}
+</code></pre>
+
+        <script src="ods_files/jquery-1.js"></script>
+        <script src="ods_files/bootstrap-3.js"></script>
+        <script src="ods_files/highlight.js"></script>
+        <script src="ods_files/base.js"></script>
+        <script src="ods_files/pretty.js"></script>
+    
+</body></html>

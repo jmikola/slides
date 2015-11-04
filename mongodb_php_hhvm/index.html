@@ -1,0 +1,848 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Rethinking Extension Development for PHP and HHVM</title>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="../vendor/reveal.js/css/reveal.min.css">
+        <link rel="stylesheet" href="../vendor/highlight.js/src/styles/github.css">
+        <link rel="stylesheet" href="../vendor/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script>
+            if( window.location.search.match( /print-pdf/gi ) ) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '../vendor/reveal.js/css/print/pdf.css';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+        </script>
+
+        <!--[if lt IE 9]>
+        <script src="../vendor/reveal.js/lib/js/html5shiv.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-state="title">
+                    <h1>Rethinking Extension<br>Development for<br>PHP and HHVM</h1>
+
+                    <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+
+                    <hr style="width:66%">
+
+                    <p><small>With special thanks to Derick Rethans and<br>Hannes Magnusson for assisting with slides<br>and working tirelessly to get us to 1.0.0 &#128024;</small></p>
+                </section>
+<!--
+When MongoDB and its PHP driver first appeared on the scene, the GoPHP5 movement was just winding down, PHP6 books were on the best-seller list, and developers were handling dependencies with a mix of PEAR and Git submodules. After six years, our beloved driver had be come quite the complex, monolithic extension, and PHP 5.x was no longer the only platform on the block. With the goal of supporting multiple platforms (PHP 5.x, HHVM, and PHP 7) while still keeping our maintenance burden in check, we set out to create several new light-weight extensions and pushed all of those user-friendly, high-level APIs off to a single, supporting PHP library. This session will walk through our journey and provide a fresh look at the next-generation MongoDB driver for PHP.
+-->
+                <section>
+                    <h2>One Extension, Three Engines</h2>
+
+                    <table>
+                        <tr>
+                            <th>PHP 5</th>
+                            <th>HHVM</th>
+                            <th>PHP 7</th>
+                        </tr>
+                        <tr>
+                            <td><img src="img/engine-php5.jpg"></td>
+                            <td><img src="img/engine-hhvm.jpg"></td>
+                            <td><img src="img/engine-php7.jpg"></td>
+                        </tr>
+                    </table>
+
+                    <ul>
+                        <li>A History Lesson</li>
+                        <li>Rethinking It All</li>
+                        <li>A New Architecture</li>
+                        <li>Implementation and Userland</li>
+                        <li>Current Status and Roadmap</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## History
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="display:inline;position:absolute;right:-7em"><img src="img/author-kristina.png" class="transparent"></div>
+
+                            ### History: 0.8.4 (April 2009)
+
+                            * Resources for connections
+                            * Classes for BSON types
+                              * Code, Date, Object ID, Regex, BinData
+                            * Very few functions:
+                              * `mongo_connect`, `mongo_close`, `mongo_remove`, `mongo_query`, `mongo_insert`, `mongo_batch_insert`, `mongo_update`, `mongo_has_next`, `mongo_next`, `mongo_gridfs_init`, `mongo_gridfs_store`, `mongo_gridfile_write`
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="display:inline;position:absolute;right:-7em"><img src="img/author-kristina.png" class="transparent"></div>
+
+                            ### History: 0.8.4 (April 2009)
+
+                            ```php
+                            include 'Mongo.php';
+
+                            $m = new Mongo();
+                            $c = $m->selectCollection('phpt', 'find');
+                            $c->drop();
+
+                            $c->insert(array(
+                                'foo' => 'bar',
+                                'a' => 'b',
+                                'b' => 'c',
+                            ));
+
+                            $cursor = $c->find(array('foo'=>'bar'), array('a'=>1,'b'=>1));
+
+                            while ($cursor->hasNext()) {
+                                var_dump($cursor->getNext());
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="display:inline;position:absolute;right:-7em"><img src="img/author-kristina.png" class="transparent"></div>
+
+                            ### History: 0.9.0 (May 2009) 
+
+                            * Support for PHP 5.3 
+                            * Reimplement most PHP-based functionality in C
+                            * Tests are implemented with PHPUnit
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="display:inline;position:absolute;right:-7em"><img src="img/author-kristina.png" class="transparent"></div>
+
+                            ### History: 1.0.0 (September 2009)
+
+                            Query operators don&rsquo;t have to start with $ anymore:
+
+                            ```php
+                            $m = new Mongo;
+                            $c = $m->selectCollection('dbname', 'colname');
+                            $r = $c->find(array('fieldname' => array('$gte' => 42)));
+                            ```
+
+                            <br>
+
+                            `ini_set('mongo.cmd', '@');`
+
+                            ```php
+                            $m = new Mongo;
+                            $c = $m->selectCollection('dbname', 'colname');
+                            $r = $c->find(array('fieldname' => array('@gte' => 42)));
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="display:inline;position:absolute;right:-7em"><img src="img/author-kristina.png" class="transparent"></div>
+
+                            ### History: 1.0.0 (September 2009)
+
+                            BSON arrays and documents are come back as PHP arrays
+
+                            ```php
+                            $m = new Mongo;
+                            $c = $m->selectCollection('demo', 'test');
+                            $c->drop();
+
+                            $c->insert((object) array('foo' => 'bar'));
+                            $c->insert(array('foo' => 'bar'));
+
+                            foreach ($c->find(array('foo' => 'bar'), array('_id' => 0)) as $result) {
+                                var_dump($result);
+                            }
+                            ```
+
+                            &darr;
+
+                            ```
+                            array(1) {
+                              ["foo"]=>
+                              string(3) "bar"
+                            }
+                            array(1) {
+                              ["foo"]=>
+                              string(3) "bar"
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="position:absolute;right:-7em"><img src="img/author-derickr.png" class="transparent"><br><img src="img/author-kristina.png" class="transparent"></div>
+
+                            ### History: 1.2.8 (February 2012)
+
+                            * Derick joins as a contractor, after having helped with integer types (November 2011)
+                            * We no longer use any functionality implemented as PHP classes (everything is C)
+                            * Connection handling uses connection pools
+                            * Kristina&rsquo;s last release
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="position:absolute;right:-7em"><img src="img/author-hannes.png" class="transparent"><br><img src="img/author-derickr.png" class="transparent"></div>
+
+                            ### History: 1.3.0 (November 2012)
+
+                            * Hannes starts helping out (June 2012)
+                            * Rewritten connection handling and replica set connection management
+                            * Sane branching in GIT:
+
+                            <table>
+                                <tr>
+                                    <td><img src="img/mongo-git-messy.png"></td>
+                                    <td><img src="img/mongo-git-not-messy.png"></td>
+                                </tr>
+                            </table>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <div style="position:absolute;right:-7em"><img src="img/author-jeremy.png" class="transparent"><br><img src="img/author-hannes.png" class="transparent"><br><img src="img/author-derickr.png" class="transparent"></div>
+
+                            ### History: 1.4.0 &ndash; 1.6.0
+
+                            Releases now come together with MongoDB server releases
+
+                            * May 2013 &ndash; 1.4.0 &ndash; MongoDB 2.4
+                              * SSL support, Jeremy starts helping out
+                            * Apr 2014 &ndash; 1.5.0 &ndash; MongoDB 2.6
+                              * SASL support, command cursors, write commands
+                            * Jan 2015 &ndash; 1.6.0 &ndash; MongoDB 3.0
+                              * Rewritten cursor support, MONGO_METHOD refactoring
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Current State of the Legacy Driver
+
+                            * Former, "great" design choices:
+                              * Array and object deserialization
+                              * Positional arguments vs. options arrays
+                              * `insert()` injection of generated Object IDs
+                              * No clear strategy for adding command helpers
+                              * Configuration via INI and static properties
+                                * `MongoCursor::$timeout`, `MongoCursor::$slaveOkay`
+                              * MongoLog *and* stream context listeners
+                            * GridFS implementation could get some more love
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Rethinking It All
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Goals for a New Driver
+
+                            * Support for multiple engines
+                            * Well-thought-out and minimalistic API
+                            * Faster to write, easier to maintain
+                            * Build on top of existing code
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Which Engines?
+
+                            <table>
+                                <tr>
+                                    <th>PHP 5</th>
+                                    <th>HHVM</th>
+                                    <th>PHP 7</th>
+                                </tr>
+                                <tr>
+                                    <td><img src="img/engine-php5.jpg"></td>
+                                    <td><img src="img/engine-hhvm.jpg"></td>
+                                    <td><img src="img/engine-php7.jpg"></td>
+                                </tr>
+                                <tr class="fragment">
+                                    <td>PHP 5.4+</td>
+                                    <td>HHVM 3.9+</td>
+                                    <td>Coming soon<br>after Nov 12</td>
+                                </tr>
+                            </table>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Engine: PHP 5
+
+                            * PHP 5.4 &ndash; PHP 5.6
+                            * Not sure what else to say&hellip;
+
+                            <br><img src="img/elephpants.jpg" class="fragment" style="width:80%">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Engine: HHVM
+
+                            * Alternative PHP runtime from Facebook
+                            * Evolution of HipHop, which compiled PHP to C++ binaries
+                            * Implements PHP language spec, supports Hack language
+                            * Written in C++, OCAML, et al.
+
+                            <br><img src="img/hhvm-elephpant.jpg" class="fragment" style="width:80%">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Engine: PHP 7
+
+                            * Userland code is mostly compatible with PHP 5
+                            * Internals are *quite* different from PHP 5
+
+                            <br><img src="img/elephpants2.jpg" class="fragment" style="width:80%">
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## New Architecture
+                        </script>
+                    </section>
+
+                    <section>
+                        <img src="img/new-architecture.png" class="transparent">
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### libbson
+
+                            `libbson` is a new shared library written in C for developers wanting to work with the BSON serialization format.
+
+                            * It&rsquo;s used by `libmongoc`
+                            * It&rsquo;s used by the drivers directly as well
+                            * High performance BSON serialization and deserialization
+                            * Callback API for deserialization
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### libmongoc (mongo-c-driver)
+
+                            `libmongoc` is a client library written in C for MongoDB
+
+                            * Meant as both a low level driver for applications *and* higher level languages
+                            * About two years old
+                            * Used by the PHP and HHVM drivers, among others
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Phongo (mongo-php-driver)
+
+                            * New MongoDB extension for PHP 5.4+
+                              * Backwards compatibility is not preserved
+                            * Very minimal API
+                              * Core classes, BSON, exceptions
+                            * Meant to be built upon by PHP libraries (like the 0.8.4 legacy driver)
+                            * Uses PHP namespaces
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            <img src="img/bc.png" class="transparent">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### On Backwards Compatibility
+
+                            * Old extension name is "mongo"
+                            * New extension name is "mongodb"
+                            * Both extensions may be loaded simultaneously
+
+                            <br>
+
+                            <table>
+                                <tr>
+                                    <th><a href="https://pecl.php.net/">PECL</a></th>
+                                    <th><a href="http://docs.php.net/manual/en/refs.database.php">PHP.net docs</a></th>
+                                </tr>
+                                <tr>
+                                    <td><img src="img/mongo-x2a.png" class="transparent"></td>
+                                    <td><img src="img/mongo-x2b.png" class="transparent"></td>
+                                </tr>
+                            </table>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Legacy API (mongo.so)
+
+                            ```php
+                            $m = new MongoClient('mongodb://localhost:27017');
+
+                            $m->demo->test->drop();
+
+                            $m->demo->test->insert([
+                                'string' => 'bar',
+                                'number_i' => 55,
+                                'number_l' => 12345678901234567,
+                                'bool' => true,
+                                'null' => null,
+                                'float' => M_PI,
+                            ]);
+
+                            $cursor = $m->demo->test->find();
+
+                            foreach ($cursor as $result) {
+                                var_dump($result);
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### New API (mongodb.so)
+
+                            ```php
+                            $m = new MongoDB\Driver\Manager('mongodb://localhost:27017');
+
+                            $cmd = new MongoDB\Driver\Command(['drop' => 'test']);
+                            $m->executeCommand('demo', $cmd);
+
+                            $bulk = new MongoDB\Driver\BulkWrite;
+                            $bulk->insert([
+                                'string' => 'bar',
+                                'number_i' => 55,
+                                'number_l' => 12345678901234567,
+                                'bool' => true,
+                                'null' => null,
+                                'float' => M_PI,
+                            ]);
+
+                            $m->executeBulkWrite('demo.test', $bulk);
+
+                            $query = new MongoDB\Driver\Query([]);
+                            $cursor = $m->executeQuery('demo.test', $query);
+
+                            foreach ($cursor as $result) {
+                                var_dump($result);
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Hippo&rsquo;s API
+
+                            * Same implementation of Phongo&rsquo;s public API, but available as an extension for HHVM
+                            * Drop-in replacement
+                            * No shared code with Phongo, as HHVM is C++
+                            * Parts of the extension may be written in Hack
+                              * <a href="https://github.com/facebook/hhvm/wiki/Extension-API">HNI: HHVM-Native Interface</a>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3><a href="http://php.net/manual/en/mongodb.persistence.article.php">Serialization Specification</a></h3>
+
+                        <iframe src="serialization_spec.html" style="width:100%;height:15em"></iframe>
+                    </section>
+
+                    <section>
+                        <h3>A Built-in ODM, too!</h3>
+
+                        <iframe src="ods.html" style="width:100%;height:15em"></iframe>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## The Implementation
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Hippo (implementation)
+
+                            An extract from `ext_mongodb.php`:
+
+                            ```php
+                            <?hh
+                            namespace MongoDB\Driver;
+                                <<__Native>> 
+                                public function __construct(string $dsn = "localhost",
+                                    array $options = [], array $driverOptions = []);
+
+                                <<__Native>>
+                                public function __debugInfo() : array;
+
+                                <<__Native>>
+                                public function executeQuery(string $namespace,
+                                    Query $query, ReadPreference $readPreference = null): Cursor;
+
+                                <<__Native>>
+                                public function selectServer(ReadPreference $readPreference): Server;
+
+                                // …
+                            }
+                            ?>
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Hippo (implementation)
+
+                            An extract from `src/MongoDB/Driver/Manager.cpp`:
+
+                            ```cpp
+                            void HHVM_METHOD(MongoDBDriverManager, __construct, const String &dsn, const Array &options, const Array &driverOptions)
+                            {
+                                MongoDBDriverManagerData* data = Native::data<MongoDBDriverManagerData>(this_);
+                                mongoc_uri_t *uri;
+                                mongoc_client_t *client;
+
+                                uri = hippo_mongo_driver_manager_make_uri(dsn.c_str(), options);
+                                client = mongoc_client_new_from_uri(uri);
+
+                                if (!client) {
+                                    throw MongoDriver::Utils::throwRunTimeException("Failed to create Manager from URI: '" + dsn + "'");
+                                }
+
+                                data->m_client = client;
+
+                                hippo_mongo_driver_manager_apply_ssl_opts(data->m_client, driverOptions);
+
+                                hippo_mongo_driver_manager_apply_rp(data->m_client, options);
+                                hippo_mongo_driver_manager_apply_wc(data->m_client, options);
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Hippo (implementation)
+
+                            An extract from `ext_mongodb.php`:
+
+                            ```php
+                            <?hh
+                            namespace MongoDB\Driver;
+
+                            <<__NativeData("MongoDBDriverReadPreference")>>
+                            final class ReadPreference {
+                                <<__Native>>
+                                private function _setReadPreference(int $readPreference): void;
+
+                                <<__Native>>
+                                private function _setReadPreferenceTags(array $tagSets): void;
+
+                                public function __construct(int $readPreference, mixed $tagSets = null)
+                                {
+                                    if ($tagSets !== NULL && Utils::mustBeArrayOrObject('parameter 2', $tagSets)) {
+                                        return;
+                                    }
+
+                                    switch ($readPreference) {
+                                        case ReadPreference::RP_PRIMARY:
+                                        case ReadPreference::RP_PRIMARY_PREFERRED:
+                                        case ReadPreference::RP_SECONDARY:
+                                        case ReadPreference::RP_SECONDARY_PREFERRED:
+                                        case ReadPreference::RP_NEAREST:
+                                            // calling into Native
+                                            $this->_setReadPreference($readPreference);
+
+                                            if ($tagSets) {
+                                                // calling into Native, might throw exception
+                                                $this->_setReadPreferenceTags($tagSets);
+                                            }
+
+                                            break;
+
+                                        default:
+                                            Utils::throwHippoException(Utils::ERROR_INVALID_ARGUMENT, "Invalid ReadPreference");
+                                            break;
+                                    }
+                                }
+                            }
+                            ?>
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Hippo vs. Phongo
+
+                            ```cpp
+                            void HHVM_METHOD(MongoDBDriverManager, __construct, const String &dsn, const Array &options, const Array &driverOptions)
+                            { /* … */ }
+                            ```
+
+                            ```c
+                            PHP_METHOD(Manager, __construct)
+                            {
+                                php_phongo_manager_t     *intern;
+                                zend_error_handling       error_handling;
+                                mongoc_uri_t             *uri;
+                                char                     *uri_string;
+                                int                       uri_string_len;
+                                zval                     *options = NULL;
+                                bson_t                    bson_options = BSON_INITIALIZER;
+                                zval                     *driverOptions = NULL;
+                                (void)return_value; (void)return_value_ptr; (void)return_value_used;
+
+                                zend_replace_error_handling(EH_THROW, phongo_exception_from_phongo_domain(PHONGO_ERROR_INVALID_ARGUMENT), &error_handling TSRMLS_CC);
+                                intern = (php_phongo_manager_t *)zend_object_store_get_object(getThis() TSRMLS_CC);
+
+                                if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|a!a!", &uri_string, &uri_string_len, &options, &driverOptions) == FAILURE) {
+                                    zend_restore_error_handling(&error_handling TSRMLS_CC);
+                                    return;
+                                }
+                                zend_restore_error_handling(&error_handling TSRMLS_CC);
+
+                                if (options) {
+                                    zval_to_bson(options, PHONGO_BSON_NONE, &bson_options, NULL TSRMLS_CC);
+                                }
+
+                                /* … */
+                            }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Adding PHP 7 Support to Phongo
+
+                            <img src="img/phongo-pull-request.png">
+
+                            * Order of elements in structs
+                            * `char *` vs. `zend_string`
+                            * zend_hash changes
+                            * PHP 7 itself was being developed alongside our new driver, which meant frequent internal API changes
+                            * PHP 7 will be released after we ship 1.0 (PHP 5, HHVM)
+
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## A Minimalistic API Does<br>Not a Full Driver Make
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### MongoDB PHP Library (PHPLIB)
+
+                            * Userland library sitting atop Phongo and Hippo
+                              * Depends on `ext-mongodb`
+                            * Implements the convenience methods lacking from the basic extension APIs
+                              * [CRUD specification](https://github.com/mongodb/specifications/blob/master/source/crud/crud.rst), command helpers
+                              * [Collection](https://github.com/mongodb/specifications/blob/master/source/enumerate-collections.rst) and [index](https://github.com/mongodb/specifications/blob/master/source/enumerate-indexes.rst) enumeration
+                            * Installable via Composer:
+
+                            ```
+                            $ mkdir new-project && cd new-project
+                            $ composer require "mongodb/mongodb@beta"
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Library Usage
+
+                            ```php
+                            require 'vendor/autoload.php';
+
+                            $m = new MongoDB\Client("mongodb://localhost:27017");
+                            $c = $m->selectCollection('test', 'demo');
+
+                            $c->drop();
+
+                            $c->insertOne([
+                                'string' => 'bar',
+                                'number_i' => 55,
+                                'number_l' => 12345678901234567,
+                                'bool' => true,
+                                'null' => null,
+                                'float' => M_PI,
+                            ]);
+
+                            foreach ($c->find() as $result) {
+                                var_dump($result);
+                            }
+                            ```
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Challenges Along the Way
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Dependencies and APIs<br>were a Moving Target
+
+                            * As the first major driver built atop `libmongoc`, there were bugs to be found and fixed
+                            * PHPLIB required identical Phongo and Hippo APIs, which wasn&rsquo;t always the case during development
+                            * Namespace changes along the way
+                              * Exceptions moved to MongoDB\Driver\Exception
+                              * Debates over a top-level BSON\ namespace
+                            * Consolidating classes and methods
+                              * CommandResult and QueryResult &rarr; Result
+                              * Remove single-write helpers on Manager
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### HHVM Extension Writing Woes
+
+                            * Many of the internal APIs are not documented
+                            * Subtle compatibility issues regarding exceptions and constructors
+                            * Bundling and configuring
+                              * HHVM does not yet have a PECL equivalent
+                            * Sharing connections and state across requests
+                            * Derick&rsquo;s memoirs: <a href="https://github.com/derickr/hhvm-hni-cookbook">HHVM/HNI Extension Cookbook</a>
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Current Status
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### PHP and HHVM Drivers
+
+                            * [Phongo 1.0.0 released](https://github.com/mongodb/mongo-php-driver/releases/tag/1.0.0)
+                            * [Hippo 1.0.0RC1 released](https://github.com/mongodb/mongo-hhvm-driver/releases/tag/1.0.0RC1)
+                            * Docs: [php.net/mongodb](http://php.net/mongodb)
+
+                            <br>
+
+                            ### Userland Library
+
+                            * [1.0.0-beta1 released](https://github.com/mongodb/mongo-php-library/releases/tag/1.0.0-beta1)
+                            * Docs: [mongodb.github.io/mongo-php-library](http://mongodb.github.io/mongo-php-library/)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Differentiating New from Old
+
+                            #### New PHP Driver
+
+                            * JIRA: [PHPC](https://jira.mongodb.org/browse/PHPC)
+                            * PECL: [mongodb](https://pecl.php.net/package/mongodb)
+                            * Docs: [PHP.net/mongodb](http://php.net/mongodb)
+                            * GitHub: [mongodb/mongo-php-driver](https://github.com/mongodb/mongo-php-driver)
+
+                            <br>
+
+                            #### Legacy PHP Driver
+
+                            * JIRA: [PHP](https://jira.mongodb.org/browse/PHP)
+                            * PECL: [mongo](https://pecl.php.net/package/mongo)
+                            * Docs: [PHP.net/mongo](http://php.net/mongo)
+                            * GitHub: [mongodb/mongo-php-driver-legacy](https://github.com/mongodb/mongo-php-driver-legacy)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### On the Roadmap
+
+                            * Resolve outstanding HHVM issues and ship 1.0.0
+                            * Minor usability improvements before PHPLIB 1.0.0
+                            * PHP 7 support planned for Phongo 1.1
+                            * MongoDB 3.2 support planned for Phongo and Hippo 1.2
+                              * Depends on upcoming `libmongoc` 1.3
+                            * GridFS coming to PHPLIB in 1.1
+                        </script>
+                    </section>
+                </section>
+
+                <section data-markdown data-background="img/dogecoin.png" data-background-repeat="no-repeat" data-background-position="bottom right" data-background-size="66%">
+                    <script type="text/template">
+                        # Thanks!
+
+                        <br>
+
+                        [database.mongodb.com/community-survey](http://database.mongodb.com/community-survey)
+
+                        <br>
+
+                        [@jmikola](http://twitter.com/jmikola) — [speakerdeck.com/jmikola](https://speakerdeck.com/jmikola)
+
+                        ## Questions?
+                        <!-- .element style="margin-top: 2em;" -->
+                    </script>
+                </section>
+            </div>
+        </div>
+
+        <script src="../vendor/reveal.js/lib/js/head.min.js"></script>
+        <script src="../vendor/reveal.js/js/reveal.min.js"></script>
+        <script src="../common/js/reveal.js"></script>
+    </body>
+</html>
