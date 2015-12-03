@@ -292,7 +292,7 @@ When MongoDB and its PHP driver first appeared on the scene, the GoPHP5 movement
                                 <tr class="fragment">
                                     <td>PHP 5.4+</td>
                                     <td>HHVM 3.9+</td>
-                                    <td>Coming soon<br>after Nov 12</td>
+                                    <td>Coming after<br>December 3rd</td>
                                 </tr>
                             </table>
                         </script>
@@ -692,7 +692,7 @@ When MongoDB and its PHP driver first appeared on the scene, the GoPHP5 movement
 
                             ```
                             $ mkdir new-project && cd new-project
-                            $ composer require "mongodb/mongodb@beta"
+                            $ composer require "mongodb/mongodb=^1.0.0@beta"
                             ```
                         </script>
                     </section>
@@ -814,25 +814,61 @@ When MongoDB and its PHP driver first appeared on the scene, the GoPHP5 movement
 
                             * Resolve outstanding HHVM issues and ship 1.0.0
                             * Minor usability improvements before PHPLIB 1.0.0
-                            * PHP 7 support planned for Phongo 1.1
-                            * MongoDB 3.2 support planned for Phongo and Hippo 1.2
+                            * MongoDB 3.2 support planned for Phongo and Hippo 1.1
                               * Depends on upcoming `libmongoc` 1.3
+                            * PHP 7 support planned for Phongo 1.2
                             * GridFS coming to PHPLIB in 1.1
+                        </script>
+                    </section>
+                </section>
+
+                <section>
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Future Possibilities
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [PHP Code Service](http://www.tekwire.net/joomla/projects/pcs) <small>by François Laupretre</small></span>
+
+                            * An easy way to mix C and PHP in extensions
+                            * PECL extension: [pcs](http://pecl.php.net/package/pcs)
+                            * Supports both PHP 5 and 7 ([pecl-compat](https://github.com/flaupretre/pecl-compat))
+                            * Opcode caching and minimal loading overhead
+                              * Classes may be autoloaded
+                              * Functions/constants registered on RINIT
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### PCS Architecture
+
+                            <img src="img/pcs_archi.png" class="transparent" width="100%">
+                        </script>
+                    </section>
+
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### PCS with MongoDB
+
+                            <img src="img/pcs_mongo.png" class="transparent" width="100%">
                         </script>
                     </section>
                 </section>
 
                 <section data-markdown data-background="img/dogecoin.png" data-background-repeat="no-repeat" data-background-position="bottom right" data-background-size="66%">
                     <script type="text/template">
-                        # Thanks!
+                        ### Thanks!
 
                         <br>
 
-                        [database.mongodb.com/community-survey](http://database.mongodb.com/community-survey)
+                        ## [joind.in / 16483](https://joind.in/16483)
 
-                        <br>
-
-                        [@jmikola](http://twitter.com/jmikola) — [speakerdeck.com/jmikola](https://speakerdeck.com/jmikola)
+                        [speakerdeck.com/jmikola](https://speakerdeck.com/jmikola)
 
                         ## Questions?
                         <!-- .element style="margin-top: 2em;" -->
