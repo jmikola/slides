@@ -458,21 +458,39 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ### Multi-key indexing for EAV the rescue
+                            ### Multi-key indexing for EAV
 
                             ```javascript
-                            > db.messages.findOne({}, { unreadForParticipants: 1 })
                             {
-                                _id: ObjectId("4fce28482516ed983884b158"),
-                                "unreadForParticipants" : [
-                                    "4fce05e42516ed9838756f17",
-                                    "4fce05e42516ed9838756f1a",
-                                    "4fce05e42516ed9838756f1b"
+                                _id: "product-1",
+                                size: "large",
+                                color: "blue"
+                            }
+                            ```
+
+                            vs.
+
+                            ```javascript
+                            {
+                                _id: "product-1",
+                                attributes: [
+                                    { k: "size", v: "large" },
+                                    { k: "color", v: "blue" }
                                 ]
                             }
                             ```
 
-                            <small>A tidbit from [FOSMessageBundle](https://github.com/FriendsOfSymfony/FOSMessageBundle/pull/32)</small>
+                            or
+
+                            ```javascript
+                            {
+                                _id: "product-1",
+                                attributes: [
+                                    "size=large",
+                                    "color=blue"
+                                ]
+                            }
+                            ```
                         </script>
                     </section>
 
