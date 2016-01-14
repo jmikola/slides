@@ -23,8 +23,10 @@ h1 span.s {
     text-transform: none;
 }
 
-li strike {
-    opacity: 0.5;
+.reveal h3 small,
+.reveal h4 small {
+    color: #999;
+    vertical-align: bottom;
 }
 
 div.col-left {
@@ -147,3 +149,29 @@ div.mario-sprite {
     background-repeat: no-repeat;
     background-size: contain;
 }
+
+table.engines td {
+    font-size: 1.5em;
+    text-align: center !important;
+}
+
+table.crud-methods {
+    border-spacing: 0;
+}
+
+table.crud-methods th,
+table.crud-methods td {
+    padding: 0.25em 0.5em;
+}
+
+table.crud-methods th {
+    border-bottom: 3px solid #000;
+    font-weight: normal;
+}
+
+table.options th,
+table.options td {
+    padding: 0.25em 0.5em;
+}
+
+
