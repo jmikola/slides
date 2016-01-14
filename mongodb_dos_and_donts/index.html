@@ -175,16 +175,24 @@
 
                             $c->drop();
 
-                            $c->insert([
-                                'string' => 'bar',
-                                'integer' => 55,
-                                'bool' => true,
-                                'null' => null,
-                                'float' => M_PI,
-                            ]);
+                            $c->insert(['foo' => 'bar']);
 
                             foreach ($c->find() as $result) {
                                 var_dump($result);
+                            }
+                            ```
+
+                            &#x25BC;
+
+                            ```
+                            array(2) {
+                              ["_id"]=>
+                              object(MongoId)#7 (1) {
+                                ["$id"]=>
+                                string(24) "5697e19de84df157638b4567"
+                              }
+                              ["foo"]=>
+                              string(3) "bar"
                             }
                             ```
                         </script>
@@ -197,25 +205,30 @@
                             ```php
                             $m = new MongoDB\Driver\Manager('mongodb://localhost:27017');
 
-                            $cmd = new MongoDB\Driver\Command(['drop' => 'test']);
-                            $m->executeCommand('demo', $cmd);
+                            $m->executeCommand('demo', new MongoDB\Driver\Command(['drop' => 'test']));
 
                             $bulk = new MongoDB\Driver\BulkWrite;
-                            $bulk->insert([
-                                'string' => 'bar',
-                                'integer' => 55,
-                                'bool' => true,
-                                'null' => null,
-                                'float' => M_PI,
-                            ]);
-
+                            $bulk->insert(['foo' => 'bar']);
                             $m->executeBulkWrite('demo.test', $bulk);
 
-                            $query = new MongoDB\Driver\Query([]);
-                            $cursor = $m->executeQuery('demo.test', $query);
+                            $cursor = $m->executeQuery('demo.test', new MongoDB\Driver\Query([]));
 
                             foreach ($cursor as $result) {
                                 var_dump($result);
+                            }
+                            ```
+
+                            &#x25BC;
+
+                            ```
+                            object(stdClass)#8 (2) {
+                              ["_id"]=>
+                              object(MongoDB\BSON\ObjectID)#7 (1) {
+                                ["oid"]=>
+                                string(24) "5697e223da14d8648f314b41"
+                              }
+                              ["foo"]=>
+                              string(3) "bar"
                             }
                             ```
                         </script>
@@ -233,16 +246,27 @@
 
                             $c->drop();
 
-                            $c->insertOne([
-                                'string' => 'bar',
-                                'integer' => 55,
-                                'bool' => true,
-                                'null' => null,
-                                'float' => M_PI,
-                            ]);
+                            $c->insertOne(['foo' => 'bar']);
 
                             foreach ($c->find() as $result) {
                                 var_dump($result);
+                            }
+                            ```
+
+                            &#x25BC;
+
+                            ```
+                            object(MongoDB\Model\BSONDocument)#13 (1) {
+                              ["storage":"ArrayObject":private]=>
+                              array(2) {
+                                ["_id"]=>
+                                object(MongoDB\BSON\ObjectID)#12 (1) {
+                                  ["oid"]=>
+                                  string(24) "5697e2beda14d865e2581941"
+                                }
+                                ["foo"]=>
+                                string(3) "bar"
+                              }
                             }
                             ```
                         </script>
