@@ -1,5 +1,6 @@
 ### Presented
 
+ * 2016-10-08 at [Bulgaria PHP](https://joind.in/event/bulgaria-php-2016/zero-to-sixty-with-mongodb)
  * 2015-05-09 at [OpenWest](http://joind.in/talk/view/14038)
  * 2014-05-20 at [php[tek]](https://joind.in/talk/view/10667)
  * 2013-11-04 at [Seattle PHP Meetup](http://www.meetup.com/php-49/events/142710822/)

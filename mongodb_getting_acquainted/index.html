@@ -34,7 +34,7 @@
 
                     <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
                 </section>
-
+<!--
                 <section data-markdown data-state="about-mongodb">
                     <script type="text/template">
                         # <span class="mongodb-logo">MongoDB</span>
@@ -48,7 +48,7 @@
                         * Hiring at [mongodb.com/careers](http://mongodb.com/careers)
                     </script>
                 </section>
-
+-->
                 <section data-background="img/highway.jpg" class="overlay">
                     <h2>Starting Off</h2>
 
@@ -124,7 +124,6 @@
                             * Limited atomicity
                             * Consistency trade-off
                             * Query language limitations
-                            * Concurrency (improving)
                         </script>
                     </section>
 
@@ -295,7 +294,7 @@
                     </section>
 
                     <section data-background="img/sagecrm_schema.gif">
-                        <h1 class="black">Things May Get Out of Hand</h1>
+                        <h1 class="black">Things May Get<br>Out of Hand</h1>
                     </section>
                 </section>
 
@@ -364,10 +363,10 @@
 
                             ```php
                             // Objects work, too!
-                            $a = new stdClass();
+                            $a = new stdClass;
                             $a->hello = 'world';
 
-                            $b = new stdClass();
+                            $b = new stdClass;
                             $b->things = ['foo', 5.05, 2012];
                             ```
                         </script>
@@ -385,7 +384,7 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## [mongodb.org/downloads](http://www.mongodb.org/downloads)
+                            ## [mongodb.com/download-center](https://www.mongodb.com/download-center)
 
                             * Compiled binaries
                                 * OS X, Linux, Windows, Solaris
@@ -400,24 +399,25 @@
                             ## Installing
 
                             ```no-highlight
-                            $ tar xvzf mongodb-linux-x86_64-2.4.4.tgz
-                            mongodb-linux-x86_64-2.4.4/GNU-AGPL-3.0
-                            mongodb-linux-x86_64-2.4.4/README
-                            mongodb-linux-x86_64-2.4.4/THIRD-PARTY-NOTICES
-                            mongodb-linux-x86_64-2.4.4/bin/mongodump
-                            mongodb-linux-x86_64-2.4.4/bin/mongorestore
-                            mongodb-linux-x86_64-2.4.4/bin/mongoexport
-                            mongodb-linux-x86_64-2.4.4/bin/mongoimport
-                            mongodb-linux-x86_64-2.4.4/bin/mongostat
-                            mongodb-linux-x86_64-2.4.4/bin/mongotop
-                            mongodb-linux-x86_64-2.4.4/bin/mongooplog
-                            mongodb-linux-x86_64-2.4.4/bin/mongofiles
-                            mongodb-linux-x86_64-2.4.4/bin/bsondump
-                            mongodb-linux-x86_64-2.4.4/bin/mongoperf
-                            mongodb-linux-x86_64-2.4.4/bin/mongosniff
-                            mongodb-linux-x86_64-2.4.4/bin/mongod
-                            mongodb-linux-x86_64-2.4.4/bin/mongos
-                            mongodb-linux-x86_64-2.4.4/bin/mongo
+                            $ tar xvzf mongodb-linux-x86_64-ubuntu1604-3.2.10.tgz 
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/README
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/THIRD-PARTY-NOTICES
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/MPL-2
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/GNU-AGPL-3.0
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongodump
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongorestore
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongoexport
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongoimport
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongostat
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongotop
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/bsondump
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongofiles
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongooplog
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongoperf
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongosniff
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongod
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongos
+                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongo
                             ```
                         </script>
                     </section>
@@ -429,14 +429,20 @@
                             ```no-highlight
                             $ mkdir /data/db
 
-                            $ mongodb-linux-x86_64-2.4.4/bin/mongod
-                            [initandlisten] MongoDB starting : pid=6214 port=27017 dbpath=/data/db 64-bit host=honeydew
-                            [initandlisten] db version v2.4.4
-                            [initandlisten] git version: 4ec1fb96702c9d4c57b1e06dd34eb73a16e407d2
-                            [initandlisten] build info: Linux ip-10-2-29-40 2.6.21.7-2.ec2.v1.2.fc8xen #1 SMP Fri Nov 20 17:48:28 EST 2009 x86_64 BOOST_LIB_VERSION=1_49
+                            $ mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongod
+                            [initandlisten] MongoDB starting : pid=20751 port=27017 dbpath=/data/db 64-bit host=honeydew
+                            [initandlisten] db version v3.2.10
+                            [initandlisten] git version: 79d9b3ab5ce20f51c272b4411202710a082d0317
+                            [initandlisten] OpenSSL version: OpenSSL 1.0.2g  1 Mar 2016
                             [initandlisten] allocator: tcmalloc
-                            [initandlisten] journal dir=/data/db/journal
-                            [websvr] admin web console waiting for connections on port 28017
+                            [initandlisten] modules: none
+                            [initandlisten] build environment:
+                            [initandlisten]     distmod: ubuntu1604
+                            [initandlisten]     distarch: x86_64
+                            [initandlisten]     target_arch: x86_64
+                            [initandlisten] options: { storage: { dbPath: "/tmp/db" } }
+                            [initandlisten] wiredtiger_open config: create,cache_size=8G,session_max=20000,eviction=(threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000),checkpoint=(wait=60,log_size=2GB),statistics_log=(wait=0),
+                            [initandlisten] Initializing full-time diagnostic data capture with directory '/tmp/db/diagnostic.data'
                             [initandlisten] waiting for connections on port 27017
                             ```
                         </script>
@@ -447,8 +453,8 @@
                             ## Connecting
 
                             ```no-highlight
-                            $ mongo
-                            MongoDB shell version: 2.4.4
+                            $ mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongo
+                            MongoDB shell version: 3.2.10
                             connecting to: test
 
                             > show dbs
@@ -457,43 +463,38 @@
                             > db.foo.insert({x: 1})
 
                             > db.foo.find()
-                            { "_id" : ObjectId("50368f0cdea8fae83cf3d097"), "x" : 1 }
+                            { "_id" : ObjectId("57f7aefab586b9ceed2df190"), "x" : 1 }
                             ```
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## PHP Driver
+                            ## MongoDB Atlas
 
-                            * [PECL extension](http://pecl.php.net/package/mongo)
-                            * Classes for MongoDB resources, types
-                            * BSON encode/decode functions
-                            * Persistent connections, logging
-                            * Track development on [GitHub](https://github.com/mongodb/mongo-php-driver) and [JIRA](https://jira.mongodb.org/browse/PHP)
+                            * Hosted MongoDB as a Service
+                            * Single-click deployments, upgrades, etc.
+                            * Configurable scalability and redundancy
+                            * Integration with MongoDB's backup service
+                            * Secure (authentication, encryption, IP whitelists)
+
+                            <br>
+
+                            More info at [mongodb.com/cloud](https://www.mongodb.com/cloud)
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## PHP Driver Installation
+                            ## PHP and HHVM Drivers
 
-                            ```no-highlight
-                            $ pecl install mongo
-                            downloading mongo-1.4.1.tgz ...
-                            Starting to download mongo-1.4.1.tgz (138,957 bytes)
-                            ......................done: 138,957 bytes
-                            84 source files, building
-
-                            ...
-
-                            Build process completed successfully
-                            Installing '/usr/lib/php5/20100525/mongo.so'
-                            install ok: channel://pecl.php.net/mongo-1.4.1
-                            ```
-
-                            * [Compiled binaries](http://www.php.net/manual/en/mongo.installation.php#mongo.installation.windows) for Windows
-                            * Included with Zend Server
+                            * [PHP](https://github.com/mongodb/mongo-php-driver) and [HHVM](https://github.com/mongodb/mongo-hhvm-driver) extensions (`ext-mongodb`)
+                              * Client, server, and cursor classes
+                              * BSON types and encode/decode functions
+                            * [PHP library](https://github.com/mongodb/mongo-php-library) (`mongodb/mongodb`)
+                              * Client, database, and collection classes
+                              * Higher-level abstractions (e.g. GridFS)
+                            * Installing the [extension](http://php.net/manual/en/mongodb.installation.php) and [library](http://php.net/manual/en/mongodb.tutorial.library.php)
                         </script>
                     </section>
                 </section>
@@ -507,10 +508,10 @@
                         <script type="text/template">
                             ## Core Classes
 
-                            * [MongoClient](http://php.net/manual/en/class.mongoclient.php)
-                            * [MongoDB](http://php.net/manual/en/class.mongodb.php)
-                            * [MongoCollection](http://php.net/manual/en/class.mongocollection.php)
-                            * [MongoCursor](http://php.net/manual/en/class.mongocursor.php)
+                            * [MongoDB\Client](https://docs.mongodb.com/php-library/master/reference/class/MongoDBClient/)
+                            * [MongoDB\Database](https://docs.mongodb.com/php-library/master/reference/class/MongoDBDatabase/)
+                            * [MongoDB\Collection](https://docs.mongodb.com/php-library/master/reference/class/MongoDBCollection/)
+                            * [MongoDB\Driver\Cursor](http://php.net/manual/en/class.mongodb-driver-cursor.php)
                         </script>
                     </section>
 
@@ -519,99 +520,92 @@
                             ## Connecting
 
                             ```php
-                            // localhost:27017
-                            $m = new MongoClient();
+                            // 127.0.0.1:27017
+                            $m = new MongoDB\Client;
 
                             // example.com:27018
-                            $m = new MongoClient('mongodb://example.com:27018');
+                            $m = new MongoDB\Client('mongodb://example.com:27018');
 
                             // authentication
-                            $m = new MongoClient('mongodb://user:password@localhost');
+                            $m = new MongoDB\Client('mongodb://user:password@localhost');
 
                             // replica set
-                            $m = new MongoClient(
+                            $m = new MongoDB\Client(
                                 'mongodb://rs1.example.com,rs2.example.com',
                                 ['replicaSet' => 'myReplSet']
                             );
-
-                            // shard cluster
-                            $m = new MongoClient('mongodb://s1.example.com,s2.example.com');
                             ```
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## The MongoClient Class
+                            ## The MongoDB\Client Class
 
                             ```php
-                            $m = new MongoClient();
+                            $m = new MongoDB\Client;
 
-                            // Get a MongoDB for the "test" database
-                            $m->test;
-                            $m->selectDB('test');
+                            // Select the "test" database
+                            $db = $m->test;
+                            $db = $m->selectDatabase('test');
 
-                            // Get a MongoCollection for "test.users"
-                            $m->test->users;
-                            $m->selectCollection('test', 'users');
-
-                            // Drop the "test" database
-                            $m->dropDB('test');
+                            // Select the "test.users" collection
+                            $c = $m->test->users;
+                            $c = $m->selectCollection('test', 'users');
                             ```
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## The MongoDB Class
+                            ## The MongoDB\Database Class
 
                             ```php
                             $db = $m->test;
-                            $db = new MongoDB($m, 'test');
+                            $db = new MongoDB\Database($m->getManager(), 'test');
 
-                            // Get a MongoCollection for "test.users"
-                            $db->users;
-                            $db->selectCollection('users');
+                            // Select the "test.users" collection
+                            $c = $db->users;
+                            $c = $db->selectCollection('users');
 
-                            $db->dropCollection('users'); // Drop "test.users"
-                            $db->drop();                  // Drop the entire database
+                            // Execute a command on the "test" database
+                            $cursor = $db->command(['serverStatus' => 1]);
+                            $serverStatus = $cursor->toArray()[0];
                             ```
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## The MongoCollection Class
+                            ## The MongoDB\Collection Class
 
                             ```php
                             $c = $db->users;
-                            $c = new MongoCollection($db, 'users');
+                            $c = new MongoDB\Collection($db->getManager(), 'test', 'users');
 
                             // Insert a user document for Bob
-                            $c->insert(['username' => 'bob', 'roles' => ['admin']]);
+                            $c->insertOne(['username' => 'bob', 'roles' => ['admin']]);
 
                             // Retrieve Bob's user document
-                            $c->findOne(['username' => 'bob']);
+                            $user = $c->findOne(['username' => 'bob']);
 
-                            // Find all admins (returns an iterable MongoCursor)
-                            $c->find(['roles' => 'admin']);
+                            // Find all admins (returns an iterable MongoDB\Driver\Cursor)
+                            $cursor = $c->find(['roles' => 'admin']);
+                            $admins = $cursor->toArray();
                             ```
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## The MongoCollection Class
+                            ## The MongoDB\Collection Class
 
                             ```php
                             $c->count();                     // Count all users
                             $c->count(['roles' => 'admin']); // Count only admins
 
-                            $c->remove(['username' => 'john']); // Delete a user
-                            $c->remove();                       // Delete all users
-
-                            // Drop the entire collection
-                            $c->drop();
+                            $c->deleteOne(['username' => 'john']); // Delete a user
+                            $c->deleteMany();                      // Delete all users
                             ```
                         </script>
                     </section>
@@ -628,23 +622,17 @@
 
                             ```php
                             // Create a user document for Tom
-                            $user = ['username' => 'tom'];
+                            $result = $c->insertOne(['username' => 'tom']);
 
-                            // Insert Tom's document
-                            $c->insert($user);
-
-                            var_dump($user);
+                            var_dump($result->getInsertedCount());
+                            var_dump($result->getInsertedId());
                             ```
 
                             ```no-highlight
-                            array(2) {
-                              ["username"]=>
-                              string(3) "tom"
-                              ["_id"]=>
-                              object(MongoId)#3 (1) {
-                                ["$id"]=>
-                                string(24) "503b0772e84df1f87b000001"
-                              }
+                            int(1)
+                            object(MongoDB\BSON\ObjectID)#11 (1) {
+                              ["oid"]=>
+                              string(24) "57f7d220da14d803b94fba92"
                             }
                             ```
                         </script>
@@ -656,20 +644,20 @@
 
                             * Its value is immutable
                             * Unique to the collection
-                            * ObjectId, scalar or object
+                            * ObjectID, scalar or object
                             * Indexed by default
                         </script>
                     </section>
 
                     <section>
-                        <h2>What's in an ObjectId?</h2>
+                        <h2>What's in an ObjectID?</h2>
 
                         <table class="bordered">
                             <tr>
-                                <td><code>5033ea5c</code></td>
-                                <td><code>e84df1</code></td>
-                                <td><code>110f</code></td>
-                                <td><code>000001</code></td>
+                                <td><code>57f7d220</code></td>
+                                <td><code>da14d8</code></td>
+                                <td><code>03b9</code></td>
+                                <td><code>4fba92</code></td>
                             </tr>
                             <tr>
                                 <td>Timestamp</td>
@@ -686,41 +674,18 @@
                         </ul>
                     </section>
 
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## The MongoId Class
-
-                            ```php
-                            $id = new MongoId();
-
-                            echo (string) $id;        // 5033ea5ce84df1110f000001
-                            echo $id->getTimestamp(); // 1345579612
-                            echo $id->getPID();       // 3857
-                            echo $id->getInc();       // 1
-
-                            // Strings will not match an ObjectId
-                            $c->find(['_id' => '5033ea5ce84df1110f000001']);
-
-                            // Use MongoId objects in query criteria
-                            $c->find(['_id' => new MongoId('5033ea5ce84df1110f000001')]);
-                            ```
-                        </script>
-                    </section>
-
                     <section data-markdown data-state="driver-type-classes">
                         <script type="text/template">
-                            ## Other Type Classes
+                            ## BSON Type Classes
 
-                            * [MongoId](http://php.net/manual/en/class.mongoid.php)
-                            * [MongoCode](http://php.net/manual/en/class.mongocode.php)
-                            * [MongoDate](http://php.net/manual/en/class.mongodate.php)
-                            * [MongoRegex](http://php.net/manual/en/class.mongoregex.php)
-                            * [MongoBinData](http://php.net/manual/en/class.mongobindata.php)
-                            * [MongoInt32](http://php.net/manual/en/class.mongoint32.php)
-                            * [MongoInt64](http://php.net/manual/en/class.mongoint64.php)
-                            * [MongoMinKey](http://php.net/manual/en/class.mongominkey.php)
-                            * [MongoMaxKey](http://php.net/manual/en/class.mongomaxkey.php)
-                            * [MongoTimestamp](http://php.net/manual/en/class.mongotimestamp.php)
+                            * [MongoDB\BSON\Binary](http://php.net/manual/en/class.mongodb-bson-binary.php)
+                            * [MongoDB\BSON\Javascript](http://php.net/manual/en/class.mongodb-bson-javascript.php)
+                            * [MongoDB\BSON\ObjectID](http://php.net/manual/en/class.mongodb-bson-objectid.php)
+                            * [MongoDB\BSON\Regex](http://php.net/manual/en/class.mongodb-bson-regex.php)
+                            * [MongoDB\BSON\Timestamp](http://php.net/manual/en/class.mongodb-bson-timestamp.php)
+                            * [MongoDB\BSON\UTCDateTime](http://php.net/manual/en/class.mongodb-bson-utcdatetime.php)
+                            * [MongoDB\Model\BSONArray](https://docs.mongodb.com/php-library/master/reference/bson/)
+                            * [MongoDB\Model\BSONDocument](https://docs.mongodb.com/php-library/master/reference/bson/)
                         </script>
                     </section>
                 </section>
@@ -749,7 +714,6 @@
                                 * Trade consistency for performance
                             * `{w: 1}`
                                 * Ensure primary acknowledges write
-                                * Issues [getLastError](http://docs.mongodb.org/manual/reference/command/getLastError/) command
                             * `{w: #}` or `{w: "majority"}`
                                 * Wait for multiple acknowledgements
                         </script>
@@ -760,17 +724,43 @@
                             ## Acknowledged Writes
 
                             ```php
-                            $c = $db->users;
+                            $c = (new MongoDB\Client)->test->users;
 
                             $user = $c->findOne(['username' => 'tom']);
 
-                            $c->insert($user, ['w' => 1]); // MongoClient's default behavior
+                            // MongoDB\Client's default behavior
+                            $result = $c->insertOne(
+                                $user,
+                                ['writeConcern' => new MongoDB\Driver\WriteConcern(1)]
+                            );
+
+                            var_dump($result->getInsertedCount());
                             ```
 
                             ```no-highlight
-                            Uncaught exception: MongoCursorException:
-                              E11000 duplicate key error index: test.users.$_id_
-                              dup key: { : ObjectId('503b0772e84df1f87b000001') }
+                            Uncaught MongoDB\Driver\Exception\BulkWriteException:
+                              E11000 duplicate key error
+                              collection: test.users
+                              index: _id_
+                              dup key: { : ObjectId('57f7d220da14d803b94fba92') }
+                            ```
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Acknowledged Writes
+
+                            ```php
+                            // Connect to a replica set URI
+                            $c = (new MongoDB\Client('...'))->test->users;
+
+                            $result = $c->insertOne(
+                                ['username' => 'tom'],
+                                ['writeConcern' => new MongoDB\Driver\WriteConcern(2)]
+                            );
+
+                            var_dump($result->getInsertedCount()); // int(1)
                             ```
                         </script>
                     </section>
@@ -780,19 +770,20 @@
                             ## Unacknowledged Writes
 
                             ```php
-                            $c->insert($user, ['w' => 0]); // No error, but nothing inserted
+                            $c = (new MongoDB\Client)->test->users;
 
-                            $db->lastError(); // Manually call getLastError
+                            $user = $c->findOne(['username' => 'tom']);
+
+                            $result = $c->insertOne(
+                                $user,
+                                ['writeConcern' => new MongoDB\Driver\WriteConcern(0)]
+                            );
+
+                            var_dump($result->isAcknowledged());
                             ```
 
-                            ```php
-                            array(
-                              "err" => "E11000 duplicate key error…",
-                              "code" => 11000,
-                              "n" => 0,
-                              "connectionId" => 16,
-                              "ok" => 1,
-                            )
+                            ```no-highlight
+                            bool(false)
                             ```
                         </script>
                     </section>
@@ -803,10 +794,13 @@
 
                             ```php
                             // Change Tom's email address
-                            $c->update(
+                            $result = $c->updateOne(
                                 ['username' => 'tom'],
                                 ['$set' => ['email' => 'thomas@example.com']]
                             );
+
+                            var_dump($result->getMatchedCount());  // int(1)
+                            var_dump($result->getModifiedCount()); // int(1)
                             ```
 
                             * Criteria
@@ -822,11 +816,13 @@
 
                             ```php
                             // Make everyone an admin (probably a bad idea :)
-                            $c->update(
+                            $result = $c->updateMany(
                                 [],
-                                ['$addToSet' => ['roles' => 'admin']],
-                                ['multiple' => true]
+                                ['$addToSet' => ['roles' => 'admin']]
                             );
+
+                            var_dump($result->getMatchedCount());  // int(9)
+                            var_dump($result->getModifiedCount()); // int(9)
                             ```
                         </script>
                     </section>
@@ -837,68 +833,55 @@
 
                             ```php
                             // If Sam doesn't exist, insert: { username: "Sam", role: "staff" }
-                            $c->update(
+                            $result = $c->updateOne(
                                 ['username' => 'sam'],
                                 ['$set' => ['role' => 'staff']],
                                 ['upsert' => true]
                             );
+
+                            var_dump($result->getMatchedCount());  // int(0)
+                            var_dump($result->getModifiedCount()); // int(0)
+                            var_dump($result->getUpsertedCount()); // int(1)
+                            var_dump($result->getUpsertedId());    // object(MongoDB\BSON\ObjectID)
                             ```
 
                             * No multi-document operation
                             * Does the criteria match a document?
                                 * Yes, update the document
-                                * No, insert the document
-                            * [Apply modifiers to criteria and insert](http://docs.mongodb.org/manual/applications/update/#update-operations-with-the-upsert-flag)
-                        </script>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            ## Saving
-
-                            ```php
-                            // Modify Tom's user
-                            $user = $c->findOne(['username' => 'tom']);
-                            $user['email'] = 'tom@example.com';
-                            $user['roles'][] = 'moderator';
-
-                            $c->save($user);
-                            ```
-
-                            * Is there an `_id`?
-                                * Yes, upsert the document
-                                * No, insert the document
-                            * Beware of race conditions
+                                * No, [apply modifiers to criteria and insert](https://docs.mongodb.com/manual/tutorial/update-documents/#upsert-option)
                         </script>
                     </section>
 
                     <section data-markdown data-state="atomic-operators">
                         <script type="text/template">
-                            ## Atomic Operators
+                            ## [Update Operators](https://docs.mongodb.com/manual/reference/operator/update/)
 
-                            * Numbers
-                                * [$inc](http://docs.mongodb.org/manual/reference/operator/inc/)
-                            * Integers
-                                * [$bit](http://docs.mongodb.org/manual/reference/operator/bit/)
-                            * Anything
-                                * [$set](http://docs.mongodb.org/manual/reference/operator/set/)
-                                * [$unset](http://docs.mongodb.org/manual/reference/operator/unset/)
-                                * [$rename](http://docs.mongodb.org/manual/reference/operator/rename/)
+                            * Mixed
+                                * [$currentDate](https://docs.mongodb.com/manual/reference/operator/update/currentDate/)
+                                * [$rename](https://docs.mongodb.com/manual/reference/operator/update/rename/)
+                                * [$set](https://docs.mongodb.com/manual/reference/operator/update/set/)
+                                * [$unset](https://docs.mongodb.com/manual/reference/operator/update/unset/)
                             * Arrays
-                                * [$addToSet](http://docs.mongodb.org/manual/reference/operator/addToSet/)
-                                * [$pop](http://docs.mongodb.org/manual/reference/operator/pop/)
-                                * [$push](http://docs.mongodb.org/manual/reference/operator/push/), [$pushAll](http://docs.mongodb.org/manual/reference/operator/pushAll/)
-                                * [$pull](http://docs.mongodb.org/manual/reference/operator/pull/), [$pullAll](http://docs.mongodb.org/manual/reference/operator/pullAll/)
+                                * [$addToSet](https://docs.mongodb.com/manual/reference/operator/update/addToSet/)
+                                * [$pop](https://docs.mongodb.com/manual/reference/operator/update/pop/)
+                                * [$pull](https://docs.mongodb.com/manual/reference/operator/update/pull/), [$pullAll](https://docs.mongodb.com/manual/reference/operator/update/pullAll/)
+                                * [$push](https://docs.mongodb.com/manual/reference/operator/update/push/), [$pushAll](https://docs.mongodb.com/manual/reference/operator/update/pushAll/)
+                            * Numbers
+                                * [$bit](https://docs.mongodb.com/manual/reference/operator/update/bit/)
+                                * [$inc](https://docs.mongodb.com/manual/reference/operator/update/inc/)
+                                * [$mul](https://docs.mongodb.com/manual/reference/operator/update/mul/)
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## [Positional Updates](http://docs.mongodb.org/manual/reference/operator/positional/)
+                            ## [Positional Updates](https://docs.mongodb.com/manual/reference/operator/update/positional/)
 
                             ```php
+                            $c = (new MongoDB\Client)->test->articles;
+
                             // An article with votable comments
-                            $db->articles->insert([
+                            $c->insertOne([
                                 '_id' => 1,
                                 'title' => 'Praesent ante dui',
                                 'comments' => [
@@ -908,7 +891,7 @@
                             ]);
 
                             // Upvote the second comment
-                            $db->articles->update(
+                            $c->updateOne(
                                 ['_id' => 1, 'comments.id' => 2],
                                 ['$inc' => ['comments.$.votes' => 1]]
                             );
@@ -928,7 +911,7 @@
 
                             ```php
                             $c->findOne(); // Retrieve one document as an array
-                            $c->find();    // Find all documents via MongoCursor
+                            $c->find();    // Find all documents via MongoDB\Driver\Cursor
 
                             // Query on field values
                             $c->findOne(['lastName' => 'Smith']);
@@ -945,34 +928,31 @@
                             ## Queries Return Cursors
 
                             * Cursors navigate a query result
-                            * Pre-query state
-                                * No database contact yet
-                                * `limit()`, `skip()`, `sort()`
-                                * Set [special flags](http://docs.mongodb.org/manual/reference/meta-query-operators/)
-                            * Post-query state
-                                * Iteration has begun
-                                * Cannot be modified
+                            * Can be iterated forward and only once
+                            * Convert to an array for random access
+                            * Commands return cursors, too
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## The MongoCursor Class
+                            ## The MongoDB\Driver\Cursor Class
 
                             ```php
-                            $cursor = $db->users->find();      // Find all users
-                            $cursor->sort(['username' => -1]); // Desc sort by username
-                            $cursor->limit(10);                // Limit to 10 results
-                            $cursor->skip(5);                  // Skip the first 5
+                            $cursor = $c->find(
+                                ['roles' => 'admin'],             // Find all admins
+                                [
+                                    'sort' => ['username' => -1], // Desc sort by username
+                                    'limit' => 10,                // Limit to 10 results
+                                    'skip' => 5,                  // Skip the first 5
+                                ]
+                            );
 
                             // Iterate through results
                             foreach ($cursor as $document) { }
 
-                            // Get them all at once
-                            $results = iterator_to_array($cursor);
-
-                            $cursor->count();     // Count irrespective of limit/skip
-                            $cursor->count(true); // Count with respect to limit/skip
+                            // Get them all at once (equivalent to iterator_to_array())
+                            $results = $cursor->toArray();
                             ```
                         </script>
                     </section>
@@ -992,14 +972,14 @@
                             ## Data to Query
 
                             ```php
-                            $c = $db->users;
+                            $c = (new MongoDB\Client)->test->users;
 
-                            $c->save([
+                            $c->insertOne([
                                 'username' => 'bob',
                                 'email' => 'bob@example.com',
                                 'profile' => [
-                                    'bio' => "I am a data fixture.",
-                                    'createdAt' => new MongoDate(),
+                                    'bio' => 'I am a data fixture.',
+                                    'createdAt' => new MongoDB\BSON\UTCDateTime,
                                 ],
                                 'roles' => ['moderator', 'admin'],
                             ]);
@@ -1013,10 +993,10 @@
                         <script type="text/template">
                             ## Complex Criteria
 
-                            * [Regular expressions](http://docs.mongodb.org/manual/reference/operator/regex/)
-                            * [Matching values in embedded objects](http://docs.mongodb.org/manual/reference/glossary/#term-dot-notation)
-                            * [Conditional operators](http://docs.mongodb.org/manual/reference/operators/#logical)
-                            * [Matching a value in an array](http://docs.mongodb.org/manual/core/read-operations/#arrays)
+                            * [Regular expressions](https://docs.mongodb.com/manual/reference/operator/query/regex/)
+                            * [Matching values in embedded objects](https://docs.mongodb.com/manual/core/document/#document-dot-notation)
+                            * [Comparison operators](https://docs.mongodb.com/manual/reference/operator/query-comparison/)
+                            * [Matching a value in an array](https://docs.mongodb.com/manual/tutorial/query-documents/#query-on-arrays)
                         </script>
                     </section>
 
@@ -1025,14 +1005,14 @@
                             ## Complex Criteria
 
                             ```php
-                            $lastYear = strtotime('last year');
+                            $lastYear = new DateTime('last year');
 
                             // Arbitrary Business Requirement #42789!
-                            $db->users->find(
+                            $cursor = $c->find(
                                 [
-                                    'email' => new MongoRegex('/gmail\.com$/i'),
+                                    'email' => new MongoDB\BSON\Regex('gmail\.com$', 'i'),
                                     'profile.createdAt' => [
-                                        '$gt' => new MongoDate($lastYear),
+                                        '$gt' => new MongoDB\BSON\UTCDateTime($lastYear),
                                     ],
                                     'roles' => 'admin',
                                 ]
@@ -1047,47 +1027,53 @@
 
                             ```php
                             // Limit returned fields to the username
-                            $db->users->find(
+                            $cursor = $c->find(
                                 [
-                                    'email' => new MongoRegex('/gmail\.com$/i'),
+                                    'email' => new MongoDB\BSON\Regex('gmail\.com$', 'i'),
                                     'profile.createdAt' => [
-                                        '$gt' => new MongoDate($lastYear),
+                                        '$gt' => new MongoDB\BSON\UTCDateTime($lastYear),
                                     ],
                                     'roles' => 'admin',
                                 ],
-                                [ 'username' => 1 ]
+                                [
+                                    'projection' => ['username' => 1],
+                                ]
                             );
                             ```
 
-                            * [Retrieving a subset of fields](http://docs.mongodb.org/manual/core/read-operations/#projection)
-                            * [Retrieving a slice of an array](http://docs.mongodb.org/manual/reference/projection/slice/)
+                            * [Retrieving a subset of fields](https://docs.mongodb.com/manual/reference/method/db.collection.find/#find-projection)
+                            * [Retrieving a slice of an array](https://docs.mongodb.com/manual/reference/operator/projection/slice/)
                         </script>
                     </section>
 
                     <section data-markdown data-state="query-operators">
                         <script type="text/template">
-                            ## Conditional Operators
+                            ## [Query Operators](https://docs.mongodb.com/manual/reference/operator/query/)
 
                             * Comparison
-                                * [$gt](http://docs.mongodb.org/manual/reference/operator/gt/), [$gte](http://docs.mongodb.org/manual/reference/operator/gte/)
-                                * [$lt](http://docs.mongodb.org/manual/reference/operator/lt/), [$lte](http://docs.mongodb.org/manual/reference/operator/lte/)
-                                * [$ne](http://docs.mongodb.org/manual/reference/operator/ne/)
+                                * [$gt](https://docs.mongodb.com/manual/reference/operator/query/gt/), [$gte](https://docs.mongodb.com/manual/reference/operator/query/gte/)
+                                * [$lt](https://docs.mongodb.com/manual/reference/operator/query/lt/), [$lte](https://docs.mongodb.com/manual/reference/operator/query/lte/)
+                                * [$ne](https://docs.mongodb.com/manual/reference/operator/query/ne/)
                             * Logical
-                                * [$and](http://docs.mongodb.org/manual/reference/operator/and/)
-                                * [$or](http://docs.mongodb.org/manual/reference/operator/or/), [$nor](http://docs.mongodb.org/manual/reference/operator/nor/)
+                                * [$and](https://docs.mongodb.com/manual/reference/operator/query/and/)
+                                * [$or](https://docs.mongodb.com/manual/reference/operator/query/or/), [$nor](https://docs.mongodb.com/manual/reference/operator/query/nor/)
+                                * [$not](https://docs.mongodb.com/manual/reference/operator/query/not/)
                             * Arrays
-                                * [$all](http://docs.mongodb.org/manual/reference/operator/all/)
-                                * [$in](http://docs.mongodb.org/manual/reference/operator/in/), [$nin](http://docs.mongodb.org/manual/reference/operator/nin/)
-                                * [$size](http://docs.mongodb.org/manual/reference/operator/size/)
-                                * [$elemMatch](http://docs.mongodb.org/manual/reference/operator/elemMatch/)
+                                * [$all](https://docs.mongodb.com/manual/reference/operator/query/all/)
+                                * [$in](https://docs.mongodb.com/manual/reference/operator/query/in/), [$nin](https://docs.mongodb.com/manual/reference/operator/query/nin/)
+                                * [$size](https://docs.mongodb.com/manual/reference/operator/query/size/)
+                                * [$elemMatch](https://docs.mongodb.com/manual/reference/operator/query/elemMatch/)
                             * Misc
-                                * [$exists](http://docs.mongodb.org/manual/reference/operator/exists/)
-                                * [$type](http://docs.mongodb.org/manual/reference/operator/type/)
-                            * Numbers
-                                * [$mod](http://docs.mongodb.org/manual/reference/operator/mod/)
-                            * Meta
-                                * [$not](http://docs.mongodb.org/manual/reference/operator/not/)
-                                * [$where](http://docs.mongodb.org/manual/reference/operator/where/)
+                                * [$exists](https://docs.mongodb.com/manual/reference/operator/query/exists/)
+                                * [$mod](https://docs.mongodb.com/manual/reference/operator/query/mod/)
+                                * [$text](https://docs.mongodb.com/manual/reference/operator/query/text/)
+                                * [$type](https://docs.mongodb.com/manual/reference/operator/query/type/)
+                                * [$where](https://docs.mongodb.com/manual/reference/operator/query/where/)
+                            * Geo
+                                * [$geoWithin](https://docs.mongodb.com/manual/reference/operator/query/geoWithin/)
+                                * [$geoIntersects](https://docs.mongodb.com/manual/reference/operator/query/geoIntersects/)
+                                * [$near](https://docs.mongodb.com/manual/reference/operator/query/near/)
+                                * [$nearSphere](https://docs.mongodb.com/manual/reference/operator/query/nearSphere/)
                         </script>
                     </section>
                 </section>
@@ -1108,15 +1094,15 @@
                             ## Data to Process
 
                             ```php
-                            $c = $db->jobs;
+                            $c = (new MongoDB\Client)->test->jobs;
 
-                            $c->save([
+                            $c->insertOne([
                                 'task' => '…',
                                 'inprogress' => 'false',
                                 'priority' => 1
                             ]);
 
-                            $c->save([
+                            $c->insertOne([
                                 'task' => '…',
                                 'inprogress' => 'false',
                                 'priority' => 4
@@ -1127,25 +1113,26 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## [Find and Modify](http://docs.mongodb.org/manual/reference/command/findAndModify/) a Document
+                            ## [Find and Modify](https://docs.mongodb.com/manual/reference/command/findAndModify/) a Document
 
                             ```php
-                            $db->jobs->findAndModify(
+                            use MongoDB\Operation\FindOneAndUpdate;
+
+                            $c->findOneAndUpdate(
                                 ['inprogress' => false],
                                 ['$set' => [
                                     'inprogress' => true,
-                                    'startedAt' => new MongoDate(),
+                                    'startedAt' => new MongoDB\BSON\UTCDateTime,
                                 ]],
-                                null, // Optional field projection
                                 [
+                                    'returnDocument' => FindOneAndUpdate::RETURN_DOCUMENT_AFTER,
                                     'sort' => ['priority' => -1],
-                                    'new' => true,
                                 ]
                             );
                             ```
 
-                            * Atomically query for, and modify, one document
-                            * Update, upsert, or remove the document
+                            * Atomically select and modify one document
+                            * Update, upsert, replace, or delete the document
                             * Return document in pre- or post-modified state
                         </script>
                     </section>
@@ -1163,8 +1150,8 @@
                             * B-trees
                             * Multiple indexes per collection
                             * Any field(s), top-level or embedded
-                            * [Multi-key indexes for array values](http://docs.mongodb.org/manual/core/indexes/#index-type-multikey)
-                            * [Sparse](http://docs.mongodb.org/manual/core/indexes/#sparse-indexes), [unique](http://docs.mongodb.org/manual/core/indexes/#unique-indexes), [geospatial](http://docs.mongodb.org/manual/core/indexes/#geospatial-indexes), [TTL](http://docs.mongodb.org/manual/tutorial/expire-data/)
+                            * [Multi-key indexes for array values](https://docs.mongodb.com/manual/core/index-multikey/)
+                            * [Sparse](https://docs.mongodb.com/manual/indexes/#sparse-indexes), [unique](https://docs.mongodb.com/manual/indexes/#unique-indexes), [geospatial](https://docs.mongodb.com/manual/indexes/#geospatial-indexes), [text](https://docs.mongodb.com/manual/core/index-text/), and [TTL](https://docs.mongodb.com/manual/tutorial/expire-data/)
                         </script>
                     </section>
 
@@ -1173,21 +1160,19 @@
                             ## Managing Indexes
 
                             ```php
-                            $c = $db->things;
+                            $c = (new MongoDB\Client)->test->things;
 
                             // Ensure unique values for x (just like the _id index)
-                            $c->ensureIndex(['x' => 1], ['unique' => true]);
-
-                            // Don't wait for index creation to succeed
-                            $c->ensureIndex(['x' => 1], ['w' => 0]);
+                            $c->createIndex(['x' => 1], ['unique' => true]);
 
                             // Delegate index creation as a background task
-                            $c->ensureIndex(['x' => 1], ['background' => true]);
+                            $c->createIndex(['x' => 1], ['background' => true]);
 
-                            $c->getIndexInfo(); // Array describing all indexes
+                            // Obtain an iterator of MongoDB\Model\IndexInfo objects
+                            $indexInfoIterator = $c->listIndexes();
 
-                            $c->deleteIndex('x'); // Delete an index by name or field(s)
-                            $c->deleteIndexes();  // Delete all collection indexes
+                            $c->dropIndex('x_1'); // Delete an index by name
+                            $c->dropIndexes();    // Delete all indexes for the collection
                             ```
                         </script>
                     </section>
@@ -1197,12 +1182,15 @@
                             ## Compound Indexes
 
                             ```php
-                            $c->ensureIndex(['x' => 1, 'y' => 1, 'z' => -1]);
+                            $c->createIndex(['x' => 1, 'y' => 1, 'z' => -1]);
 
                             // These queries will use the index
                             $c->find(['x' => 'foo']);
                             $c->find(['x' => 'foo', 'y' => ['$gt' => 5]]);
-                            $c->find(['x' => 'foo', 'y' => 4])->sort(['z' => -1]);
+                            $c->find(
+                                ['x' => 'foo', 'y' => 4],
+                                ['sort' => ['z' => -1]]
+                            );
                             $c->find(['x' => "foo", 'y' => 8, 'z' => 'baz']);
 
                             // This query will not by default
@@ -1214,7 +1202,7 @@
                             * Usable for constituent field queries
                         </script>
                     </section>
-
+<!--
                     <section data-markdown>
                         <script type="text/template">
                             ## Explain Your Queries
@@ -1241,17 +1229,17 @@
                             * Documentation for [explain output](http://docs.mongodb.org/manual/reference/method/cursor.explain/#explain-output-fields-core)
                         </script>
                     </section>
-
+-->
                     <section data-markdown>
                         <script type="text/template">
                             ## Performance Tips
 
-                            * [Keep your indexes and working set in RAM](http://docs.mongodb.org/manual/tutorial/ensure-indexes-fit-ram/)
-                            * [Mind your read/write ratio](http://docs.mongodb.org/manual/faq/indexes/#how-do-write-operations-affect-indexes)
-                            * [Support multiple queries per index](http://docs.mongodb.org/manual/tutorial/create-indexes-to-support-queries/)
+                            * [Keep your indexes and working set in RAM](https://docs.mongodb.com/manual/tutorial/ensure-indexes-fit-ram/)
+                            * [Mind your read/write ratio](https://docs.mongodb.com/manual/faq/indexes/#how-do-write-operations-affect-indexes)
+                            * [Support multiple queries per index](https://docs.mongodb.com/manual/tutorial/create-indexes-to-support-queries/)
                             * Avoid non-indexed queries and table scans
-                            * [Create indexes that ensure selectivity](http://docs.mongodb.org/manual/tutorial/create-queries-that-ensure-selectivity/)
-                            * [Indexing advice and FAQ](http://docs.mongodb.org/manual/faq/indexes/)
+                            * [Create indexes that ensure selectivity](https://docs.mongodb.com/manual/tutorial/create-queries-that-ensure-selectivity/)
+                            * [Indexing advice and FAQ](https://docs.mongodb.com/manual/faq/indexes/)
                         </script>
                     </section>
                 </section>
@@ -1267,8 +1255,8 @@
 
                             * `findOne` queries on special `$cmd` collection
                             * Shell and driver helpers for some
-                            * [MongoDB::command()](http://php.net/manual/en/mongodb.command.php) for the rest
-                            * [Reference list](http://docs.mongodb.org/manual/reference/commands/)
+                            * [MongoDB\Database::command()](https://docs.mongodb.com/php-library/master/reference/method/MongoDBDatabase-command/) for the rest
+                            * [Reference list](https://docs.mongodb.com/manual/reference/command/)
                                 * Sharding
                                 * Replication
                                 * Aggregation
@@ -1290,10 +1278,10 @@
                         <script type="text/template">
                             ## Aggregation
 
-                            * [Aggregation framework](http://docs.mongodb.org/manual/core/aggregation-pipeline/)
-                            * [count()](http://docs.mongodb.org/manual/core/single-purpose-aggregation/#count), [distinct()](http://docs.mongodb.org/manual/core/single-purpose-aggregation/#distinct), and [group()](http://docs.mongodb.org/manual/core/single-purpose-aggregation/#group)
-                            * [MapReduce](http://docs.mongodb.org/manual/core/map-reduce/)
-                            * [Hadoop adapter](http://docs.mongodb.org/ecosystem/tools/hadoop/)
+                            * [Aggregation framework](https://docs.mongodb.com/manual/core/aggregation-pipeline/)
+                            * [Single-purpose aggregation commands](https://docs.mongodb.com/manual/aggregation/#single-purpose-aggregation-operations)
+                            * [MapReduce](https://docs.mongodb.com/manual/core/map-reduce/)
+                            * [Hadoop adapter](https://docs.mongodb.com/ecosystem/tools/hadoop/)
                         </script>
                     </section>
 
@@ -1312,12 +1300,12 @@
                             ## Data to Aggregate
 
                             ```php
-                            $c = $db->articles;
+                            $c = (new MongoDB\Client)->test->articles;
 
-                            $c->save(['author' => 'jen', 'tags' => ['politics', 'tech']]);
-                            $c->save(['author' => 'sue', 'tags' => ['business']]);
-                            $c->save(['author' => 'tom', 'tags' => ['sports']]);
-                            $c->save([
+                            $c->insertOne(['author' => 'jen', 'tags' => ['politics', 'tech']]);
+                            $c->insertOne(['author' => 'sue', 'tags' => ['business']]);
+                            $c->insertOne(['author' => 'tom', 'tags' => ['sports']]);
+                            $c->insertOne([
                                 'author' => 'bob',
                                 'tags' => ['business', 'sports', 'tech']
                             ]);
@@ -1348,6 +1336,7 @@
                             $reduce = '
                             function(key, values) {
                                 var result = { authors: [] };
+
                                 values.forEach(function(value) {
                                     value.authors.forEach(function(author) {
                                         if (-1 == result.authors.indexOf(author)) {
@@ -1355,6 +1344,7 @@
                                         }
                                     });
                                 });
+
                                 return result;
                             }';
                             ```
@@ -1366,14 +1356,16 @@
                             ## MapReduce
 
                             ```php
-                            $rs = $db->command([
+                            $db = (new MongoDB\Client)->test;
+
+                            $cursor = $db->command([
                                 'mapreduce' => 'articles',
-                                'map' => new MongoCode($map),
-                                'reduce' => new MongoCode($reduce),
+                                'map' => new MongoDB\BSON\Javascript($map),
+                                'reduce' => new MongoDB\BSON\Javascript($reduce),
                                 'out' => ['inline' => true],
                             ]);
 
-                            foreach ($rs['results'] as $r) {
+                            foreach ($cursor->toArray()[0]['results'] as $r) {
                                 $authors = implode(', ', $r['value']['authors']);
                                 printf("%s: %s\n", $r['_id'], $authors);
                             }
@@ -1393,7 +1385,9 @@
                             ## Aggregation Framework
 
                             ```php
-                            $rs = $db->articles->aggregate([
+                            $c = (new MongoDB\Client)->test->articles;
+
+                            $cursor = $c->aggregate([
                                 ['$unwind' => '$tags'],
                                 ['$group' => [
                                     '_id' => '$tags',
@@ -1401,7 +1395,7 @@
                                 ]],
                             ]);
 
-                            foreach ($rs['result'] as $r) {
+                            foreach ($cursor as $r) {
                                 $authors = implode(', ', $r['authors']);
                                 printf("%s: %s\n", $r['_id'], $authors);
                             }
@@ -1424,33 +1418,37 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## [GridFS](http://docs.mongodb.org/manual/core/gridfs/)
+                            ## [GridFS](https://docs.mongodb.com/manual/core/gridfs/)
 
                             * File storage within MongoDB
                             * BSON collections
                                 * `fs.files`: metadata document
                                 * `fs.chunks`: binary data (1+ per file)
-                            * PHP classes
-                                * [MongoGridFS](http://php.net/manual/en/class.mongogridfs.php) extends [MongoCollection](http://php.net/manual/en/class.mongocollection.php)
-                                * [MongoGridFSFile](http://php.net/manual/en/class.mongogridfsfile.php)
-                                * [MongoGridFSCursor](http://php.net/manual/en/class.mongogridfscursor.php) extends [MongoCursor](http://php.net/manual/en/class.mongocursor.php)
+                            * MongoDB\GridFS\Bucket and [PHP Streams](http://php.net/manual/en/book.stream.php)
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## MongoGridFS
+                            ## The MongoDB\GridFS\Bucket Class
 
                             ```php
-                            // Default construction (fs.files and fs.chunks)
-                            $grid = $db->getGridFS();
-                            $grid = new MongoGridFS($db);
+                            $db = (new MongoDB\Client)->test;
+
+                            // Default prefix (fs.files and fs.chunks)
+                            $b = $db->selectGridFSBucket();
+                            $b = new MongoDB\GridFS\Bucket(
+                                $db->getManager(),
+                                $db->getDatabaseName()
+                            );
 
                             // Custom prefix (images.files and images.chunks)
-                            $grid = $db->getGridFS('images');
-                            $grid = new MongoGridFS($db, 'images');
-
-                            $grid->chunks; // MongoCollection for chunks
+                            $b = $db->selectGridFSBucket(['bucketName' => 'images']);
+                            $b = new MongoDB\GridFS\Bucket(
+                                $db->getManager(),
+                                $db->getDatabaseName(),
+                                ['bucketName' => 'images']
+                            );
                             ```
                         </script>
                     </section>
@@ -1460,15 +1458,15 @@
                             ## Storing Files
 
                             ```php
-                            // Store a file and return its _id
-                            $grid->storeFile('photo.jpg', ['extra' => 'metadata']);
-                            $grid->put('photo.jpg', ['extra' => 'metadata']);
+                            // Upload a file and return its _id
+                            $source = fopen('/path/to/file', 'rb');
+                            $id = $b->uploadFromStream('filename', $source);
 
-                            // Store bytes as a file and return its _id
-                            $grid->storeBytes('foo', ['extra' => 'metadata']);
-
-                            // Store uploads from POST data
-                            $grid->storeUpload('field_name', ['extra' => 'metadata']);
+                            // Upload bytes to a file and return its _id
+                            $stream = $b->openUploadStream('filename');
+                            $id = $b->getFileIdForStream($stream);
+                            fwrite($stream, 'foobar');
+                            fclose($stream);
                             ```
                         </script>
                     </section>
@@ -1478,88 +1476,106 @@
                             ## Retrieving Files
 
                             ```php
-                            // Get a MongoGridFSFile by its _id
-                            $grid->get(new MongoId('503ce546e84df14d54000000'));
+                            // Download a file by its _id
+                            $id = new MongoDB\BSON\ObjectID('57f81b38da14d802e97b1b72');
+                            $destination = fopen('/path/to/file', 'w+b');
+                            $b->downloadToStream($id, $destination);
 
-                            // Query for a MongoGridFS file
-                            $grid->findOne(['filename' => 'photo.jpg']);
+                            // Open a readable stream for a file by its _id
+                            $stream = $b->openDownloadStream($id);
+                            $contents = stream_get_contents($stream);
 
-                            // Query for multiple MongoGridFS files
-                            $yesterday = new MongoDate(strtotime('yesterday'));
-                            $grid->find(['uploadDate' => ['$gt' => $yesterday]]);
+                            // Download a file by its filename
+                            $destination = fopen('/path/to/file', 'w+b');
+                            $b->downloadToStreamByName('filename', $destination);
+
+                            // Open a readable stream for a file by its filename
+                            $stream = $b->openDownloadStreamByName('filename');
+                            $contents = stream_get_contents($stream);
                             ```
 
-                            * Remember to create additional indexes
                             * `filename` is not necessarily unique
+                            * Same `filename` and different `uploadDate` &rarr; revision
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## MongoGridFSFile
+                            ## Retrieving Files by Revision
 
                             ```php
-                            $file = $grid->findOne(['filename' => 'photo.jpg']);
+                            // Open the most recent revision (default behavior)
+                            $stream = $b->openDownloadStreamByName('filename', ['revision' => -1]);
 
-                            $file->getFilename(); // Filename string
-                            $file->getLength();   // File size
+                            // Open the second most recent revision
+                            $stream = $b->openDownloadStreamByName('filename', ['revision' => -2]);
 
-                            $file->getBytes();    // Get all chunks as a byte string
-                            $file->getResource(); // Stream resource
+                            // Open the original revision (i.e. 0th)
+                            $stream = $b->openDownloadStreamByName('filename', ['revision' => 0]);
 
-                            $file->write();               // Write data to stored filename
-                            $file->write('/tmp/foo.jpg'); // Write data to a new file
+                            // Open the first revision
+                            $stream = $b->openDownloadStreamByName('filename', ['revision' => 1]);
                             ```
 
-                            * Keep tabs on memory usage
-                            * Stream resources are most efficient
+                            * Same options for `downloadToStreamByName()`
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## The File Document
+                            ## Selecting a File Document
 
                             ```php
-                            $file->file; // Document from the "files" collection
+                            $id = new MongoDB\BSON\ObjectID('57f81b38da14d802e97b1b72');
+                            $stream = $b->openDownloadStream($id);
+                            var_dump($b->getFileDocumentForStream($stream));
                             ```
 
-                            ```php
-                            array(
-                              "_id" => <object of type MongoId>,
-                              "filename" => "/data/photo.jpg",
-                              "uploadDate" => <object of type MongoDate>,
-                              "length" => 1511769,
-                              "chunkSize" => 262144,
-                              "md5" => "40ad6901b991fc8c6e8d2e1578db4db9",
-                            )```
-
-                            * Extra metadata fields may follow
-                            * Standard fields can be customized
+                            ```no-highlight
+                            object(stdClass)#16 (6) {
+                              ["_id"]=>
+                              object(MongoDB\BSON\ObjectID)#18 (1) {
+                                ["oid"]=>
+                                string(24) "57f8228eda14d81806017242"
+                              }
+                              ["chunkSize"]=>
+                              int(261120)
+                              ["filename"]=>
+                              string(8) "filename"
+                              ["uploadDate"]=>
+                              object(MongoDB\BSON\UTCDateTime)#21 (1) {
+                                ["milliseconds"]=>
+                                string(13) "1475879566662"
+                              }
+                              ["length"]=>
+                              int(9)
+                              ["md5"]=>
+                              string(32) "d8d77109f4a24efc3bd53d7cabb7ee35"
+                            }
+                            ```
                         </script>
                     </section>
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## Removing Files
+                            ## Deleting Files
 
                             ```php
                             // Delete a file (and related chunks) by its _id
-                            $grid->delete(new MongoId('503ce546e84df14d54000000'));
-
-                            // Remove files and their related chunks
-                            $grid->remove(['filename' => 'photo.jpg']);
+                            $id = new MongoDB\BSON\ObjectID('57f81b38da14d802e97b1b72');
+                            $b->delete($id);
 
                             // Drop the files and chunks collections
-                            $grid->drop();
+                            $b->drop();
                             ```
 
-                            * No API for modifying files
-                            * Remove and insert a new file
+                            * No API for modifying files in-place
+                                * Delete and re-upload, or create a new revision
+                            * Random access with `fseek()` is not yet supported
                         </script>
                     </section>
                 </section>
-
+<!--
                 <section>
                     <section data-background="img/earth.jpg">
                         <h1>Geospatial Indexing</h1>
@@ -1567,14 +1583,14 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ## [Geospatial Indexing](http://docs.mongodb.org/manual/core/geospatial-indexes/)
+                            ## [Geospatial Indexing](https://docs.mongodb.com/manual/core/geospatial-indexes/)
 
                             * Geo-hashed, 2D coordinates
                             * Legacy point format: `[x,y]`
                             * [GeoJSON](http://geojson.org/geojson-spec.html) for points/geometries
                             * One geospatial index per collection
-                            * [Multi-location documents](http://docs.mongodb.org/manual/core/geospatial-indexes/#multi-location-documents-for-2d-indexes)
-                            * [Spherical model support](http://docs.mongodb.org/manual/applications/geospatial-indexes/)
+                            * [Multi-location documents](https://docs.mongodb.com/manual/core/geospatial-indexes/#multi-location-documents-for-2d-indexes)
+                            * [Spherical model support](https://docs.mongodb.com/manual/applications/geospatial-indexes/#spherical)
                         </script>
                     </section>
 
@@ -1583,21 +1599,21 @@
                             ## Data to Index
 
                             ```php
-                            $c = $db->places;
+                            $c = (new MongoDB\Client)->test->places;
 
-                            $c->save([
+                            $c->insertOne([
                                 'name' => 'Home',
                                 'type' => 'residence',
                                 'loc'  => [ 'type' => 'Point', 'coordinates' => [0, 0] ],
                             ]);
 
-                            $c->save([
+                            $c->insertOne([
                                 'name' => 'Work',
                                 'type' => 'office',
                                 'loc'  => [ 'type' => 'Point', 'coordinates' => [12, 15] ],
                             ]);
 
-                            $c->ensureIndex(['loc' => '2dsphere']);
+                            $c->createIndex(['loc' => '2dsphere']);
                             ```
                         </script>
                     </section>
@@ -1632,16 +1648,19 @@
                             ## Sorted Proximity Queries
 
                             ```php
-                            $point = [ 'type' => 'Point', 'coordinates' => [50, 50] ];
+                            $point = ['type' => 'Point', 'coordinates' => [50, 50]];
 
                             // Find locations near a point, ordered by proximity
-                            $db->places->find(['loc' => ['$near' => $point]]);
+                            $c->find(['loc' => ['$near' => $point]]);
 
                             // Find at most 10 museums within 5 units of a point
-                            $db->places->find([
-                                'loc' => ['$near' => $point, '$maxDistance' => 5],
-                                'type' => 'museum',
-                            ])->limit(10);
+                            $c->find(
+                                [
+                                    'loc' => ['$near' => $point, '$maxDistance' => 5],
+                                    'type' => 'museum',
+                                ],
+                                ['limit' => 10]
+                            );
                             ```
                         </script>
                     </section>
@@ -1652,6 +1671,7 @@
 
                             ```php
                             // geoNear command includes distance and diagnostic data
+                            $db = (new MongoDB\Client)->test;
                             $db->command([
                                 'geoNear' => 'places',
                                 'near' => $point,
@@ -1663,8 +1683,9 @@
                         </script>
                     </section>
                 </section>
-
+-->
                 <section>
+<!--
                     <section data-markdown>
                         <script type="text/template">
                             # <span class="mongodb-logo">MongoDB</span>
@@ -1679,14 +1700,16 @@
                         <h1 class="hidden">Companies Using MongoDB</h1>
                     </section>
                 </section>
-
+-->
                 <section data-markdown data-state="final">
                     <script type="text/template">
                         # Thanks!
 
-                        * [Server and drivers](http://www.mongodb.org/downloads)
-                        * [PHP documentation](http://php.net/manual/en/book.mongo.php)
-                        * [MongoDB documentation](http://docs.mongodb.org/manual/)
+                        * [Server downloads](https://www.mongodb.com/download-center) and [documentation](https://docs.mongodb.com/manual/)
+                        * [PHP and HHVM extension documentation](http://php.net/manual/en/set.mongodb.php)
+                        * [PHP library documentation](https://docs.mongodb.com/php-library/master/)
+                        * [MongoDB University](https://university.mongodb.com) (free online education)
+                        * [MongoDB Atlas](https://www.mongodb.com/cloud) (DBaaS)
 
                         ### Questions?
                     </script>

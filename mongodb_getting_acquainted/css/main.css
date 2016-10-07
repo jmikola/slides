@@ -192,15 +192,6 @@ section[data-state="relational-diagram"] table#relational-authors {
     clear: left;
 }
 
-section[data-state="driver-type-classes"] > ul > li {
-    float: left;
-    width: 45%;
-}
-
-section[data-state="driver-type-classes"] > ul > li:nth-child(even) {
-    margin-left: 5%;
-}
-
 section[data-state="atomic-operators"] > ul {
     width: 100%;
 }
