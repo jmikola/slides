@@ -142,6 +142,24 @@ section[data-state="photo-credits"] ul li {
     line-height: 1.2em;
 }
 
+section[data-state="history"] ul,
+section[data-state="history"] p,
+section[data-state="history"] pre {
+    
+}
+
+section[data-state="history"] div.contributors {
+    display: inline;
+    position: absolute;
+    right: -3em;
+}
+
+section[data-state="history"] div.contributors img {
+    width: 100px;
+    -webkit-filter: drop-shadow(0 0 5px #222);
+    filter:         drop-shadow(0 0 5px #222);
+}
+
 .reveal h3 a,
 .reveal h4 a {
     line-height: inherit !important;
