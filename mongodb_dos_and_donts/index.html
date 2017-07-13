@@ -41,15 +41,15 @@
 
                     <div class="col-inline">
                         <ul>
-                            <li>The New PHP Driver</li>
                             <li>Schema Design</li>
                             <li>Write Operations</li>
+                            <li>Reading and Querying</li>
                         </ul>
                     </div>
 
                     <div class="col-inline">
                         <ul>
-                            <li>Reading and Querying</li>
+                            <li>Replication and Sharding</li>
                             <li>Deployment and Ops</li>
                             <li>Object Document Mappers</li>
                         </ul>
@@ -88,13 +88,12 @@
                             </ul>
                         </div>
 
-                        <p class="fragment" style="margin-top:2em;">Many more <a href="http://docs.mongodb.org/ecosystem/drivers/community-supported-drivers/">community-supported drivers</a><p>
+                        <p class="fragment" style="margin-top:2em;">Many more <a href="https://docs.mongodb.com/ecosystem/drivers/community-supported-drivers/">community-supported drivers</a><p>
                     </section>
 
                     <section class="spaced-out">
                         <h3>Enabling the Community</h3>
 
-                        <p class="fragment"><a href="http://docs.mongodb.org/meta-driver/latest/">MongoDB meta driver</a></p>
                         <p class="fragment"><a href="https://github.com/mongodb/specifications">Server and driver specifications</a></p>
                     </section>
 
@@ -109,16 +108,17 @@
                         <script type="text/template">
                             ### Don&rsquo;t be limited to helper methods
 
-                            * [`db.collection.aggregate()`](http://docs.mongodb.org/manual/reference/method/db.collection.aggregate/)
-                            * [`db.collection.distinct()`](http://docs.mongodb.org/manual/reference/method/db.collection.distinct/)
-                            * [`db.collection.mapReduce()`](http://docs.mongodb.org/manual/reference/method/db.collection.mapReduce/)
+                            * [`db.collection.aggregate()`](https://docs.mongodb.com/manual/reference/method/db.collection.aggregate/)
+                            * [`db.collection.distinct()`](https://docs.mongodb.com/manual/reference/method/db.collection.distinct/)
+                            * [`db.collection.mapReduce()`](https://docs.mongodb.com/manual/reference/method/db.collection.mapReduce/)
 
-                            <p class="fragment">Where&rsquo;s [`geoNear`](http://docs.mongodb.org/manual/reference/command/geoNear/)?</p>
+                            <p class="fragment">Where&rsquo;s [`geoNear`](https://docs.mongodb.com/manual/reference/command/geoNear/)?</p>
 
-                            <p class="fragment">[`db.runCommand()`](http://docs.mongodb.org/manual/reference/method/db.runCommand/)</p>
+                            <p class="fragment">[`db.runCommand()`](https://docs.mongodb.com/manual/reference/method/db.runCommand/)</p>
                         </script>
                     </section>
 -->
+<!--
                 <section>
                     <section>
                         <h2>Introducing the New<br>PHP and HHVM Drivers</h2>
@@ -287,6 +287,7 @@
                         </script>
                     </section>
                 </section>
+-->
 <!--
                 <section>
                     <section>
@@ -418,16 +419,18 @@
                         <script type="text/template">
                             ### Don&rsquo;t create field paths willy-nilly
 
+                            <br>
+
                             ```javascript
                             > db.messages.findOne({}, { isReadByParticipant: 1 })
                             {
                                 _id: ObjectId("4fce28482516ed983884b158"),
-                                "isReadByParticipant" : {
-                                    "4fce05e42516ed9838756f17" : false,
-                                    "4fce05e42516ed9838756f18" : true,
-                                    "4fce05e42516ed9838756f19" : true,
-                                    "4fce05e42516ed9838756f1a" : false,
-                                    "4fce05e42516ed9838756f1b" : false
+                                isReadByParticipant: {
+                                    "4fce05e42516ed9838756f17": false,
+                                    "4fce05e42516ed9838756f18": true,
+                                    "4fce05e42516ed9838756f19": true,
+                                    "4fce05e42516ed9838756f1a": false,
+                                    "4fce05e42516ed9838756f1b": false
                                 }
                             }
                             ```
@@ -440,11 +443,13 @@
                         <script type="text/template">
                             ### Multi-key indexing to the rescue
 
+                            <br>
+
                             ```javascript
                             > db.messages.findOne({}, { unreadForParticipants: 1 })
                             {
                                 _id: ObjectId("4fce28482516ed983884b158"),
-                                "unreadForParticipants" : [
+                                unreadForParticipants: [
                                     "4fce05e42516ed9838756f17",
                                     "4fce05e42516ed9838756f1a",
                                     "4fce05e42516ed9838756f1b"
@@ -499,18 +504,28 @@
                             ### Field paths and trees structures
 
                             ```javascript
-                            > db.subjects.findOne()
+                            > db.trees.findOne()
                             {
-                                _id: 1,
-                                name: "American Literature",
-                                sub_category: {
-                                     name: "1920s",
-                                     sub_category: { name: "Jazz Age" }
-                                }
+                                _id: ObjectId("5966500e01c7635140447bba"),
+                                name: "Conifer",
+                                subCategories: [
+                                    {
+                                        name: "Pine",
+                                        subCategories: [
+                                            { name: "Larch" },
+                                            { name: "Spruce" },
+                                            { name: "Douglas Fir" }
+                                        ]
+                                    },
+                                    {
+                                        name: "Cypress",
+                                        subCategories: [ … ]
+                                    }
+                                ]
                             }
                             ```
 
-                            One document contains the entire tree.
+                            One document contains the entire family.
 
                             <span class="fragment">How can we query this?</span>
                         </script>
@@ -521,19 +536,19 @@
                             ### A better tree schema
 
                             ```javascript
-                            > db.subjects.find()
+                            > db.trees.find()
                             {
-                                _id: "American Literature"
+                                _id: "Conifer"
                             }
 
                             {
-                                _id: "1920s",
-                                parent: "American Literature"
+                                _id: "Pine",
+                                parent: "Conifer"
                             }
 
                             {
-                                _id: "Jazz Age",
-                                parent: "1920s"
+                                _id: "Larch",
+                                parent: "Pine"
                             }
                             ```
 
@@ -546,24 +561,26 @@
                             ### But wait, there&rsquo;s more!
 
                             ```javascript
-                            > db.subjects.find()
+                            > db.trees.find()
                             {
-                                _id: "American Literature",
-                                path: ["American Literature"]
+                                _id: "Conifer",
+                                path: ["Conifer"]
                             }
 
                             {
-                                _id: "1920s",
-                                path: ["1920s", "American Literature"]
+                                _id: "Pine",
+                                path: ["Pine", "Conifer"]
                             }
 
                             {
-                                _id: "Jazz Age",
-                                path: ["Jazz Age", "1920s", "American Literature"]
+                                _id: "Larch",
+                                path: ["Larch", "Pine", "Conifer"]
                             }
                             ```
 
-                            Multi-key indexing on ``path`` allows branch querying, but relationship querying would require single-field index(es)
+                            Multi-key indexing on ``path`` allows branch querying
+
+                            Relationship querying possible with single-field index(es)
                         </script>
                     </section>
 
@@ -573,7 +590,7 @@
 
                             Create schemas that support your query patterns.
 
-                            And then create indexes for those queries.
+                            Then create indexes for those queries.
                         </script>
                     </section>
 
@@ -592,9 +609,9 @@
                         <script type="text/template">
                             ### Don&rsquo;t shoot in the dark
 
-                            [Explain](http://docs.mongodb.org/manual/reference/explain/) your cursors.
+                            [Explain](https://docs.mongodb.com/manual/reference/explain-results/) your cursors.
 
-                            [Profile](http://docs.mongodb.org/manual/tutorial/manage-the-database-profiler/) slow queries.
+                            [Profile](https://docs.mongodb.com/manual/tutorial/manage-the-database-profiler/) slow queries.
                         </script>
                     </section>
 
@@ -604,7 +621,7 @@
 
                             * [MongoDB for Analytics](https://speakerdeck.com/jnunemaker/mongodb-for-analytics-5) &ndash; John Nunemaker
                             * [Importing OpenStreetMap Data](http://derickrethans.nl/importing-osm-into-mongodb.html) &ndash; Derick Rethans
-                            * [Use Cases](https://docs.mongodb.org/ecosystem/use-cases/) &ndash; MongoDB manual
+                            * [Use Cases](https://docs.mongodb.com/ecosystem/use-cases/) &ndash; MongoDB manual
                         </script>
                     </section>
                 </section>
@@ -617,6 +634,26 @@
 
                         <h3 style="color: #999">And keeping it there&hellip;</h3>
                     </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### `save()` is an anti-pattern
+
+                            <br>
+
+                            ```javascript
+                            document = db.users.findOne({ _id: "jmikola" });
+                            document["friends"].push("pgodel");
+                            db.users.save(document);
+                            ```
+
+                            <br>
+
+                            <span class="fragment">Query</span><span class="fragment">, modify</span><span class="fragment">, and overwrite.</span>
+                        </script>
+                    </section>
+
+
 
                     <section data-markdown>
                         <script type="text/template">
@@ -653,14 +690,23 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ### Use atomic operators where possible
-
-                            <br>
+                            ### Use atomic operators when possible
 
                             ```javascript
                             document = db.users.findOne({ _id: "jmikola" });
                             document["friends"].push("pgodel");
-                            db.users.replaceOne({ _id: document._id }, document);
+                            db.users.replaceOne({ _id: "jmikola" }, document);
+                            ```
+
+                            or
+
+                            ```javascript
+                            document = db.users.findOne({ _id: "jmikola" });
+                            document["friends"].push("pgodel");
+                            db.users.updateOne(
+                                { _id: "jmikola" },
+                                { $set: { friends: document["friends"] }}
+                            );
                             ```
 
                             vs.
@@ -680,7 +726,7 @@
 
                             No transactions for multi-document writes.
 
-                            <p class="fragment">Emulate transactions with [two-phase commits](https://docs.mongodb.org/manual/tutorial/perform-two-phase-commits/).</p>
+                            <p class="fragment">Emulate transactions with [two-phase commits](https://docs.mongodb.com/manual/tutorial/perform-two-phase-commits/).</p>
 
                             <p class="fragment">Single document updates *are* atomic.</p>
 
@@ -690,7 +736,7 @@
 
                     <section data-markdown>
                         <script type="text/template">
-                            ### The [findAndModify](http://docs.mongodb.org/manual/reference/command/findandmodify/) command
+                            ### The [findAndModify](https://docs.mongodb.com/manual/reference/command/findandmodify/) command
 
                             Atomically selects and modifies a<br>document in one of three modes:
 
@@ -706,12 +752,14 @@
                         <script type="text/template">
                             ### Implementing a simple job queue
 
+                            <br>
+
                             ```javascript
                             // Insert a request to borrow a library book
                             db.loans.insertOne({
                                 _id: { borrower: "bjori", book: ObjectId("…") },
                                 approved: false,
-                                pending: false
+                                pending: false,
                                 priority: 1
                             });
 
@@ -719,7 +767,10 @@
                             request = db.loans.findOneAndUpdate(
                                 { pending: false },
                                 { $set: { pending: true }},
-                                { returnNewDocument: true, sort: { priority: -1 }}
+                                {
+                                    returnNewDocument: true,
+                                    sort: { priority: -1 }
+                                }
                             );
                             ```
                         </script>
@@ -748,7 +799,7 @@
                                 </tr>
                                 <tr>
                                     <th style="color: #666">&lt;string&gt;</th>
-                                    <td>Write acknowledgement to a node with the given <a href="http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets">tag set</a></td>
+                                    <td>Write acknowledgement to a node with the given <a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/">tag set</a></td>
                                 </tr>
                             </table>
 
@@ -758,15 +809,15 @@
 
                     <section class="spaced-out" data-markdown>
                         <script type="text/template">
-                            ### Document growth with [MMAPv1](https://docs.mongodb.org/manual/core/mmapv1/)
+                            ### Document growth with [MMAPv1](https://docs.mongodb.com/manual/core/mmapv1/)
 
-                            <p>Growing and relocation causes fragmentation.</p>
+                            <p>Growth and relocation causes fragmentation.</p>
 
-                            <p class="fragment">[Document storage may be padded](https://docs.mongodb.org/manual/core/mmapv1/#record-storage-characteristics).</p>
+                            <p class="fragment">[Document storage may be padded](https://docs.mongodb.com/manual/core/mmapv1/#record-storage-characteristics).</p>
 
-                            <p class="fragment">If possible, update documents [in-place](http://blog.mongodb.org/post/248614779/fast-updates-with-mongodb-update-in-place).</p>
+                            <p class="fragment">If possible, update documents [in-place](https://www.mongodb.com/blog/post/fast-updates-with-mongodb-update-in-place).</p>
 
-                            <p class="fragment">Not relevant for [WiredTiger](https://docs.mongodb.org/manual/core/wiredtiger/), which uses<br>multiversion concurrency control (MVCC).</p>
+                            <p class="fragment">Not relevant for [WiredTiger](https://docs.mongodb.com/manual/core/wiredtiger/), which uses<br>multiversion concurrency control (MVCC).</p>
                         </script>
                     </section>
                 </section>
@@ -782,13 +833,13 @@
 
                             Index your queries.
 
-                            Know your [working set](http://docs.mongodb.org/manual/faq/storage/#what-is-the-working-set).
+                            Know your [working set](https://docs.mongodb.com/manual/faq/storage/#what-is-the-working-set).
                         </script>
                     </section>
 
                     <section class="spaced-out" data-markdown>
                         <script type="text/template">
-                            ### [Read Preference](http://docs.mongodb.org/manual/applications/replication/#read-preference)
+                            ### [Read Preference](https://docs.mongodb.com/manual/core/read-preference/)
 
                             <table class="options">
                                 <tr>
@@ -813,26 +864,28 @@
                                 </tr>
                             </table>
 
-                            <p class="fragment">[Tag sets](http://docs.mongodb.org/manual/reference/replica-configuration/#tag-sets) may be used for more fine-grained selection</p>
+                            <p class="fragment">[Tag sets](https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/) may be used for more fine-grained selection</p>
                         </script>
                     </section>
 
                     <section class="spaced-out" data-markdown>
                         <script type="text/template">
-                            ### Read Concern
+                            ### [Read Concern](https://docs.mongodb.com/manual/reference/read-concern/)
 
                             <table class="options">
                                 <tr>
                                     <th>"local"</th>
-                                    <td>Return the node&rsquo;s most recent copy of the data, which may be rolled back (default)</td>
+                                    <td>Return the node&rsquo;s most recent data, which may be rolled back (default)</td>
                                 </tr>
                                 <tr>
                                     <th>"majority"</th>
-                                    <td>Return the node&rsquo;s most recent copy of the data confirmed as written to a majority of the nodes (i.e. it cannot be rolled back)</td>
+                                    <td>Return the node&rsquo;s most recent data acknowledged by a majority of replica set</td>
+                                </tr>
+                                <tr>
+                                    <th>"linearizable"</th>
+                                    <td>Return the primary&rsquo;s most recent data written with a <code>"majority"</code> write concern <em>and</em> acknowledged prior to the start of the query (i.e. data cannot be rolled back if journaled)</td>
                                 </tr>
                             </table>
-
-                            <p class="fragment">Requires the WiredTiger storage engine and MongoDB 3.2+</p>
                         </script>
                     </section>
 
@@ -840,7 +893,7 @@
                         <script type="text/template">
                             ### JavaScript Evaluation
 
-                            [`eval`](http://docs.mongodb.org/manual/reference/command/eval/) and [`$where`](http://docs.mongodb.org/manual/reference/operator/where/).
+                            [`eval`](https://docs.mongodb.com/manual/reference/command/eval/) and [`$where`](https://docs.mongodb.com/manual/reference/operator/query/where/).
 
                             <p class="fragment">Would you use [`eval()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) in JavaScript?</p>
                         </script>
@@ -852,7 +905,7 @@
 
                             We&rsquo;ll make an allowance for JavaScript here.
 
-                            <p class="fragment">But try the [aggregation framework](http://docs.mongodb.org/manual/aggregation/) first.</p>
+                            <p class="fragment">But try the [aggregation framework](https://docs.mongodb.com/manual/aggregation/) first.</p>
                         </script>
                     </section>
 
@@ -959,26 +1012,26 @@
                             }
                             ```
 
-                            <p class="fragment">Usable with unsharded collection in the *same* database</p>
+                            <p class="fragment">Usable with unsharded collections in the *same* database</p>
+                        </script>
+                    </section>
+
+                    <section class="spaced-out" data-markdown>
+                        <script type="text/template">
+                            ### Limiting Execution Time
+
+                            [`maxTimeMS`](https://docs.mongodb.com/manual/tutorial/terminate-running-operations/#maxtimems) query and command option
+
+                            [Do not use client-side socket timeouts](http://jmikola.net/blog/mongodb-timeouts/)
+
+                            <img src="img/rickroll.gif" alt="rickroll.gif" style="width: 70%;position:relative;top:-6em" class="fragment">
                         </script>
                     </section>
                 </section>
 
                 <section>
                     <section>
-                        <h2>Sharding and Replication</h2>
-                    </section>
-
-                    <section data-markdown>
-                        <script type="text/template">
-                            ### The Players
-
-                            * Application and driver
-                            * `mongod`
-                            * `mongod --replSet`
-                            * `mongod --configsvr`
-                            * `mongos`
-                        </script>
+                        <h2>Replication and Sharding</h2>
                     </section>
 
                     <section data-markdown>
@@ -995,29 +1048,72 @@
                         </script>
                     </section>
 
+                    <section>
+                        <h3>Replication</h3>
+
+                        <img src="img/rs_cluster.png" alt="rs_cluster.png" style="width: 70%;" class="transparent">
+                    </section>
+
+                    <section>
+                        <h3>What does replication do for us?</h3>
+
+                        <img src="img/rs_healthy.png" alt="rs_healthy.png" style="width: 70%;" class="transparent">
+                    </section>
+
+                    <section>
+                        <h3>Replication provides failover recovery</h3>
+
+                        <img src="img/rs_failover.png" alt="rs_failover.png" style="width: 70%;" class="transparent">
+
+                        <img src="img/automatic-failover.gif" alt="automatic-failover.gif" style="width: 70%;position:relative;top:-15.25em;" class="fragment">
+                    </section>
+
                     <section class="spaced-out" data-markdown>
                         <script type="text/template">
-                            ### Replication
+                            ### Making the most of replication
 
                             Always have an odd number of voting members.
 
-                            <p class="fragment">Nodes can be [tagged](https://docs.mongodb.org/manual/tutorial/configure-replica-set-tag-sets/) (e.g. purpose, location).</p>
+                            <p class="fragment">Nodes can be [tagged](https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/) (e.g. purpose, location).</p>
 
-                            <p class="fragment">Take advantage of [priority](https://docs.mongodb.org/manual/tutorial/adjust-replica-set-member-priority/), [hidden](https://docs.mongodb.org/manual/core/replica-set-hidden-member/), and [delay](https://docs.mongodb.org/manual/core/replica-set-delayed-member/).</p>
+                            <p class="fragment">Take advantage of [priority](https://docs.mongodb.com/manual/tutorial/adjust-replica-set-member-priority/), [hidden](https://docs.mongodb.com/manual/core/replica-set-hidden-member/), and [delay](https://docs.mongodb.com/manual/core/replica-set-delayed-member/).</p>
 
-                            <p class="fragment">Use tags to define [custom write concerns](https://docs.mongodb.org/manual/tutorial/configure-replica-set-tag-sets/#custom-multi-datacenter-write-concerns).</p>
+                            <p class="fragment">Use tags to define [custom write concerns](https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/#custom-multi-datacenter-write-concerns).</p>
                         </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Sharding
+
+                            <img src="img/shard_cluster.png" alt="shard_cluster.png" style="width: 100%" class="transparent">
+
+                            <p class="fragment">Not shown: a very tedious [deployment process](https://docs.mongodb.com/manual/tutorial/deploy-shard-cluster/)</p>
+                            <p>
+                        </script>
+                    </section>
+
+                    <section>
+                        <h3>What does sharding do for us?</h3>
+
+                        <img src="img/sharding_cache-1.png" alt="sharding_cache-1.png" style="width: 80%;">
+                    </section>
+
+                    <section>
+                        <h3>Sharding provides horizontal scalability</h3>
+
+                        <img src="img/sharding_cache-2.png" alt="sharding_cache-2.png" style="width: 80%;">
                     </section>
 
                     <section class="spaced-out" data-markdown>
                         <script type="text/template">
                             ### Sharding
 
-                            Each shard is a replica set or single `mongod`.
+                            Each shard is a single <code>mongod</code> or replica set<br>that stores a portion of the total data set.
 
-                            <p class="fragment">They can be [tagged](https://docs.mongodb.org/manual/core/tag-aware-sharding/), too.</p>
+                            <p class="fragment">The shard key specifies one or more fields and determines the distribution of documents among the cluster&apos;s shards.</p>
 
-                            <p class="fragment">Not to be confused with replica set tags.</p>
+                            <p class="fragment">MongoDB attempts to keep chunks<br>evenly distributed among the shards.</p>
                         </script>
                     </section>
 
@@ -1026,6 +1122,32 @@
                             ### Select a good shard key
 
                             This is *the* most important decision.
+
+                            <p class="fragment">Once a collection is sharded,<br>the shard key and its values are immutable!</p>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Ranged Sharding
+
+                            <img src="img/shard_key_range.png" alt="shard_key_range.png" style="width: 100%" class="transparent">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Shard Key Distribution
+
+                            <img src="img/shard_key_distribution.png" alt="shard_key_distribution.png" style="width: 100%" class="transparent">
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### [Hashed Sharding](https://docs.mongodb.com/manual/core/hashed-sharding/)
+
+                            <img src="img/shard_key_hashed.png" alt="shard_key_hashed.png" style="width: 100%" class="transparent">
                         </script>
                     </section>
 
@@ -1047,6 +1169,28 @@
                         <p>Segmented Access</p>
                     </section>
 
+                    <section class="spaced-out" data-markdown>
+                        <script type="text/template">
+                            ### [Zone Sharding](https://docs.mongodb.com/manual/core/zone-sharding/)
+
+                            Zones are shard key ranges that can be<br>associated with one or more shards.
+
+                            <ul>
+                                <li class="fragment">Isolate subset of data to specific set of shards</li>
+                                <li class="fragment">Enforce geographic distribution of data</li>
+                                <li class="fragment">Route data based on hardware/performance</li>
+                            </ul>
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Zone Sharding
+
+                            <img src="img/shard_zones.png" alt="shard_zones.png" style="width: 100%" class="transparent">
+                        </script>
+                    </section>
+<!--
                     <section>
                         <h3>Sharding without replication?</h3>
 
@@ -1059,18 +1203,6 @@
                         <img src="img/brent-rambo.gif" width="70%">
                     </section>
 
-                    <section>
-                        <h3>What does sharding do for us?</h3>
-
-                        <img src="img/sharding_cache-1.png" alt="sharding_cache-1.png" style="width: 80%;">
-                    </section>
-
-                    <section>
-                        <h3>Sharding provides horizontal scalability</h3>
-
-                        <img src="img/sharding_cache-2.png" alt="sharding_cache-2.png" style="width: 80%;">
-                    </section>
-<!--
                     <section>
                         <h3>Data, RAM and disk</h3>
                     </section>
@@ -1090,7 +1222,7 @@
                     <section>
                         <img src="img/memory-4.png" alt="memory-4.png" style="width: 80%;">
                     </section>
--->
+
                     <section data-markdown>
                         <script type="text/template">
                             ### Keep an eye on RAM usage
@@ -1113,6 +1245,61 @@
                             ```
 
                             Can lead to intermittent page faults and disk access
+                        </script>
+                    </section>
+-->
+                </section>
+
+                <section>
+                    <section>
+                        <h2>Deployment and Ops</h2>
+                    </section>
+
+                    <section>
+                        <h3><a href="https://docs.mongodb.com/manual/administration/security-checklist/">Security Checklist</a></h3>
+
+                        <ul>
+                            <li class="fragment">Enable and enforce authentication</li>
+                            <li class="fragment">Configure role-based access control</li>
+                            <li class="fragment">Configure TLS/SSL for connections</li>
+                            <li class="fragment">Limit network exposure</li>
+                            <li class="fragment">Encrypt and protect database files</li>
+                            <li class="fragment">Run MongoDB as a dedicated user</li>
+                            <li class="fragment"><a href="https://docs.mongodb.com/manual/administration/security-checklist/#run-mongodb-with-secure-configuration-options">Hardened server and network configuration</a></li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h3><a href="https://docs.mongodb.com/manual/administration/production-checklist-operations/">Operations Checklist</a></h3>
+
+                        <ul>
+                            <li class="fragment">Adjust replica set oplog size</li>
+                            <li class="fragment">Enable journaling for writes</li>
+                            <li class="fragment">Driver connection pooling (if applicable)</li>
+                            <li class="fragment">Filesystem choice (XFS and NTFS preferred)</li>
+                            <li class="fragment"><a href="https://docs.mongodb.com/manual/administration/production-checklist-operations/#operating-system-configuration">Tweak operating system configuration</a></li>
+                            <li class="fragment">Schedule and test backup processes</li>
+                            <li class="fragment">Monitor database metrics and hardware</li>
+                        </ul>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### Monitoring, Backup, Automation
+
+                            <img src="img/cloud_manager.png" alt="cloud_manager.png" style="width: 80%" class="transparent">
+
+                            [mongodb.com/cloud/cloud-manager](https://www.mongodb.com/cloud/cloud-manager)
+                        </script>
+                    </section>
+
+                    <section data-markdown>
+                        <script type="text/template">
+                            ### MongoDB as a Service
+
+                            <img src="img/atlas.png" alt="atlas.png" style="width: 100%" class="transparent">
+
+                            [atlas.mongodb.com](https://atlas.mongodb.com)
                         </script>
                     </section>
                 </section>
@@ -1141,12 +1328,28 @@
                         <script type="text/template">
                             ### The same principles apply
 
+                            <br>
+
                             > Essentially the ORM can handle about 80-90% of the mapping problems, but that last chunk always needs careful work by somebody who really understands how a relational database works.
 
                             &mdash; Martin Fowler in [OrmHate](http://martinfowler.com/bliki/OrmHate.html)
                         </script>
                     </section>
 
+                    <section class="spaced-out">
+                        <h3>Be an informed user</h3>
+
+                        <ul>
+                            <li class="fragment">Active Record vs. Data Mapper</li>
+                            <li class="fragment">Are changes written with atomic modifiers?</li>
+                            <li class="fragment">How is replication and sharding integrated?</li>
+                            <li class="fragment">How are references handled?</li>
+                            <li class="fragment">How are embedded documents managed?</li>
+                            <li class="fragment">Are commands beyond basic CRUD supported?</li>
+                            <li class="fragment">Is the driver API available if needed?</li>
+                        </ul>
+                    </section>
+<!--
                     <section>
                         <h3>A look at ODM functionality<br>in the new driver</h3>
 
@@ -1235,6 +1438,7 @@
                             Object casting ensures serialization to a document.<br>Construction during unserialization ensures<br>both offset (`[]`) and property (`->`) access.
                         </script>
                     </section>
+-->
                 </section>
 
                 <section data-markdown data-state="final">
