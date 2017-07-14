@@ -387,7 +387,7 @@
                             ## [mongodb.com/download-center](https://www.mongodb.com/download-center)
 
                             * Compiled binaries
-                                * OS X, Linux, Windows, Solaris
+                                * OS X, Linux, Windows
                             * Packages
                                 * MacPorts, Homebrew, Debian, CentOS
                             * Drivers for over a dozen languages
@@ -399,25 +399,25 @@
                             ## Installing
 
                             ```no-highlight
-                            $ tar xvzf mongodb-linux-x86_64-ubuntu1604-3.2.10.tgz 
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/README
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/THIRD-PARTY-NOTICES
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/MPL-2
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/GNU-AGPL-3.0
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongodump
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongorestore
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongoexport
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongoimport
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongostat
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongotop
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/bsondump
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongofiles
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongooplog
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongoperf
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongosniff
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongod
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongos
-                            mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongo
+                            $ tar xvzf mongodb-linux-x86_64-ubuntu1604-3.4.6.tgz 
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/README
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/THIRD-PARTY-NOTICES
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/MPL-2
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/GNU-AGPL-3.0
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongodump
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongorestore
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongoexport
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongoimport
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongostat
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongotop
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/bsondump
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongofiles
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongooplog
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongoreplay
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongoperf
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongod
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongos
+                            mongodb-linux-x86_64-ubuntu1604-3.4.6/bin/mongo
                             ```
                         </script>
                     </section>
@@ -429,10 +429,10 @@
                             ```no-highlight
                             $ mkdir /data/db
 
-                            $ mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongod
-                            [initandlisten] MongoDB starting : pid=20751 port=27017 dbpath=/data/db 64-bit host=honeydew
-                            [initandlisten] db version v3.2.10
-                            [initandlisten] git version: 79d9b3ab5ce20f51c272b4411202710a082d0317
+                            $ ./mongod
+                            [initandlisten] MongoDB starting : pid=20357 port=27017 dbpath=/data/db 64-bit host=honeydew
+                            [initandlisten] db version v3.4.6
+                            [initandlisten] git version: c55eb86ef46ee7aede3b1e2a5d184a7df4bfb5b5
                             [initandlisten] OpenSSL version: OpenSSL 1.0.2g  1 Mar 2016
                             [initandlisten] allocator: tcmalloc
                             [initandlisten] modules: none
@@ -440,10 +440,10 @@
                             [initandlisten]     distmod: ubuntu1604
                             [initandlisten]     distarch: x86_64
                             [initandlisten]     target_arch: x86_64
-                            [initandlisten] options: { storage: { dbPath: "/tmp/db" } }
-                            [initandlisten] wiredtiger_open config: create,cache_size=8G,session_max=20000,eviction=(threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000),checkpoint=(wait=60,log_size=2GB),statistics_log=(wait=0),
-                            [initandlisten] Initializing full-time diagnostic data capture with directory '/tmp/db/diagnostic.data'
-                            [initandlisten] waiting for connections on port 27017
+                            [initandlisten] options: { storage: { dbPath: "/data/db" } }
+                            [initandlisten] wiredtiger_open config: create,cache_size=7453M,session_max=20000,eviction=(threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000),checkpoint=(wait=60,log_size=2GB),statistics_log=(wait=0),
+                            [initandlisten] Initializing full-time diagnostic data capture with directory '/data/db/diagnostic.data'
+                            [thread1] waiting for connections on port 27017
                             ```
                         </script>
                     </section>
@@ -453,8 +453,8 @@
                             ## Connecting
 
                             ```no-highlight
-                            $ mongodb-linux-x86_64-ubuntu1604-3.2.10/bin/mongo
-                            MongoDB shell version: 3.2.10
+                            $ ./mongo
+                            MongoDB shell version: 3.4.6
                             connecting to: test
 
                             > show dbs
@@ -477,6 +477,7 @@
                             * Configurable scalability and redundancy
                             * Integration with MongoDB's backup service
                             * Secure (authentication, encryption, IP whitelists)
+                            * Free tier available
 
                             <br>
 
@@ -488,7 +489,7 @@
                         <script type="text/template">
                             ## PHP and HHVM Drivers
 
-                            * [PHP](https://github.com/mongodb/mongo-php-driver) and [HHVM](https://github.com/mongodb/mongo-hhvm-driver) extensions (`ext-mongodb`)
+                            * [PHP](https://github.com/mongodb/mongo-php-driver) extension (`ext-mongodb`)
                               * Client, server, and cursor classes
                               * BSON types and encode/decode functions
                             * [PHP library](https://github.com/mongodb/mongo-php-library) (`mongodb/mongodb`)
@@ -521,16 +522,16 @@
 
                             ```php
                             // 127.0.0.1:27017
-                            $m = new MongoDB\Client;
+                            $client = new MongoDB\Client;
 
                             // example.com:27018
-                            $m = new MongoDB\Client('mongodb://example.com:27018');
+                            $client = new MongoDB\Client('mongodb://example.com:27018');
 
                             // authentication
-                            $m = new MongoDB\Client('mongodb://user:password@localhost');
+                            $client = new MongoDB\Client('mongodb://user:password@localhost');
 
                             // replica set
-                            $m = new MongoDB\Client(
+                            $client = new MongoDB\Client(
                                 'mongodb://rs1.example.com,rs2.example.com',
                                 ['replicaSet' => 'myReplSet']
                             );
@@ -543,15 +544,20 @@
                             ## The MongoDB\Client Class
 
                             ```php
-                            $m = new MongoDB\Client;
+                            $client = new MongoDB\Client;
 
                             // Select the "test" database
-                            $db = $m->test;
-                            $db = $m->selectDatabase('test');
+                            $db = $client->test;
+                            $db = $client->selectDatabase('test');
 
                             // Select the "test.users" collection
-                            $c = $m->test->users;
-                            $c = $m->selectCollection('test', 'users');
+                            $collection = $client->test->users;
+                            $collection = $client->selectCollection('test', 'users');
+
+                            // List databases on the server
+                            foreach ($client->listDatabases() as $databaseInfo) {
+                                echo $databaseInfo->getName(), "\n";
+                            }
                             ```
                         </script>
                     </section>
@@ -561,16 +567,20 @@
                             ## The MongoDB\Database Class
 
                             ```php
-                            $db = $m->test;
-                            $db = new MongoDB\Database($m->getManager(), 'test');
+                            $db = $client->test;
 
                             // Select the "test.users" collection
-                            $c = $db->users;
-                            $c = $db->selectCollection('users');
+                            $collection = $db->users;
+                            $collection = $db->selectCollection('users');
 
                             // Execute a command on the "test" database
                             $cursor = $db->command(['serverStatus' => 1]);
                             $serverStatus = $cursor->toArray()[0];
+
+                            // List collections in the "test" database
+                            foreach ($db->listCollections() as $collectionInfo) {
+                                echo $collectionInfo->getName(), "\n";
+                            }
                             ```
                         </script>
                     </section>
@@ -580,17 +590,16 @@
                             ## The MongoDB\Collection Class
 
                             ```php
-                            $c = $db->users;
-                            $c = new MongoDB\Collection($db->getManager(), 'test', 'users');
+                            $collection = $db->users;
 
                             // Insert a user document for Bob
-                            $c->insertOne(['username' => 'bob', 'roles' => ['admin']]);
+                            $collection->insertOne(['username' => 'bob', 'roles' => ['admin']]);
 
                             // Retrieve Bob's user document
-                            $user = $c->findOne(['username' => 'bob']);
+                            $user = $collection->findOne(['username' => 'bob']);
 
                             // Find all admins (returns an iterable MongoDB\Driver\Cursor)
-                            $cursor = $c->find(['roles' => 'admin']);
+                            $cursor = $collection->find(['roles' => 'admin']);
                             $admins = $cursor->toArray();
                             ```
                         </script>
@@ -601,11 +610,11 @@
                             ## The MongoDB\Collection Class
 
                             ```php
-                            $c->count();                     // Count all users
-                            $c->count(['roles' => 'admin']); // Count only admins
+                            $collection->count();                     // Count all users
+                            $collection->count(['roles' => 'admin']); // Count only admins
 
-                            $c->deleteOne(['username' => 'john']); // Delete a user
-                            $c->deleteMany();                      // Delete all users
+                            $collection->deleteOne(['username' => 'john']); // Delete a user
+                            $collection->deleteMany([]);                    // Delete all users
                             ```
                         </script>
                     </section>
@@ -622,7 +631,7 @@
 
                             ```php
                             // Create a user document for Tom
-                            $result = $c->insertOne(['username' => 'tom']);
+                            $result = $collection->insertOne(['username' => 'tom']);
 
                             var_dump($result->getInsertedCount());
                             var_dump($result->getInsertedId());
@@ -724,12 +733,12 @@
                             ## Acknowledged Writes
 
                             ```php
-                            $c = (new MongoDB\Client)->test->users;
+                            $collection = (new MongoDB\Client)->test->users;
 
-                            $user = $c->findOne(['username' => 'tom']);
+                            $user = $collection->findOne(['username' => 'tom']);
 
                             // MongoDB\Client's default behavior
-                            $result = $c->insertOne(
+                            $result = $collection->insertOne(
                                 $user,
                                 ['writeConcern' => new MongoDB\Driver\WriteConcern(1)]
                             );
@@ -753,9 +762,9 @@
 
                             ```php
                             // Connect to a replica set URI
-                            $c = (new MongoDB\Client('...'))->test->users;
+                            $collection = (new MongoDB\Client('...'))->test->users;
 
-                            $result = $c->insertOne(
+                            $result = $collection->insertOne(
                                 ['username' => 'tom'],
                                 ['writeConcern' => new MongoDB\Driver\WriteConcern(2)]
                             );
@@ -770,11 +779,11 @@
                             ## Unacknowledged Writes
 
                             ```php
-                            $c = (new MongoDB\Client)->test->users;
+                            $collection = (new MongoDB\Client)->test->users;
 
-                            $user = $c->findOne(['username' => 'tom']);
+                            $user = $collection->findOne(['username' => 'tom']);
 
-                            $result = $c->insertOne(
+                            $result = $collection->insertOne(
                                 $user,
                                 ['writeConcern' => new MongoDB\Driver\WriteConcern(0)]
                             );
@@ -794,7 +803,7 @@
 
                             ```php
                             // Change Tom's email address
-                            $result = $c->updateOne(
+                            $result = $collection->updateOne(
                                 ['username' => 'tom'],
                                 ['$set' => ['email' => 'thomas@example.com']]
                             );
@@ -816,7 +825,7 @@
 
                             ```php
                             // Make everyone an admin (probably a bad idea :)
-                            $result = $c->updateMany(
+                            $result = $collection->updateMany(
                                 [],
                                 ['$addToSet' => ['roles' => 'admin']]
                             );
@@ -833,7 +842,7 @@
 
                             ```php
                             // If Sam doesn't exist, insert: { username: "Sam", role: "staff" }
-                            $result = $c->updateOne(
+                            $result = $collection->updateOne(
                                 ['username' => 'sam'],
                                 ['$set' => ['role' => 'staff']],
                                 ['upsert' => true]
@@ -878,10 +887,10 @@
                             ## [Positional Updates](https://docs.mongodb.com/manual/reference/operator/update/positional/)
 
                             ```php
-                            $c = (new MongoDB\Client)->test->articles;
+                            $collection = (new MongoDB\Client)->test->articles;
 
                             // An article with votable comments
-                            $c->insertOne([
+                            $collection->insertOne([
                                 '_id' => 1,
                                 'title' => 'Praesent ante dui',
                                 'comments' => [
@@ -891,7 +900,7 @@
                             ]);
 
                             // Upvote the second comment
-                            $c->updateOne(
+                            $collection->updateOne(
                                 ['_id' => 1, 'comments.id' => 2],
                                 ['$inc' => ['comments.$.votes' => 1]]
                             );
@@ -910,12 +919,12 @@
                             ## Basic Querying
 
                             ```php
-                            $c->findOne(); // Retrieve one document as an array
-                            $c->find();    // Find all documents via MongoDB\Driver\Cursor
+                            $collection->findOne(); // Retrieve one document as an array
+                            $collection->find();    // Find all documents via MongoDB\Driver\Cursor
 
                             // Query on field values
-                            $c->findOne(['lastName' => 'Smith']);
-                            $c->find(['roles' => 'admin']);
+                            $collection->findOne(['lastName' => 'Smith']);
+                            $collection->find(['roles' => 'admin']);
                             ```
 
                             * Query criteria is BSON
@@ -939,7 +948,7 @@
                             ## The MongoDB\Driver\Cursor Class
 
                             ```php
-                            $cursor = $c->find(
+                            $cursor = $collection->find(
                                 ['roles' => 'admin'],             // Find all admins
                                 [
                                     'sort' => ['username' => -1], // Desc sort by username
@@ -972,9 +981,9 @@
                             ## Data to Query
 
                             ```php
-                            $c = (new MongoDB\Client)->test->users;
+                            $collection = (new MongoDB\Client)->test->users;
 
-                            $c->insertOne([
+                            $collection->insertOne([
                                 'username' => 'bob',
                                 'email' => 'bob@example.com',
                                 'profile' => [
@@ -1008,7 +1017,7 @@
                             $lastYear = new DateTime('last year');
 
                             // Arbitrary Business Requirement #42789!
-                            $cursor = $c->find(
+                            $cursor = $collection->find(
                                 [
                                     'email' => new MongoDB\BSON\Regex('gmail\.com$', 'i'),
                                     'profile.createdAt' => [
@@ -1027,7 +1036,7 @@
 
                             ```php
                             // Limit returned fields to the username
-                            $cursor = $c->find(
+                            $cursor = $collection->find(
                                 [
                                     'email' => new MongoDB\BSON\Regex('gmail\.com$', 'i'),
                                     'profile.createdAt' => [
@@ -1094,15 +1103,15 @@
                             ## Data to Process
 
                             ```php
-                            $c = (new MongoDB\Client)->test->jobs;
+                            $collection = (new MongoDB\Client)->test->jobs;
 
-                            $c->insertOne([
+                            $collection->insertOne([
                                 'task' => '…',
                                 'inprogress' => 'false',
                                 'priority' => 1
                             ]);
 
-                            $c->insertOne([
+                            $collection->insertOne([
                                 'task' => '…',
                                 'inprogress' => 'false',
                                 'priority' => 4
@@ -1118,7 +1127,7 @@
                             ```php
                             use MongoDB\Operation\FindOneAndUpdate;
 
-                            $c->findOneAndUpdate(
+                            $collection->findOneAndUpdate(
                                 ['inprogress' => false],
                                 ['$set' => [
                                     'inprogress' => true,
@@ -1160,19 +1169,21 @@
                             ## Managing Indexes
 
                             ```php
-                            $c = (new MongoDB\Client)->test->things;
+                            $collection = (new MongoDB\Client)->test->things;
 
                             // Ensure unique values for x (just like the _id index)
-                            $c->createIndex(['x' => 1], ['unique' => true]);
+                            $collection->createIndex(['x' => 1], ['unique' => true]);
 
                             // Delegate index creation as a background task
-                            $c->createIndex(['x' => 1], ['background' => true]);
+                            $collection->createIndex(['x' => 1], ['background' => true]);
 
-                            // Obtain an iterator of MongoDB\Model\IndexInfo objects
-                            $indexInfoIterator = $c->listIndexes();
+                            // List all indexes in the "test.things" collection
+                            foreach ($collection->listIndexes() as $indexInfo) {
+                                echo $indexInfo->getName(), "\n";
+                            }
 
-                            $c->dropIndex('x_1'); // Delete an index by name
-                            $c->dropIndexes();    // Delete all indexes for the collection
+                            $collection->dropIndex('x_1'); // Delete an index by name
+                            $collection->dropIndexes();    // Delete all indexes for the collection
                             ```
                         </script>
                     </section>
@@ -1182,19 +1193,19 @@
                             ## Compound Indexes
 
                             ```php
-                            $c->createIndex(['x' => 1, 'y' => 1, 'z' => -1]);
+                            $collection->createIndex(['x' => 1, 'y' => 1, 'z' => -1]);
 
                             // These queries will use the index
-                            $c->find(['x' => 'foo']);
-                            $c->find(['x' => 'foo', 'y' => ['$gt' => 5]]);
-                            $c->find(
+                            $collection->find(['x' => 'foo']);
+                            $collection->find(['x' => 'foo', 'y' => ['$gt' => 5]]);
+                            $collection->find(
                                 ['x' => 'foo', 'y' => 4],
                                 ['sort' => ['z' => -1]]
                             );
-                            $c->find(['x' => "foo", 'y' => 8, 'z' => 'baz']);
+                            $collection->find(['x' => "foo", 'y' => 8, 'z' => 'baz']);
 
                             // This query will not by default
-                            $c->find(['y' => 6]);
+                            $collection->find(['y' => 6]);
                             ```
 
                             * Index multiple fields
@@ -1253,7 +1264,6 @@
                         <script type="text/template">
                             ## Database Commands
 
-                            * `findOne` queries on special `$cmd` collection
                             * Shell and driver helpers for some
                             * [MongoDB\Database::command()](https://docs.mongodb.com/php-library/master/reference/method/MongoDBDatabase-command/) for the rest
                             * [Reference list](https://docs.mongodb.com/manual/reference/command/)
@@ -1300,12 +1310,12 @@
                             ## Data to Aggregate
 
                             ```php
-                            $c = (new MongoDB\Client)->test->articles;
+                            $collection = (new MongoDB\Client)->test->articles;
 
-                            $c->insertOne(['author' => 'jen', 'tags' => ['politics', 'tech']]);
-                            $c->insertOne(['author' => 'sue', 'tags' => ['business']]);
-                            $c->insertOne(['author' => 'tom', 'tags' => ['sports']]);
-                            $c->insertOne([
+                            $collection->insertOne(['author' => 'jen', 'tags' => ['politics', 'tech']]);
+                            $collection->insertOne(['author' => 'sue', 'tags' => ['business']]);
+                            $collection->insertOne(['author' => 'tom', 'tags' => ['sports']]);
+                            $collection->insertOne([
                                 'author' => 'bob',
                                 'tags' => ['business', 'sports', 'tech']
                             ]);
@@ -1385,9 +1395,9 @@
                             ## Aggregation Framework
 
                             ```php
-                            $c = (new MongoDB\Client)->test->articles;
+                            $collection = (new MongoDB\Client)->test->articles;
 
-                            $cursor = $c->aggregate([
+                            $cursor = $collection->aggregate([
                                 ['$unwind' => '$tags'],
                                 ['$group' => [
                                     '_id' => '$tags',
@@ -1436,19 +1446,10 @@
                             $db = (new MongoDB\Client)->test;
 
                             // Default prefix (fs.files and fs.chunks)
-                            $b = $db->selectGridFSBucket();
-                            $b = new MongoDB\GridFS\Bucket(
-                                $db->getManager(),
-                                $db->getDatabaseName()
-                            );
+                            $bucket = $db->selectGridFSBucket();
 
                             // Custom prefix (images.files and images.chunks)
-                            $b = $db->selectGridFSBucket(['bucketName' => 'images']);
-                            $b = new MongoDB\GridFS\Bucket(
-                                $db->getManager(),
-                                $db->getDatabaseName(),
-                                ['bucketName' => 'images']
-                            );
+                            $bucket = $db->selectGridFSBucket(['bucketName' => 'images']);
                             ```
                         </script>
                     </section>
@@ -1460,11 +1461,11 @@
                             ```php
                             // Upload a file and return its _id
                             $source = fopen('/path/to/file', 'rb');
-                            $id = $b->uploadFromStream('filename', $source);
+                            $id = $bucket->uploadFromStream('filename', $source);
 
                             // Upload bytes to a file and return its _id
-                            $stream = $b->openUploadStream('filename');
-                            $id = $b->getFileIdForStream($stream);
+                            $stream = $bucket->openUploadStream('filename');
+                            $id = $bucket->getFileIdForStream($stream);
                             fwrite($stream, 'foobar');
                             fclose($stream);
                             ```
@@ -1479,23 +1480,32 @@
                             // Download a file by its _id
                             $id = new MongoDB\BSON\ObjectID('57f81b38da14d802e97b1b72');
                             $destination = fopen('/path/to/file', 'w+b');
-                            $b->downloadToStream($id, $destination);
+                            $bucket->downloadToStream($id, $destination);
 
                             // Open a readable stream for a file by its _id
-                            $stream = $b->openDownloadStream($id);
+                            $stream = $bucket->openDownloadStream($id);
                             $contents = stream_get_contents($stream);
+                            ```
+                        </script>
+                    </section>
 
+                    <section data-markdown>
+                        <script type="text/template">
+                            ## Retrieving Files by Filename
+
+                            ```php
                             // Download a file by its filename
                             $destination = fopen('/path/to/file', 'w+b');
-                            $b->downloadToStreamByName('filename', $destination);
+                            $bucket->downloadToStreamByName('filename', $destination);
 
                             // Open a readable stream for a file by its filename
-                            $stream = $b->openDownloadStreamByName('filename');
+                            $stream = $bucket->openDownloadStreamByName('filename');
                             $contents = stream_get_contents($stream);
                             ```
 
                             * `filename` is not necessarily unique
                             * Same `filename` and different `uploadDate` &rarr; revision
+                            * Filename queries select the most recent revision by default
                         </script>
                     </section>
 
@@ -1505,16 +1515,16 @@
 
                             ```php
                             // Open the most recent revision (default behavior)
-                            $stream = $b->openDownloadStreamByName('filename', ['revision' => -1]);
+                            $bucket->openDownloadStreamByName('filename', ['revision' => -1]);
 
                             // Open the second most recent revision
-                            $stream = $b->openDownloadStreamByName('filename', ['revision' => -2]);
+                            $bucket->openDownloadStreamByName('filename', ['revision' => -2]);
 
                             // Open the original revision (i.e. 0th)
-                            $stream = $b->openDownloadStreamByName('filename', ['revision' => 0]);
+                            $bucket->openDownloadStreamByName('filename', ['revision' => 0]);
 
                             // Open the first revision
-                            $stream = $b->openDownloadStreamByName('filename', ['revision' => 1]);
+                            $bucket->openDownloadStreamByName('filename', ['revision' => 1]);
                             ```
 
                             * Same options for `downloadToStreamByName()`
@@ -1527,8 +1537,8 @@
 
                             ```php
                             $id = new MongoDB\BSON\ObjectID('57f81b38da14d802e97b1b72');
-                            $stream = $b->openDownloadStream($id);
-                            var_dump($b->getFileDocumentForStream($stream));
+                            $stream = $bucket->openDownloadStream($id);
+                            var_dump($bucket->getFileDocumentForStream($stream));
                             ```
 
                             ```no-highlight
@@ -1563,15 +1573,14 @@
                             ```php
                             // Delete a file (and related chunks) by its _id
                             $id = new MongoDB\BSON\ObjectID('57f81b38da14d802e97b1b72');
-                            $b->delete($id);
+                            $bucket->delete($id);
 
                             // Drop the files and chunks collections
-                            $b->drop();
+                            $bucket->drop();
                             ```
 
                             * No API for modifying files in-place
-                                * Delete and re-upload, or create a new revision
-                            * Random access with `fseek()` is not yet supported
+                            * Delete and re-upload, or create a new revision
                         </script>
                     </section>
                 </section>
