@@ -1,0 +1,1146 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>MongoDB: Retryable Writes</title>
+
+        <link rel="stylesheet" href="reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="reveal.js/css/theme/white.css">
+        <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+        <link rel="stylesheet" href="style.css">
+
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = 'reveal.js/css/print/' + (window.location.search.match( /print-pdf/gi ) ? 'pdf.css' : 'paper.css');
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <section data-state="title" data-transition="fade" data-transition-speed="fast">
+                        <h1>It&rsquo;s 10<span style="font-variant: small-caps;">pm</span>: Do you know where your writes are?</h1>
+
+                        <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                    </section>
+
+                    <section data-state="title" data-transition="fade" data-transition-speed="fast">
+                        <h1>It&rsquo;s 11<span style="font-variant: small-caps;">am</span>: Do you know where your writes are?</h1>
+
+                        <p class="bio">Jeremy Mikola<br><a href="http://twitter.com/jmikola">jmikola</a></p>
+                    </section>
+
+                    <section>
+                        <h2>On the roadmap</h2>
+
+                        <ul style="font-size: 1.25em">
+                            <li>Retryable writes</li>
+                            <li>Zombie cursor cleanup</li>
+                            <li>Cluster-wide killOp</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Retryable Writes</h1>
+
+                        <div style="position: relative; height: 10em;">
+                            <span class="fragment fade-out" data-fragment-index="2">
+                                <img src="img/moving-letter.svg" style="height: 5em; position: absolute; top: 0; left: 5em">
+                                <span class="fragment fade-in" data-fragment-index="1">
+                                    <img src="img/crash.svg" style="height: 5em; position: absolute; top: 0; left: 6em">
+                                </span>
+                            </span>
+                            <span class="fragment fade-in" data-fragment-index="2">
+                                <img src="img/moving-letter.svg" style="height: 5em; position: absolute; top: 5em; left: 12em">
+                            </span>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>You&rsquo;re updating a document</h2>
+
+                        <pre class="fragment"><code class="js" data-trim>
+                            db.coll.updateOne(
+                              { _id: 16 },
+                              { $inc: { count: 1 }}
+                            );
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Murphy&rsquo;s Law kicks in</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+                            <img src="img/arrow.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                            <img src="img/bomb.svg" style="height: 2em; position: absolute; top: 0.8em; right: 2.3em">
+                        </div>
+
+                        <aside class="notes">
+                            Network error. Dropped connection, primary failover, etc.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Is it safe to retry the update?</h2>
+
+                        <img src="img/thinking-face.svg" style="height: 8em">
+
+                        <aside class="notes">
+                            Take a poll. We don't know whether the server executed the update.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Did our message never<br>make it to the server?</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+                            <img src="img/arrow.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                            <img src="img/crash.svg" style="height: 3em; position: absolute; top: 0.5em; left: 11em">
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>Did we lose the server&rsquo;s reply?</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+                            <img src="img/arrow-drop.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                            <img src="img/crash.svg" style="height: 3em; position: absolute; top: 4.5em; left: 7.25em">
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>Did something else happen?</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+                            <img src="img/arrow.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                            <img src="img/plug.svg" class="fragment current-visible" style="height: 5em; position: absolute; top: 0.5em; right: -1.25em;">
+                            <img src="img/bomb.svg" class="fragment current-visible" style="height: 5em; position: absolute; top: 0.5em; right: -1.25em;">
+                            <img src="img/fire.svg" class="fragment current-visible" style="height: 5em; position: absolute; top: 0.5em; right: -1.25em;">
+                            <img src="img/poop.svg" class="fragment current-visible" style="height: 5em; position: absolute; top: 0.5em; right: -1.25em;">
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>There&rsquo;s no way to retrieve<br>an operation&rsquo;s state</h2>
+
+                        <img src="img/confused.svg" style="height: 8em">
+                    </section>
+
+                    <section>
+                        <h2>Let&rsquo;s review some<br>best practices</h2>
+
+                        <p style="display: inline-block;">
+                            <img src="img/ajdavis.jpg" style="float: left; margin-right: 1em; height: 4em;">
+                            <span style="font-family: 'Gloria Hallelujah', cursive; position: relative; top: 1em">
+                                <a href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">How To Write Resilient<br>MongoDB Applications</a>
+                            </span>
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2>This was our update&hellip;</h2>
+
+                        <pre><code class="js" data-trim>
+                            db.coll.updateOne(
+                              { _id: 16 },
+                              { $inc: { count: 1 }}
+                            );
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Errors and retry strategies</h2>
+
+                        <table>
+                            <tr>
+                                <td style="border: 0 !important;"></td>
+                                <th>Transient network error</th>
+                                <th>Persistent outage</th>
+                                <th>Command error</th>
+                            </tr>
+                            <tr>
+                                <th>Never retry</th>
+                                <td class="fragment red">May undercount</td>
+                                <td class="fragment green">OK</td>
+                                <td class="fragment green">OK</td>
+                            </tr>
+                            <tr>
+                                <th>Always retry</th>
+                                <td class="fragment red">May overcount</td>
+                                <td class="fragment red">Wastes time</td>
+                                <td class="fragment red">Wastes time</td>
+                            </tr>
+                            <tr>
+                                <th>Retry once</th>
+                                <td class="fragment red">May overcount</td>
+                                <td class="fragment green">OK</td>
+                                <td class="fragment green">OK</td>
+                            </tr>
+                        </table>
+
+                        <aside class="notes">
+                            For persistent outages, the driver knows that a server is unreachable due to SDAM.
+                            <br><br>
+                            One attempt is enough to allow SDAM to rediscover the primary.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>There&rsquo;s no good solution for<br>transient network errors</h2>
+
+                        <img src="img/disappointed.svg" style="height: 8em">
+                    </section>
+
+                    <section>
+                        <h2>We can safely retry<br><em>idempotent</em>&nbsp; operations</h2>
+
+                        <table>
+                            <tr>
+                                <td style="border: 0 !important;"></td>
+                                <th>Transient network error</th>
+                                <th>Persistent outage</th>
+                                <th>Command error</th>
+                            </tr>
+                            <tr>
+                                <th>Retry once</th>
+                                <td class="fragment green">OK</td>
+                                <td class="fragment green">OK</td>
+                                <td class="fragment green">OK</td>
+                            </tr>
+                        </table>
+
+                        <aside class="notes">
+                            Idempotent operations have the same outcome whether you execute them once or multiple times.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Safe-to-retry inserts</h2>
+
+                        <pre><code class="js" data-trim>
+                            db.coll.insertOne(
+                              { _id: 18, name: "Alice" }
+                            );
+                        </code></pre>
+
+                        <aside class="notes">
+                            Insert with ID is idempotent. Retry on network error and ignore duplicate key error on _id field only.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Safe-to-retry deletes</h2>
+
+                        <pre><code class="js" data-trim>
+                            db.coll.deleteOne(
+                              { _id: 20 }
+                            );
+                        </code></pre>
+
+                        <pre style="margin-top: 2em"><code class="js" data-trim>
+                            db.coll.deleteMany(
+                              { status: "inactive" }
+                            );
+                        </code></pre>
+
+                        <aside class="notes">
+                            Delete one with ID is idempotent. An unnecessary retry is a no-op.
+                            <br><br>
+                            Delete many is always idempotent. Race conditions (e.g. other inserts between retry) not a concern.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Safe-to-retry updates</h2>
+
+                        <pre><code class="js" data-trim>
+                            db.coll.updateOne(
+                              { _id: 22 },
+                              { $set: { status: "active" }}
+                            );
+                        </code></pre>
+
+                        <aside class="notes">
+                            Some update operators are idempotent (e.g. $set, $addToSet).
+                            <br><br>
+                            Other updates can be split into two idempotent steps (per Jesse's article), but this entails multiple round trips and requires that we clean up incomplete operations.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Why can&rsquo;t we retrieve<br>an operation&rsquo;s state?</h2>
+
+                        <img src="img/raised-eyebrow.svg" style="height: 8em">
+                    </section>
+
+                    <section>
+                        <h2>In MongoDB 3.4, state is<br>tied to connection objects</h2>
+
+                        <img src="img/link.svg" style="height: 8em">
+
+                        <aside class="notes">
+                            There is no mechanism to store state beyond a connection object.
+                            <br><br>
+                            Don't confuse oplog with individual operation state.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>MongoDB 3.6 introduces<br>logical sessions</h2>
+
+                        <p class="fragment">Sessions allow us to maintain cluster-wide<br>state about the user and their operations.</p>
+
+                        <p class="fragment" style="margin-top: 2em">Sessions are <em>not</em> tied to connections.</p>
+                    </section>
+
+                    <section>
+                        <h2>Retrying writes with a session</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+
+                            <span class="fragment fade-in" data-fragment-index="1">
+                                <img src="img/s.svg" style="height: 1em; position: absolute; top: 0.5em; left: 0.5em">
+                                <img src="img/s.svg" style="height: 1em; position: absolute; top: 0.5em; right: 0.5em">
+                                <span class="fragment fade-out" data-fragment-index="2">
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="3">
+                                <span class="fragment fade-out" data-fragment-index="4">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>update</code></span>
+                                    <img src="img/arrow-drop.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                    <img src="img/crash.svg" style="height: 3em; position: absolute; top: 4.5em; left: 7.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="5">
+                                <span class="fragment fade-out" data-fragment-index="6">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>update</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+                        </div>
+
+                        <aside class="notes">
+                            Write includes session ID (16-byte UUID) and unique transaction number (64-bit integer).
+                            <br><br>
+                            Retrying possible because state is preserved by the session.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>We can trust the server to<br>Do the Right Thing&trade;</h2>
+
+                        <p class="fragment">If the write already executed,<br>return the result we missed.</p>
+
+                        <p class="fragment" style="margin-top: 2em">If the write never executed,<br>do it now and return its result.</p>
+                    </section>
+
+                    <section>
+                        <h2>Sessions are cluster-wide</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+                            <img src="img/s.svg" style="height: 1em; position: absolute; top: 0.5em; left: 1em">
+
+                            <div style="position: absolute; height: 2em; width: 2em; right: 4em;">
+                                <img src="img/computer.svg" style="height: 2em; position: absolute; top: 0; left: 0;">
+                                <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 0.25em; right: -0.2em">
+                                <span class="fragment fade-in" data-fragment-index="4">
+                                    <img src="img/crown.svg" style="height: 1em; position: absolute; top: -0.75em; right: 0.55em">
+                                </span>
+                            </div>
+
+                            <div style="position: absolute; height: 2em; width: 2em; right: 1em;">
+                                <img src="img/computer.svg" style="height: 2em; position: absolute; top: 0; left: 0;">
+                                <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 0.25em; right: -0.2em">
+                            </div>
+
+                            <div style="position: absolute; height: 2em; width: 2em; top: 3em; right: 2.5em;">
+                                <img src="img/computer.svg" style="height: 2em; position: absolute; top: 0; left: 0;">
+                                <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 0.25em; right: -0.2em">
+                                <span class="fragment fade-out" data-fragment-index="3">
+                                    <img src="img/crown.svg" style="height: 1em; position: absolute; top: -0.75em; right: 0.55em">
+                                </span>
+                                <span class="fragment fade-in" data-fragment-index="2">
+                                    <img src="img/fire.svg" style="height: 2em; position: absolute; top: 0.25em; right: -0.05em">
+                                </span>
+                            </div>
+
+                            <span class="fragment fade-in" data-fragment-index="1">
+                                <span class="fragment fade-out" data-fragment-index="3">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>update</code></span>
+                                    <img src="img/arrow.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="5">
+                                <span style="position: absolute; top: 0.5em; left: 8em;"><code>update</code></span>
+                                <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                            </span>
+                        </div>
+
+                        <aside class="notes">
+                            Likewise applies to sharded clusters (e.g. retry on another mongos).
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Taking advantage of<br>retryable writes</h2>
+
+                        <p style="margin-top: 2em"><code><span style="opacity: 0.5">mongodb://&hellip;</span>?retryWrites=true</code></p>
+
+                        <aside class="notes">
+                            Enable retryable writes via MongoClient's connection string.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>One down, two to go</h2>
+
+                        <ul style="font-size: 1.25em">
+                            <li style="text-decoration: line-through">Retryable writes</li>
+                            <li style="opacity: 0.5">Zombie cursor cleanup</li>
+                            <li style="opacity: 0.5">Cluster-wide killOp</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Zombie Cursor Cleanup</h1>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/zombie.svg" class="fragment fade-out" data-fragment-index="1" style="height: 8em; position: absolute; left: 6em">
+                            <img src="img/zombie.svg" class="fragment fade-out" data-fragment-index="1" style="height: 3em; position: absolute; left: 2em">
+                            <img src="img/zombie.svg" class="fragment fade-out" data-fragment-index="1" style="height: 5em; position: absolute; right: 0">
+
+                            <img src="img/coffin.svg" class="fragment fade-up" data-fragment-index="1" style="height: 8em; position: absolute; top: 3em;  left: 6em;">
+                            <img src="img/coffin.svg" class="fragment fade-up" data-fragment-index="1" style="height: 3em; position: absolute; top: 1em;  left: 2em;">
+                            <img src="img/coffin.svg" class="fragment fade-up" data-fragment-index="1" style="height: 5em; position: absolute; top: 2em;  right: 0;">
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>You&rsquo;re running a long query</h2>
+
+                        <pre class="fragment"><code class="js" data-trim>
+                            cursor = db.coll.find();
+
+                            cursor.forEach(function() {
+                              // lengthy processing&hellip;
+                            });
+                        </code></pre>
+
+                        <span class="fragment fade-up">
+                            <img src="img/technologist.svg" style="height: 8em; position: absolute; bottom: -2.5em; right: -1em">
+                        </span>
+
+                        <aside class="notes">
+                            This could be a data migration, complicated math, other network queries, etc.
+                            <br><br>
+                            Anything that might surpass the 10-minute timeout between getMore requests and cause the server to close the cursor due to inactivity.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Cursors have a timeout</h2>
+
+                        <p class="fragment">After 10 minutes, the server will<br>close a cursor due to inactivity.</p>
+
+                        <p class="fragment" style="margin-top: 2em">Issuing a <code>getMore</code><br>resets the clock.</p>
+                    </section>
+
+                    <section>
+                        <h2>Disabling cursor timeouts</h2>
+
+                        <pre><code class="js" data-trim>
+                            cursor = db.coll.find(
+                              { },
+                              { noCursorTimeout: true }
+                            );
+
+                            cursor.forEach(function() {
+                              // lengthy processing&hellip;
+                            });
+                        </code></pre>
+
+                        <span class="fragment fade-up">
+                            <img src="img/tipping-hand.svg" style="height: 8em; position: absolute; bottom: -0.75em; right: -1.75em">
+                        </span>
+
+                        <aside class="notes">
+                            Caller's responsibility to exhaust the results of explicitly close/kill the cursor.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Executing our long query</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+
+                            <span class="fragment fade-in">
+                                <img src="img/c.svg" style="height: 1em; position: absolute; top: 0.5em; right: 0.5em">
+                                <span class="fragment fade-out">
+                                    <span style="position: absolute; top: 0.5em; left: 8.75em;"><code>find</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in">
+                                <span class="fragment fade-out">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>getMore</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in">
+                                <span class="fragment fade-out">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>getMore</code></span>
+                                    <img src="img/arrow-drop.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                    <img src="img/crash.svg" style="height: 3em; position: absolute; top: 4.5em; left: 7.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in">
+                                <span style="position: absolute; top: 0.5em; left: 8em;"><code>getMore</code></span>
+                                <img src="img/arrow.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                <img src="img/arrow.svg" class="fragment" style="height: 5em; position: absolute; top: 2.5em; left: 6.25em; opacity: 0.9">
+                                <img src="img/arrow.svg" class="fragment" style="height: 5em; position: absolute; top: 3.5em; left: 6.25em; opacity: 0.7">
+                                <img src="img/arrow.svg" class="fragment" style="height: 5em; position: absolute; top: 4.5em; left: 6.25em; opacity: 0.5">
+                                <img src="img/arrow.svg" class="fragment" style="height: 5em; position: absolute; top: 5.5em; left: 6.25em; opacity: 0.3">
+                                <img src="img/arrow.svg" class="fragment" style="height: 5em; position: absolute; top: 6.5em; left: 6.25em; opacity: 0.1">
+                            </span>
+
+                            <img src="img/shrug.svg" class="fragment fade-in" style="height: 8em; position: absolute; top: 2.25em; left: 6em">
+                        </div>
+
+                        <aside class="notes">
+                            After multiple failed retry attempts, we eventually give up.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <div style="position: relative; height: 10em; width: 20em; margin: 2em auto">
+                            <img src="img/sun.svg" class="fragment fade-up current-visible" style="height: 8em; position: absolute; top: 2em; left: 0">
+
+                            <img src="img/moon.svg" class="fragment fade-down current-visible" style="height: 8em; position: absolute; top: 0em; left: 7em">
+
+                            <img src="img/sun-cloud.svg" class="fragment fade-up current-visible" style="height: 8em; position: absolute; top: 2em; right: 0">
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>A zombie cursor is born</h2>
+
+                        <pre><code class="js" data-trim>
+                            &gt; db.serverStatus()
+                            {
+                              "metrics": {
+                                "cursor": {
+                                  "open": {
+                                    "noTimeout": 1,
+                                    "total": 1
+                            }}}}
+                        </code></pre>
+
+                        <aside class="notes">
+                            The next day, you realize that the cursor is still open on the server.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>
+                            What happened last night?
+                            <small class="fragment" data-fragment-index="0">(from the server&rsquo;s POV)</small>
+                        </h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <span class="fragment fade-in" data-fragment-index="1">
+                                <span class="fragment fade-out" data-fragment-index="8">
+                                    <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+                                </span>
+                            </span>
+
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+                            <span class="fragment fade-in" data-fragment-index="2">
+                                <img src="img/c.svg" style="height: 1em; position: absolute; top: 0.5em; right: 0.5em">
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="2">
+                                <span class="fragment fade-out" data-fragment-index="3">
+                                    <span style="position: absolute; top: 0.5em; left: 8.75em;"><code>find</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="4">
+                                <span class="fragment fade-out" data-fragment-index="5">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>getMore</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="6">
+                                <span class="fragment fade-out" data-fragment-index="7">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>getMore</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="9">
+                                <img src="img/question.svg" style="height: 2em; position: absolute; top: 0.8em; right: 2.5em">
+                            </span>
+                        </div>
+
+                        <aside class="notes">
+                            From the server's POV, the client is still processing the last batch.
+                            <br><br>
+                            It has no way to know that the client abandoned the cursor and will keep it open indefinitely.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Avoiding zombie cursors<br>with logical sessions</h2>
+
+                        <p class="fragment">Sessions also have a timeout.</p>
+
+                        <p class="fragment" style="margin-top: 2em">We can associate<br>queries with a session.</p>
+                    </section>
+
+                    <section>
+                        <h2>Querying with a session</h2>
+
+                        <pre><code class="js" data-trim>
+                            session = client.startSession();
+
+                            cursor = db.coll.find(
+                              { },
+                              { session: session }
+                            );
+
+                            cursor.forEach(&hellip;);
+                        </code></pre>
+
+                        <aside class="notes">
+                            All driver methods that talk to a server should take a session parameter.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Executing our long query</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 5em; position: absolute; top: 0; left: 1em">
+
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; top: 0; right: 1em">
+
+                            <span class="fragment fade-in" data-fragment-index="1">
+                                <span class="fragment fade-out" data-fragment-index="11">
+                                    <img src="img/s.svg" style="height: 1em; position: absolute; top: 0.5em; left: 0.5em">
+                                    <img src="img/s.svg" style="height: 1em; position: absolute; top: 0.5em; right: 0.5em">
+                                </span>
+                                <span class="fragment fade-out" data-fragment-index="2">
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="3">
+                                <span class="fragment fade-out" data-fragment-index="11">
+                                    <img src="img/c.svg" style="height: 1em; position: absolute; top: 1.6em; right: 0.5em">
+                                </span>
+                                <span class="fragment fade-out" data-fragment-index="4">
+                                    <span style="position: absolute; top: 0.5em; left: 8.75em;"><code>find</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="5">
+                                <span class="fragment fade-out" data-fragment-index="6">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>getMore</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="7">
+                                <span class="fragment fade-out" data-fragment-index="8">
+                                    <span style="position: absolute; top: 0.5em; left: 8em;"><code>getMore</code></span>
+                                    <img src="img/arrow-return.svg" style="height: 5em; position: absolute; top: 1.5em; left: 6.25em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="9">
+                                <span class="fragment fade-out" data-fragment-index="11">
+                                    <img src="img/hourglass.svg" style="height: 6em; position: absolute; top: 2.25em; left: 7em">
+                                    <span class="fragment fade-in" data-fragment-index="10" style="position: absolute; top: 8.5em; left: 6.75em;">session expires</span>
+                                </span>
+                            </span>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>Did we just punt on<br>the timeout issue?</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/football.svg" style="height: 2em; position: absolute; top: 4em; left: 6em">
+                            <img src="img/walking.svg" style="height: 8em; position: absolute; top: 0em; left: 8em">
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>Session timeouts are<br>non-negotiable</h2>
+
+                        <p class="fragment">Idle sessions will expire.</p>
+
+                        <p class="fragment" style="margin-top: 2em">Any operation using the<br>session resets the clock.</p>
+
+                        <aside class="notes">
+                            A cursor's timeout can still be disabled, but any cursor associated with a session will be killed when that session expires.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Two down, one to go</h2>
+
+                        <ul style="font-size: 1.25em">
+                            <li style="text-decoration: line-through">Retryable writes</li>
+                            <li style="text-decoration: line-through">Zombie cursor cleanup</li>
+                            <li style="opacity: 0.5">Cluster-wide killOp</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Cluster-wide killOp</h1>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/computer.svg" style="height: 8em; position: absolute; left: 6em">
+                            <img src="img/computer.svg" style="height: 3em; position: absolute; left: 2em">
+                            <img src="img/computer.svg" style="height: 5em; position: absolute; right: 0">
+
+                            <span class="fragment fade-out" data-fragment-index="1">
+                                <img src="img/hourglass.svg" style="height: 3em; position: absolute; top: 1.5em; left: 8.5em">
+                                <img src="img/hourglass.svg" style="height: 1em; position: absolute; top: 0.6em; left: 3em">
+                                <img src="img/hourglass.svg" style="height: 2em; position: absolute; top: 0.85em; right: 1.5em">
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="1">
+                                <img src="img/bomb.svg" style="height: 3em; position: absolute; top: 1.5em; left: 8.75em">
+                                <img src="img/bomb.svg" style="height: 1em; position: absolute; top: 0.6em; left: 3.1em">
+                                <img src="img/bomb.svg" style="height: 2em; position: absolute; top: 0.85em; right: 1.25em">
+                            </span>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h2>You&rsquo;re running an operation<br>that may never complete</h2>
+
+                        <pre class="fragment"><code class="js" data-trim>
+                            cursor = db.coll.find(
+                              { &hellip; } // table scans for days
+                            );
+                        </code></pre>
+
+                        <aside class="notes">
+                            Table scans across all shards with very poor index utilization.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>You&rsquo;ve made a<br>terrible mistake</h2>
+
+                        <img src="img/pouting.svg" style="height: 8em">
+                    </section>
+
+                    <section>
+                        <h2>Step 1: Find the operation ID</h2>
+
+                        <pre style="font-size: 0.75em"><code class="js" data-trim>
+                            &gt; db.currentOp()
+                            {
+                                "inprog" : [
+                                    {
+                                        "desc" : "conn2",
+                                        "threadId" : "140181791471360",
+                                        "connectionId" : 2,
+                                        "client" : "127.0.0.1:49456",
+                                        "appName" : "MongoDB Shell",
+                                        "active" : true,
+                                        "opid" : 132921,
+                                        "secs_running" : 0,
+                                        "microsecs_running" : NumberLong(36),
+                                        "op" : "command",
+                                        "ns" : "admin.$cmd",
+                                        "query" : {
+                                            "currentOp" : 1
+                                        },
+                                        "numYields" : 0,
+                                        "locks" : {
+
+                                        },
+                                        "waitingForLock" : false,
+                                        "lockStats" : {
+
+                                        }
+                                    }
+                                ],
+                                "ok" : 1
+                            }
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Step 2: Kill the operation ID</h2>
+
+                        <pre><code class="js" data-trim>
+                            &gt; db.killOp(132921)
+                            {
+                              "info": "attempting to kill op",
+                              "ok": 1
+                            }
+                        </code></pre>
+                    </section>
+
+                    <section>
+                        <h2>Lather, rinse, repeat</h2>
+
+                        <pre class="fragment" data-fragment-index="1" style="font-size: 0.75em"><code class="js" data-trim data-noescape>
+                            &gt; connect("mongodb://shard-2.example.com")
+
+                            <span class="fragment" data-fragment-index="2">&gt; db.currentOp()
+                            {
+                                "inprog" : [
+                                    // &hellip;
+                                ]
+                            }</span>
+
+                            <span class="fragment" data-fragment-index="3">&gt; db.killOp(&hellip;)</span>
+                        </code></pre>
+
+                        <span class="fragment fade-up" data-fragment-index="4">
+                            <img src="img/face-palm.svg" style="height: 8em; position: absolute; bottom: 0em; left: 7.5em">
+                        </span>
+                    </section>
+
+                    <section>
+                        <h2>How did this happen?</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 3em; position: absolute; top: 3em; left: 0em">
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 3.25em; left: 8.5em;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.1em; font-size: 0.5em; font-weight: bold">mongos</span>
+                            </div>
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 0em; right: 0.5em;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.25em; font-size: 0.5em; font-weight: bold">shard 1</span>
+                            </div>
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 3.25em; right: 0;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.25em; font-size: 0.5em; font-weight: bold">shard 2</span>
+                            </div>
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 6.5em; right: 0.5em;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.25em; font-size: 0.5em; font-weight: bold">shard 3</span>
+                            </div>
+
+                            <span class="fragment fade-in" data-fragment-index="1">
+                                <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 4em; left: 3.5em">
+                                <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 3.5em; left: 11.1em">
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="2">
+                                <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 2.25em; left: 12.3em; transform: rotate(-30deg)">
+                                <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 4em; left: 12em">
+                                <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 5.5em; left: 11.1em; transform: rotate(30deg)">
+                                <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 0.25em; right: 0.4em">
+                                <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 3.5em; right: -0.1em">
+                                <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 6.75em; right: 0.4em">
+                            </span>
+                        </div>
+
+                        <aside class="notes">
+                            Initial query to mongos fanned out to all shards.
+                            <br><br>
+                            Connection and operation IDs will vary by shard, as can the operation itself.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Cluster-wide killOp<br>with logical sessions</h2>
+
+                        <p class="fragment">Any operation may be<br>associated with a session.</p>
+
+                        <p class="fragment" style="margin-top: 2em">Terminating a session will end<br>all of its associated operations.</p>
+                    </section>
+
+                    <section>
+                        <h2>Terminating a session</h2>
+
+                        <pre><code class="js" data-trim>
+                            session = client.startSession();
+
+                            cursor = db.coll.find(
+                              { &hellip; }, // table scans for days
+                              { session: session }
+                            );
+
+                            session.endSession();
+                        </code></pre>
+
+                        <aside class="notes">
+                            Alternatively, the endSessions command can terminate a session by its ID.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Querying with sessions</h2>
+
+                        <div style="position: relative; height: 10em; width: 20em; margin: 0 auto">
+                            <img src="img/word-bubble.svg" style="height: 3em; position: absolute; top: 3em; left: 0em">
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 3.25em; left: 8.5em;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.1em; font-size: 0.5em; font-weight: bold">mongos</span>
+                            </div>
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 0em; right: 0.5em;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.25em; font-size: 0.5em; font-weight: bold">shard 1</span>
+                            </div>
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 3.25em; right: 0;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.25em; font-size: 0.5em; font-weight: bold">shard 2</span>
+                            </div>
+
+                            <div style="position: absolute; height: 3em; width: 3em; top: 6.5em; right: 0.5em;">
+                                <img src="img/computer.svg" style="height: 3em; position: absolute; top: 0; left: 0;">
+                                <span style="position: absolute; top: 1.5em; left: 1.25em; font-size: 0.5em; font-weight: bold">shard 3</span>
+                            </div>
+
+                            <span class="fragment fade-in" data-fragment-index="1">
+                                <span class="fragment fade-out" data-fragment-index="2">
+                                    <img src="img/arrow-return.svg" style="height: 3em; position: absolute; top: 4em; left: 3.5em">
+                                </span>
+                                <span class="fragment fade-out" data-fragment-index="8">
+                                    <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 3.5em; left: -0.2em">
+                                </span>
+                                <span class="fragment fade-out" data-fragment-index="8">
+                                    <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 3.5em; left: 11.1em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="2">
+                                <span class="fragment fade-out" data-fragment-index="3">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 2.25em; left: 12.3em; transform: rotate(-30deg)">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 4em; left: 12em">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 5.5em; left: 11.1em; transform: rotate(30deg)">
+                                </span>
+                                <span class="fragment fade-out" data-fragment-index="9">
+                                    <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 0.25em; right: 0.4em">
+                                    <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 3.5em; right: -0.1em">
+                                    <img src="img/s.svg" style="height: 0.5em; position: absolute; top: 6.75em; right: 0.4em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="4">
+                                <span class="fragment fade-out" data-fragment-index="6">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 4em; left: 3.5em">
+                                </span>
+                                <span class="fragment fade-out" data-fragment-index="8">
+                                    <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 4.1em; left: 11.1em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="5">
+                                <span class="fragment fade-out" data-fragment-index="6">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 2.25em; left: 12.3em; transform: rotate(-30deg)">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 4em; left: 12em">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 5.5em; left: 11.1em; transform: rotate(30deg)">
+                                </span>
+                                <span class="fragment fade-out" data-fragment-index="9">
+                                    <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 0.85em; right: 0.4em">
+                                    <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 4.1em; right: -0.1em">
+                                    <img src="img/c.svg" style="height: 0.5em; position: absolute; top: 7.35em; right: 0.4em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="7">
+                                <span class="fragment fade-out" data-fragment-index="8">
+                                    <img src="img/arrow-return.svg" style="height: 3em; position: absolute; top: 4em; left: 3.5em">
+                                </span>
+                            </span>
+
+                            <span class="fragment fade-in" data-fragment-index="8">
+                                <span class="fragment fade-out" data-fragment-index="9">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 2.25em; left: 12.3em; transform: rotate(-30deg)">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 4em; left: 12em">
+                                    <img src="img/arrow.svg" style="height: 3em; position: absolute; top: 5.5em; left: 11.1em; transform: rotate(30deg)">
+                                </span>
+                            </span>
+                        </div>
+
+                        <aside class="notes">
+                            Initial query to mongos fanned out to all shards.
+                            <br><br>
+                            Connection and operation IDs will vary by shard, as can the operation itself.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>That&rsquo;s a wrap</h2>
+
+                        <ul style="font-size: 1.25em">
+                            <li style="text-decoration: line-through">Retryable writes</li>
+                            <li style="text-decoration: line-through">Zombie cursor cleanup</li>
+                            <li style="text-decoration: line-through">Cluster-wide killOp</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>One last point</h1>
+
+                        <img src="img/finger-point-up.svg" style="height: 8em">
+                    </section>
+
+                    <section>
+                        <h2>Resilence is primarily<br>the driver&rsquo;s domain</h2>
+
+                        <ul style="margin-top: 1em">
+                            <li class="fragment">Server discovery and monitoring</li>
+                            <li class="fragment">Elections and failover recovery</li>
+                            <li class="fragment">Load-balancing mongos connections</li>
+                            <li class="fragment">Routing queries by read preference</li>
+                        </ul>
+
+                        <aside class="notes">
+                            Drivers are generally robust.
+                            <br><br>
+                            Retryable writes builds upon driver features like SDAM.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Addressing resilence<br>on the server-side</h2>
+
+                        <ul style="margin-top: 1em">
+                            <li class="fragment">Tracking operation state</li>
+                            <li class="fragment">Cluster-wide sessions</li>
+                        </ul>
+
+                        <aside class="notes">
+                            In the past, use cases were smaller scale and these errors were rarer.
+                            <br><br>
+                            Larger scale use makes these pain points more common.
+                            <br><br>
+                            Obvious complication with finding a robust solution that supports sharding.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Providing a relatively<br>easy upgrade path</h2>
+
+                        <ul style="margin-top: 1em">
+                            <li class="fragment">No need to rewrite applications</li>
+                            <li class="fragment">Opting in to retryable writes</li>
+                            <li class="fragment">New API for client session objects</li>
+                            <li class="fragment">Pass session option as needed</li>
+                        </ul>
+
+                        <aside class="notes">
+                            In the past, use cases were smaller scale and these errors were rarer.
+                            <br><br>
+                            Larger scale use makes these pain points more common.
+                            <br><br>
+                            Obvious complication with finding a robust solution that supports sharding.
+                        </aside>
+                    </section>
+
+                    <section>
+                        <h2>Inside the spec process</h2>
+
+                        <p style="margin-top: 2em; font-size: 1.25em"><a href="https://github.com/mongodb/specifications"><img src="img/github.svg" style="height: 1em; vertical-align: middle"> mongodb/specifications</a></p>
+
+                        <p style="text-align: right">
+                            <span class="fragment">/sessions<br></span>
+                            <span class="fragment">/retryable-writes<br></span>
+                            <span class="fragment">/causal-consistency<br></span>
+                            <span class="fragment">/retryable-reads</span>
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2>In the meantime&hellip;</h2>
+
+                        <p style="display: inline-block;">
+                            <img src="img/ajdavis.jpg" style="float: left; margin-right: 1em; height: 4em;">
+                            <span style="font-family: 'Gloria Hallelujah', cursive; position: relative; top: 1em">
+                                <a href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">How To Write Resilient<br>MongoDB Applications</a>
+                            </span>
+                        </p>
+
+                        <p style="margin-top: 1em; font-size: 1.5em"><a href="http://bit.ly/resilient-applications">bit.ly/resilient-applications</a></p>
+                    </section>
+                </section>
+
+                <section>
+                    <h1>Thanks!</h1>
+
+                    <img src="img/fingers-victory.svg" style="height: 8em">
+
+                    <p style="margin-top: 2em; font-size: 0.6em">These slides brought to you by<br><a href="https://github.com/hakimel/reveal.js">reveal.js</a> and <a href="https://github.com/twitter/twemoji">Twitter Emoji</a></p>
+                </section>
+            </div>
+        </div>
+
+        <script src="reveal.js/lib/js/head.min.js"></script>
+        <script src="reveal.js/js/reveal.js"></script>
+
+        <script>
+            Reveal.initialize({
+                controls: false,
+                progress: true,
+                history: true,
+                transition: "slide",
+                center: false,
+
+                dependencies: [
+                    { src: 'reveal.js/plugin/markdown/marked.js' },
+                    { src: 'reveal.js/plugin/markdown/markdown.js' },
+                    { src: 'reveal.js/plugin/notes/notes.js', async: true },
+                    { src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
+</html>

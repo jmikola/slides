@@ -1,0 +1,85 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat:700);
+@import url('https://fonts.googleapis.com/css?family=Gloria+Hallelujah');
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  margin: 0 0 40px 0;
+  font-family: "Montserrat", Impact, sans-serif;
+  font-weight: normal;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  text-transform: none;
+  text-shadow: none;
+  word-wrap: break-word; }
+
+.reveal h1 { font-size: 2em; }
+.reveal h2 { font-size: 1.5em; margin-bottom: 1em; }
+.reveal h3 { font-size: 1.25em; }
+.reveal h4 { font-size: 1em; }
+
+.reveal pre {
+    font-size: 1em;
+}
+
+.reveal pre span.fragment.highlight-green.current-fragment span {
+    color: inherit;
+}
+
+.reveal section img[src$=svg] {
+    margin: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.reveal table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+.reveal table th,
+.reveal table td {
+    border: 2px solid #999 !important;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.reveal table th {
+    background-color: #cfe2f3;
+}
+
+.reveal table td.red {
+    background-color: #f4cccc;
+}
+
+.reveal table td.green {
+    background-color: #d9ead3;
+}
+
+.reveal p.bio {
+    display: inline-block;
+    margin-top: 4em;
+    padding-left: 4em;
+    height: 3em;
+    background-image: url("../common/img/jmikola_cartoon.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.reveal p.bio a[href*="twitter"] {
+    background-image: url("../common/img/twitter-bird-light-bgs.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    padding-left: 50px;
+}
+
+section[data-state="photo-credits"] ul li {
+    font-size: 0.5em;
+    line-height: 1.2em;
+}

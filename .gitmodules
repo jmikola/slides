@@ -4,3 +4,6 @@
 [submodule "vendor/highlight.js"]
 	path = vendor/highlight.js
 	url = https://github.com/isagalaev/highlight.js.git
+[submodule "mongodb_retryable_writes/reveal.js"]
+	path = mongodb_retryable_writes/reveal.js
+	url = https://github.com/hakimel/reveal.js.git
