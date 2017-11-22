@@ -635,6 +635,37 @@
                         <h3 style="color: #999">And keeping it there&hellip;</h3>
                     </section>
 
+                    <section class="spaced-out" data-markdown>
+                        <script type="text/template">
+                            ### Write Concern
+
+                            <table class="options">
+                                <tr>
+                                    <th>0</th>
+                                    <td>No write acknowledgement</td>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <td>Write acknowledgement from the primary (default)</td>
+                                </tr>
+                                <tr>
+                                    <th style="color: #666">&lt;integer&gt;</th>
+                                    <td>Write acknowledgement from <em>n</em> nodes</td>
+                                </tr>
+                                <tr>
+                                    <th>"majority"</th>
+                                    <td>Write acknowledgement from the majority of voting nodes (includes journaling)</td>
+                                </tr>
+                                <tr>
+                                    <th style="color: #666">&lt;string&gt;</th>
+                                    <td>Write acknowledgement to a node with the given <a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/">tag set</a></td>
+                                </tr>
+                            </table>
+
+                            Additional `wtimeout` and `journal` options.
+                        </script>
+                    </section>
+
                     <section data-markdown>
                         <script type="text/template">
                             ### `save()` is an anti-pattern
@@ -776,37 +807,19 @@
                         </script>
                     </section>
 
-                    <section class="spaced-out" data-markdown>
-                        <script type="text/template">
-                            ### Write Concern
+                    <section>
+                        <h3>Further Reading</h3>
 
-                            <table class="options">
-                                <tr>
-                                    <th>0</th>
-                                    <td>No write acknowledgement</td>
-                                </tr>
-                                <tr>
-                                    <th>1</th>
-                                    <td>Write acknowledgement from the primary (default)</td>
-                                </tr>
-                                <tr>
-                                    <th style="color: #666">&lt;integer&gt;</th>
-                                    <td>Write acknowledgement from <em>n</em> nodes</td>
-                                </tr>
-                                <tr>
-                                    <th>"majority"</th>
-                                    <td>Write acknowledgement from the majority of voting nodes (includes journaling)</td>
-                                </tr>
-                                <tr>
-                                    <th style="color: #666">&lt;string&gt;</th>
-                                    <td>Write acknowledgement to a node with the given <a href="https://docs.mongodb.com/manual/tutorial/configure-replica-set-tag-sets/">tag set</a></td>
-                                </tr>
-                            </table>
+                        <p style="display: inline-block; margin-top: 1em; font-size: 1em;">
+                            <img src="img/ajdavis.jpg" style="float: left; margin-right: 1em; height: 4em;">
+                            <span style="font-family: 'Gloria Hallelujah', cursive; position: relative; top: 1em">
+                                <a href="https://emptysqua.re/blog/how-to-write-resilient-mongodb-applications/">How To Write Resilient<br>MongoDB Applications</a>
+                            </span>
+                        </p>
 
-                            Additional `wtimeout` and `journal` options.
-                        </script>
+                        <p class="fragment" style="margin-top: 1em; font-size: 1.5em"><a href="http://bit.ly/resilient-applications">bit.ly/resilient-applications</a></p>
                     </section>
-
+<!--
                     <section class="spaced-out" data-markdown>
                         <script type="text/template">
                             ### Document growth with [MMAPv1](https://docs.mongodb.com/manual/core/mmapv1/)
@@ -820,6 +833,7 @@
                             <p class="fragment">Not relevant for [WiredTiger](https://docs.mongodb.com/manual/core/wiredtiger/), which uses<br>multiversion concurrency control (MVCC).</p>
                         </script>
                     </section>
+-->
                 </section>
 
                 <section>
@@ -1022,7 +1036,7 @@
 
                             [`maxTimeMS`](https://docs.mongodb.com/manual/tutorial/terminate-running-operations/#maxtimems) query and command option
 
-                            [Do not use client-side socket timeouts](http://jmikola.net/blog/mongodb-timeouts/)
+                            [Do not rely on client-side socket timeouts](http://jmikola.net/blog/mongodb-timeouts/)
 
                             <img src="img/rickroll.gif" alt="rickroll.gif" style="width: 70%;position:relative;top:-6em" class="fragment">
                         </script>
